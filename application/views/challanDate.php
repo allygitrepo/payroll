@@ -1,5 +1,5 @@
 <?php
-$title = "Challan Date Entry";
+$title = "EPF Challan Date Entry";
   include('label.php'); ?>
    <!-- Main section-->
    <section>
@@ -9,7 +9,7 @@ $title = "Challan Date Entry";
 							<h3><?php if(isset($title)){ echo $title; } ?></h3>
 						</div>
 						<div class="pull-right">
-	<button type="button" class="btn btn-primary" id="new"><em class="fa fa-plus"></em> Challan Date</button>		
+	<button type="button" class="btn btn-primary" id="new"><em class="fa fa-plus"></em> EPF Challan Date</button>		
 		</div>
           </div>  
             <!-- START row-->
@@ -66,7 +66,7 @@ $title = "Challan Date Entry";
                                         <div class="col-md-12">
                                        <div class="col-md-3">
                                            <div class="form-group">
-                                              <label class="control-label">Challan Date *</label>
+                                              <label class="control-label">EPF Challan Date *</label>
                              <div id="datetimepicker1" class="date">
                                  <input type="text" class="form-control starttoenddate" id="challandate" name="challandate" value='' placeholder="Select Date">
                                  <label id="d" style="color:red;"></label>
