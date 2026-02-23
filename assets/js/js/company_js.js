@@ -32,6 +32,7 @@ $(document).on('submit','#company_form',function(e){
             var estaType1 = $('#estaType').val();
             var underEpfo1 = $('#underEpfo').val();  
             var linNo1 = $('#linNo').val();
+            var esic_id1 = $('#esic_id').val();
             var address1 = $('#address_list').val();
             var postoffice1 = $('#postoffice').val();
             var district1 = $('#district').val();
@@ -47,7 +48,7 @@ $(document).on('submit','#company_form',function(e){
                 type : "POST",
 				url  : baseurl+"companycontroller/save_company",
                 dataType : "JSON",
-                data : {id:save_update1 ,estb_id:estb_id1,esta_name:esta_name1,estaType:estaType1,underEpfo:underEpfo1,linNo:linNo1,address:address1 , postoffice:postoffice1, district:district1,pincode:pincode1,pan:pan1,tan:tan1,pTax:pTax1,primaryEmail:primaryEmail1,phone:phone1,website:website},
+                data : {id:save_update1 ,estb_id:estb_id1,esta_name:esta_name1,estaType:estaType1,underEpfo:underEpfo1,linNo:linNo1,esic_id:esic_id1,address:address1 , postoffice:postoffice1, district:district1,pincode:pincode1,pan:pan1,tan:tan1,pTax:pTax1,primaryEmail:primaryEmail1,phone:phone1,website:website},
                 success: function(data){
 				if(data == true){
 				
@@ -62,6 +63,7 @@ $(document).on('submit','#company_form',function(e){
 					$('#estaType').val("");
 					$('#underEpfo').val("");  
 					$('#linNo').val("");
+					$('#esic_id').val("");
 					$('#pan').val("");
 					$('#tan').val("");
 					$('#pTax').val("");
@@ -108,7 +110,7 @@ $(document).on('submit','#company_form',function(e){
 		       //     $('#show_company_list').html("");
 
 			
-		            var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%" ><thead><tr><th>Sr. No.</th><th>Estb ID</th><th>Establishment Name</th><th>Establishment Type</th><th>Under EPFO Office</th><th>LIN No.</th><th>Address</th><th>Postoffice</th><th>District</th><th>Pincode</th><th>PAN</th><th>TAN</th><th>PT</th><th>Email</th><th>Phone No.</th><th>Website Name</th><th   ><center>Action</center></th></tr></thead><tbody >';
+		            var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%" ><thead><tr><th>Sr. No.</th><th>Estb ID</th><th>Establishment Name</th><th>Establishment Type</th><th>Under EPFO Office</th><th>LIN No.</th><th>ESIC ID</th><th>Address</th><th>Postoffice</th><th>District</th><th>Pincode</th><th>PAN</th><th>TAN</th><th>PT</th><th>Email</th><th>Phone No.</th><th>Website Name</th><th   ><center>Action</center></th></tr></thead><tbody >';
 		            var i;
 		            for(i=0; i<data.length; i++){
 					var sr = i+1;
@@ -119,6 +121,7 @@ $(document).on('submit','#company_form',function(e){
 	                        '<td id="type'+data[i].company_id+'">'+data[i].type+'</td>'+
 	                        '<td id="epfo_office'+data[i].company_id+'">'+data[i].epfo_office+'</td>'+
 	                        '<td id="lin_no'+data[i].company_id+'">'+data[i].lin_no+'</td>'+
+	                        '<td id="esic_id'+data[i].company_id+'">'+data[i].esic_id+'</td>'+
 	                       '<td id="address'+data[i].company_id+'" >'+data[i].address+'</td>'+
 	                        '<td id="post_office'+data[i].company_id+'">'+data[i].post_office+'</td>'+
 	                        '<td id="district'+data[i].company_id+'">'+data[i].district+'</td>'+
@@ -193,6 +196,7 @@ $(document).on('submit','#company_form',function(e){
 	                    var type   = $('#type'+id1).html();
 	                    var epfo_office   = $('#epfo_office'+id1).html();
 	                    var line_no   = $('#lin_no'+id1).html();
+	                    var esic_id   = $('#esic_id'+id1).html();
 				//		var	address_id = $('#address'+id1).val();
 						var	address = $('#address'+id1).html();
 //alert(address_id1);
@@ -217,6 +221,7 @@ $(document).on('submit','#company_form',function(e){
 					$('#estaType').val(type);
 					$('#underEpfo').val(epfo_office);  
 					$('#linNo').val(line_no);
+					$('#esic_id').val(esic_id);
 					$('#pan').val(pan);
 					$('#tan').val(tan);
 					$('#pTax').val(p_tax);
@@ -297,6 +302,7 @@ function form_clear(){
 					$('#estaType').val("");
 					$('#underEpfo').val("");  
 					$('#linNo').val("");
+					$('#esic_id').val("");
 					$('#pan').val("");
 					$('#tan').val("");
 					$('#pTax').val("");

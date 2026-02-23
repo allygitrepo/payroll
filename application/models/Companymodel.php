@@ -11,6 +11,7 @@ class Companymodel extends CI_Model{
                 'type'  =>    strtoupper($this->input->post('estaType')), 
              'epfo_office' => strtoupper($this->input->post('underEpfo')), 
                  'lin_no'  => strtoupper($this->input->post('linNo')), 
+                 'esic_id'  => strtoupper($this->input->post('esic_id')), 
              'address_id'  => strtoupper($this->input->post('address')), 
                     'pan'  => strtoupper($this->input->post('pan')), 
                     'tan'  => strtoupper($this->input->post('tan')), 
@@ -33,6 +34,7 @@ function company_update(){
                     $type  = strtoupper($this->input->post('estaType')); 
               $epfo_office = strtoupper($this->input->post('underEpfo')); 
                   $lin_no  = strtoupper($this->input->post('linNo')); 
+                  $esic_id  = strtoupper($this->input->post('esic_id')); 
               $address_id  = strtoupper($this->input->post('address')); 
                        $pan= strtoupper($this->input->post('pan')); 
                      $tan  = strtoupper($this->input->post('tan')); 
@@ -46,6 +48,7 @@ function company_update(){
         $this->db->set('type', $type);
         $this->db->set('epfo_office', $epfo_office);
         $this->db->set('lin_no', $lin_no);
+        $this->db->set('esic_id', $esic_id);
         $this->db->set('address_id', $address_id);
         $this->db->set('pan', $pan);
         $this->db->set('tan', $tan);

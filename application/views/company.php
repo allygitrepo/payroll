@@ -68,6 +68,14 @@
                                         </div>
                                         <div class="col-md-3">
                                            <div class="form-group">
+                                              <label class="control-label">ESIC ID *</label>
+                                              <input type="text" name="esic_id" id="esic_id" class="form-control" placeholder="Enter ESIC ID * 	 				 												"oninvalid="this.setCustomValidity('please enter ESIC ID')" onChange="this.setCustomValidity('')" required>
+                                           </div>
+                                        </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                        <div class="col-md-3">
+                                           <div class="form-group">
                                               <label class="control-label"><?= $address; ?> *</label>
                                               <select type="text" name="address" id="address_list" class="form-control" placeholder="Enter <?= $address; ?> * 	 				 												"oninvalid="this.setCustomValidity('please Select Address')" onChange="this.setCustomValidity('')" required >
 												  
