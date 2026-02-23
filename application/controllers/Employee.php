@@ -99,26 +99,69 @@ class Employee extends CI_Controller{
 		$this->load->library("upload");
 		
 		if ($_FILES['uploadFile_emp']['size'] > 0) {
-			$this->upload->initialize(array( 
+			// Get IP number from POST, use timestamp as fallback
+			$ip_number = $this->input->post('ip_number');
+			if(empty($ip_number)){
+				$ip_number = 'emp_' . time();
+			}
+			
+			// Configure upload with temporary name
+			$config = array( 
 		       "upload_path" => './assets/images/employee/profile/',
-		       "overwrite" => FALSE,
+		       "overwrite" => TRUE,
 		       "max_filename" => 300,
 		       "remove_spaces" => TRUE,
 		       "allowed_types" => 'jpg|jpeg|png|gif',
 		       "max_size" => 30000,
-		    ));
+		       "file_name" => 'temp_' . time()
+		    );
+			
+			$this->upload->initialize($config);
 
 		   if (!$this->upload->do_upload('uploadFile_emp')) {
 			$error = array('error' => $this->upload->display_errors());
 			echo json_encode($error);
+			return;
 		}
 
-		    $data = $this->upload->data();
-			$path = $data['file_name'];
+		    $upload_data = $this->upload->data();
+			$source_path = $upload_data['full_path'];
+			$extension = $upload_data['file_ext'];
 			
-			echo json_encode($path);	
+			// New filename with IP number or fallback
+			$new_filename = $ip_number . $extension;
+			$destination_path = './assets/images/employee/profile/' . $new_filename;
+			
+			// Compress and resize image
+			$this->load->library('image_lib');
+			
+			$config_resize = array(
+				'image_library' => 'gd2',
+				'source_image' => $source_path,
+				'new_image' => $destination_path,
+				'maintain_ratio' => TRUE,
+				'width' => 800,
+				'height' => 800,
+				'quality' => '60%'
+			);
+			
+			$this->image_lib->initialize($config_resize);
+			
+			if (!$this->image_lib->resize()) {
+				// If resize fails, just rename the file
+				rename($source_path, $destination_path);
+			} else {
+				// Delete temporary file if resize succeeded
+				if(file_exists($source_path) && $source_path != $destination_path){
+					unlink($source_path);
+				}
+			}
+			
+			$this->image_lib->clear();
+			
+			echo json_encode($new_filename);	
 		}else{
-			echo "no file"; 
+			echo json_encode(array('error' => 'No file uploaded')); 
 		}
 		
 		

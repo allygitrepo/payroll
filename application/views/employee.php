@@ -55,9 +55,16 @@ $title = "Employee";
 </div>
 															<div class="col-md-3">
                                            <div class="form-group">
-                                              <label class="control-label">UAN</label>
-                                              <input type="text" name="uan_id" form="employee_form" id="uan_id" class="form-control" placeholder="Enter UAN No">
-                                 <label id="uan_id" style="color:red;"></label>
+                                              <label class="control-label">UAN *</label>
+                                              <input type="text" name="uan_id" form="employee_form" id="uan_id" class="form-control" placeholder="Enter UAN No" required>
+                                 <label id="uan_id_error" style="color:red;"></label>
+                                           </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                           <div class="form-group">
+                                              <label class="control-label">IP Number *</label>
+                                              <input type="text" name="ip_number" form="employee_form" id="ip_number" class="form-control" placeholder="Enter IP Number" required>
+                                 <label id="ip_number_error" style="color:red;"></label>
                                            </div>
                                         </div>
     
@@ -807,7 +814,12 @@ $('#uploadFile').ajaxfileupload({
 $('#uploadFile_emp').ajaxfileupload({
   //'action' : 'callAction',
   'action' : baseurl+'employee/employee_image_upload',
-  'onStart': function() {$("#msg_emp").html("<font color='red'><i class='fa fa-refresh fa-spin fa-3x fa-fw'></i>Please wait file is uploading.....</font>"); },
+  'params': {
+    'ip_number': function() { return $('#ip_number').val(); }
+  },
+  'onStart': function() {
+    $("#msg_emp").html("<font color='red'><i class='fa fa-refresh fa-spin fa-3x fa-fw'></i>Please wait file is uploading.....</font>");
+  },
   'onComplete' : function(response) {
   
 //	alert(JSON.stringify(response));

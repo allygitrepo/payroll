@@ -141,6 +141,7 @@ class Employeemodel extends CI_Model{
 				'dob' => 		strtoupper($dob),
 				'doj'  => 		strtoupper($doj), 
 				'UAN'  =>	strtoupper($this->input->post('uan_id')), 
+				'ip_number'  =>	strtoupper($this->input->post('ip_number')), 
                 'gender'  =>	strtoupper($this->input->post('gender')), 
            'father_husband'  => strtoupper($this->input->post('fhName')), 
 				  'relation' => strtoupper($this->input->post('relation')), 
@@ -208,6 +209,7 @@ class Employeemodel extends CI_Model{
 		$doj = $this->input->post('doj');
 //		$doj = date("Y-m-d", strtotime($doj));
 		$uan=strtoupper($this->input->post('uan_id'));
+		$ip_number=strtoupper($this->input->post('ip_number'));
                 $gender  = strtoupper($this->input->post('gender')); 
         $father_husband  = strtoupper($this->input->post('fhName')); 
                $relation = strtoupper($this->input->post('relation')); 
@@ -236,6 +238,7 @@ class Employeemodel extends CI_Model{
                   $pmrpy =	$this->input->post('pmrpy'); 
         			
 		$this->db->set('UAN', $uan);   
+        $this->db->set('ip_number', $ip_number);   
         $this->db->set('dob', $dob);
         $this->db->set('doj', $doj);
         $this->db->set('gender', $gender);
