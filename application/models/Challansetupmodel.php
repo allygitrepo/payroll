@@ -29,6 +29,8 @@ class Challansetupmodel extends CI_Model{
                 'ac2min'  => $this->input->post('ac2min'), 
                 'ac22min' => $this->input->post('ac22min'), 
                 'pmrpy' => $this->input->post('pmrpy'), 
+                'esic_wages' => $this->input->post('esic_wages'), 
+                'employee_share' => $this->input->post('employee_share'), 
                 'employer_share' => $this->input->post('employer_share'), 
             );
 		$result=$this->db->insert('challan_setup',$data);
@@ -58,6 +60,8 @@ class Challansetupmodel extends CI_Model{
                $ac2min  = $this->input->post('ac2min'); 
                $ac22min = $this->input->post('ac22min'); 
                $pmrpy = $this->input->post('pmrpy'); 
+               $esic_wages = $this->input->post('esic_wages'); 
+               $employee_share = $this->input->post('employee_share'); 
                $employer_share = $this->input->post('employer_share'); 
             
         $this->db->set('from_date', $from_date);
@@ -74,6 +78,8 @@ class Challansetupmodel extends CI_Model{
         $this->db->set('ac2min', $ac2min);
         $this->db->set('ac22min', $ac22min);
         $this->db->set('pmrpy', $pmrpy);
+        $this->db->set('esic_wages', $esic_wages);
+        $this->db->set('employee_share', $employee_share);
         $this->db->set('employer_share', $employer_share);
         $this->db->where('challan_id', $id);
         $result=$this->db->update('challan_setup');

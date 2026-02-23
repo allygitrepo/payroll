@@ -124,11 +124,35 @@
                                            </div>
                                         </div>
                                         <div class="col-md-3">
+                                       <div class="form-group">
+                                          <label class="control-label">ESIC Wages</label>
+                                          <input type="text" 
+                                                name="esic_wages" 
+                                                id="esic_wages" 
+                                                class="form-control" 
+                                                placeholder="Enter ESIC Wages" 
+                                                required>
+                                       </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                       <div class="form-group">
+                                          <label class="control-label">Employee Share (%)</label>
+                                          <input type="text" 
+                                                name="employee_share" 
+                                                id="employee_share" 
+                                                class="form-control" 
+                                                placeholder="Enter Employee Share" 
+                                                required>
+                                       </div>
+                                    </div>
+                                        <div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label">Employer Share</label>
                                               <input type="text" name="employer_share" id="employer_share" class="form-control" placeholder="Enter Employer Share" required>
                                            </div>
                                         </div>
+                                       
                                         </div>
                      	       <div class="col-md-12">
                                     <center> 

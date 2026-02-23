@@ -29,6 +29,8 @@ $(document).ready(function() {
             var ac22min = $('#ac22min').val();  
 			
             var pmrpy = $('#pmrpy').val();  
+            var esic_wages = $('#esic_wages').val();  
+            var employee_share = $('#employee_share').val();  
             var employer_share = $('#employer_share').val();  
             var save_update1 = $('#save_update').val(); 
 			
@@ -37,7 +39,7 @@ $(document).ready(function() {
                 type : "POST",
 				url  : baseurl+"challansetup/save_challansetup",
                 dataType : "JSON",
-                data : {employer_share:employer_share,id:save_update1 ,startdate:startdate1 ,enddate:enddate1,salarylimit:salarylimit,edliwages:edliwages, ac1eemale:ac1eemale,
+                data : {esic_wages:esic_wages,employee_share:employee_share,employer_share:employer_share,id:save_update1 ,startdate:startdate1 ,enddate:enddate1,salarylimit:salarylimit,edliwages:edliwages, ac1eemale:ac1eemale,
 				ac1eefemale:ac1eefemale,ac1er:ac1er,ac2:ac2,ac10:ac10,ac21:ac21,ac22:ac22,ac2min:ac2min,ac22min:ac22min,pmrpy:pmrpy},
                 success: function(data){
 			//salert(data);
@@ -57,6 +59,9 @@ $(document).ready(function() {
 					$('#ac2min').val("");
 					$('#ac22min').val("");  
 					$('#pmrpy').val("");  
+					$('#esic_wages').val("");  
+					$('#employee_share').val("");  
+					$('#employer_share').val("");  
 						$('#save_update').val("add");
 		$("#hide_show").hide();
 					$("#new").show();
@@ -103,6 +108,8 @@ $(document).ready(function() {
 					'<th style="white-space:nowrap;" >A/c no.2 Min</th>'+
 					'<th style="white-space:nowrap;" >A/c no.22 Min</th>'+
 					'<th style="white-space:nowrap;" >PMRPY</th>'+
+					'<th style="white-space:nowrap;" >ESIC Wages</th>'+
+					'<th style="white-space:nowrap;" >Employee Share</th>'+
 					'<th style="white-space:nowrap;" >Employer Share</th>'+
 					'<th style="white-space:nowrap;" ><center>Action</center></th></tr></thead><tbody id="">';
 		            var i;
@@ -134,6 +141,8 @@ $(document).ready(function() {
 	                        '<td id="ac2min'+data[i].challan_id+'">'+data[i].ac2min+'</td>'+
 	                        '<td id="ac22min'+data[i].challan_id+'">'+data[i].ac22min+'</td>'+
 	                        '<td id="pmrpy'+data[i].challan_id+'">'+data[i].pmrpy+'</td>'+
+	                        '<td id="esic_wages'+data[i].challan_id+'">'+data[i].esic_wages+'</td>'+
+	                        '<td id="employee_share'+data[i].challan_id+'">'+data[i].employee_share+'</td>'+
 	                        '<td id="employer_share'+data[i].challan_id+'">'+data[i].employer_share+'</td>'+
 		                        '<td><button  class="edit_row btn btn-xs btn-primary"  id="'+data[i].challan_id+'"  ><i class="fa fa-edit"></i></button>				<button class="delete_row btn btn-xs btn-danger" type="submit" id="'+data[i].challan_id+'" ><i class="fa fa-trash"></i></button></td>'+
 		                        '</tr>';
@@ -199,6 +208,8 @@ $(document).ready(function() {
 		var ac2min = $('#ac2min'+id1).html();
 		var ac22min = $('#ac22min'+id1).html();
 		var pmrpy = $('#pmrpy'+id1).html();
+		var esic_wages = $('#esic_wages'+id1).html();
+		var employee_share = $('#employee_share'+id1).html();
 		var employer_share = $('#employer_share'+id1).html();
 			$('#startdate').val(from_date1);
             $('#enddate').val(to_date1);
@@ -214,6 +225,8 @@ $(document).ready(function() {
             $('#ac2min').val(ac2min);
             $('#ac22min').val(ac22min);
             $('#pmrpy').val(pmrpy);
+            $('#esic_wages').val(esic_wages);
+            $('#employee_share').val(employee_share);
             $('#employer_share').val(employer_share);
 			
 					$('#save_update').val(id1);
