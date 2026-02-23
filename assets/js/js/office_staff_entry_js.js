@@ -29,6 +29,7 @@ $(document).ready(function() {
 				'<th>Total</th>'+  			
 				'<th>PF</th>'+  			
 				'<th>PT</th>'+  			
+				'<th>ESIC</th>'+  			
 				'<th>Net Wages</th>'+
 					'</tr></thead><tbody id="">';
 		            var i;
@@ -44,6 +45,7 @@ $(document).ready(function() {
 					var data_7 = 0;
 					var data_8 = 0;
 					var data_9 = 0;
+					var data_10 = 0;
 
 		            for(i=0; i<data.length; i++){
 					
@@ -70,6 +72,7 @@ $('#month_year').val(data1[7]);
 								'<td style="display:none;" id="pt_id'+data1[0]+'" >'+data1[9]+'</td>'+
 								'<td style="display:none;" id="pt_rate'+data1[0]+'" >'+data1[6]+'</td>'+
 								'<td id="pt'+data1[0]+'" >'+data1[18]+'</td>'+
+								'<td id="esic'+data1[0]+'" >'+data1[25]+'</td>'+
 								'<td id="net_wages'+data1[0]+'" >'+data1[19]+'</td>'+
 								'<td  style="display:none;"  id="ac1eemf'+data1[0]+'" >'+data1[10]+'</td>'+
 								'<td  style="display:none;"  id="ac10'+data1[0]+'" >'+data1[11]+'</td>'+
@@ -98,7 +101,8 @@ $('#month_year').val(data1[7]);
 						data_6 =	parseInt(data_6)+parseInt(data1[16]);
 						data_7 =	parseInt(data_7)+parseInt(data1[17]);
 						data_8 =	parseInt(data_8)+parseInt(data1[18]);
-						data_9 =	parseInt(data_9)+parseInt(data1[19]);
+						data_9 =	parseInt(data_9)+parseInt(data1[25]);
+						data_10 =	parseInt(data_10)+parseInt(data1[19]);
 		            }
 
 					html += '</tbody><tfoot><tr>'+
@@ -112,6 +116,7 @@ $('#month_year').val(data1[7]);
 				'<th id="total_data_7">'+data_7+'</th>'+
 				'<th id="total_data_8">'+data_8+'</th>'+		
 				'<th id="total_data_9">'+data_9+'</th>'+  			
+				'<th id="total_data_10">'+data_10+'</th>'+  			
 				'</tr></tfoot>';
 	                html += '</table>';
 
@@ -588,6 +593,7 @@ $('#month_year').val(data1[7]);
 		if(salary11==0){
 				$('#net_wages'+emp_id11).html('0');
 				$('#pt'+emp_id11).html('0');
+				$('#esic'+emp_id11).html('0');
 		}
 			
 				$.ajax({
@@ -603,7 +609,12 @@ $('#month_year').val(data1[7]);
 
 		$('#pt'+emp_id11).html(parseInt(pt));
 		$('#pt_id'+emp_id11).html(parseInt(data1[1]));
-			var net_wages = parseInt(salary11)-(parseInt(pt)+parseInt(pf11));
+		
+		// Get ESIC value
+		var esic = parseInt(data1[2]) || 0;
+		$('#esic'+emp_id11).html(esic);
+		
+			var net_wages = parseInt(salary11)-(parseInt(pt)+parseInt(pf11)+parseInt(esic));
 		$('#net_wages'+emp_id11).html(parseInt(net_wages));
 		
                 }
@@ -626,6 +637,7 @@ function get_grand_total(){
 			var total_data_7 = 0;
 			var total_data_8 = 0;
 			var total_data_9 = 0;
+			var total_data_10 = 0;
 			
 			
 			for (var i = 0; i < r; i++) {
@@ -639,7 +651,8 @@ function get_grand_total(){
 			var data_6 = $('#totalmonthsalary'+emp_id).html();
 			var data_7 = $('#pf'+emp_id).html();
 			var data_8 = $('#pt'+emp_id).html();
-			var data_9 = $('#net_wages'+emp_id).html();
+			var data_9 = $('#esic'+emp_id).html();
+			var data_10 = $('#net_wages'+emp_id).html();
 			
 			
 			total_data_1 = parseInt(total_data_1) + parseInt(data_1);
@@ -651,6 +664,7 @@ function get_grand_total(){
 			total_data_7 = parseInt(total_data_7) + parseInt(data_7);
 			total_data_8 = parseInt(total_data_8) + parseInt(data_8);
 			total_data_9 = parseInt(total_data_9) + parseInt(data_9);
+			total_data_10 = parseInt(total_data_10) + parseInt(data_10);
 			}
 		
 			$('#total_data_1').html(total_data_1);
@@ -662,6 +676,7 @@ function get_grand_total(){
 			$('#total_data_7').html(total_data_7);
 			$('#total_data_8').html(total_data_8);
 			$('#total_data_9').html(total_data_9);
+			$('#total_data_10').html(total_data_10);
 			
 			
 		}

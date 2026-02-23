@@ -34,6 +34,7 @@ var html = '<table id="example1" class="table table-striped table-bordered table
 				'<th style="white-space:nowrap;">PF</th>'+  			
 				'<th style="display:none;"></th>'+
 				'<th style="white-space:nowrap;">PT</th>'+  			
+				'<th style="white-space:nowrap;">ESIC</th>'+  			
 				'<th style="white-space:nowrap;">Net Wages</th>'+  			
 				'<th style="display:none;"></th>'+
 				'<th style="display:none;"></th>'+
@@ -57,6 +58,7 @@ var html = '<table id="example1" class="table table-striped table-bordered table
 					var data_13 = 0;
 					var data_14 = 0;
 					var data_15 = 0;
+					var data_16 = 0;
 						
 						
 						
@@ -94,6 +96,7 @@ $('#month_year').val(data1[7]);
 				'<td id="pf'+data1[0]+'">'+data1[21]+'</td>'+
 				'<td style="display:none;" id="pt_id'+data1[0]+'" >'+data1[30]+'</td>'+
 				'<td id="pt'+data1[0]+'">'+data1[22]+'</td>'+
+				'<td id="esic'+data1[0]+'">'+data1[31]+'</td>'+
 				'<td id="net_wages'+data1[0]+'">'+data1[23]+'</td>'+
 				'<td style="display:none;" id="ac1eemf'+data1[0]+'" >'+data1[9]+'</td>'+
 				'<td style="display:none;" id="ac10'+data1[0]+'" >'+data1[10]+'</td>'+
@@ -130,7 +133,8 @@ $('#month_year').val(data1[7]);
 						data_12 =	parseInt(data_12)+parseInt(data1[20]);
 						data_13 =	parseInt(data_13)+parseInt(data1[21]);
 						data_14 =	parseInt(data_14)+parseInt(data1[22]);
-						data_15 =	parseInt(data_15)+parseInt(data1[23]);
+						data_15 =	parseInt(data_15)+parseInt(data1[31]);
+						data_16 =	parseInt(data_16)+parseInt(data1[23]);
 						
 						
 				
@@ -156,6 +160,7 @@ $('#month_year').val(data1[7]);
 				'<th id="total_data_13">'+data_13+'</th>'+  			
 				'<th id="total_data_14">'+data_14+'</th>'+  			
 				'<th id="total_data_15">'+data_15+'</th>'+  			
+				'<th id="total_data_16">'+data_16+'</th>'+  			
 				'</tr></tfoot>';
 	                html += '</table>';
 		       
@@ -250,6 +255,7 @@ get_grand_total();
 		if(salary==0){
 				$('#net_wages'+emp_id).html('0');
 				$('#pt'+emp_id).html('0');
+				$('#esic'+emp_id).html('0');
 		}
 				$.ajax({
                 type : "POST",
@@ -265,7 +271,11 @@ get_grand_total();
 		$('#pt'+emp_id).html(parseInt(pt));
 		$('#pt_id'+emp_id).html(parseInt(data1[1]));
 		
-			var net_wages = parseInt(salary)-(parseInt(pt)+parseInt(pf));
+		// Get ESIC value
+		var esic = parseInt(data1[2]) || 0;
+		$('#esic'+emp_id).html(esic);
+		
+			var net_wages = parseInt(salary)-(parseInt(pt)+parseInt(pf)+parseInt(esic));
 		$('#net_wages'+emp_id).html(parseInt(net_wages));
 		
                 }
@@ -379,6 +389,7 @@ get_grand_total();
 			var total_data_13 = 0;
 			var total_data_14 = 0;
 			var total_data_15 = 0;
+			var total_data_16 = 0;
 			
 			
 			for (var i = 0; i < r; i++) {
@@ -399,7 +410,8 @@ get_grand_total();
 			var data_12 = $('#total'+emp_id).html();
 			var data_13 = $('#pf'+emp_id).html();
 			var data_14 = $('#pt'+emp_id).html();
-			var data_15 = $('#net_wages'+emp_id).html();
+			var data_15 = $('#esic'+emp_id).html();
+			var data_16 = $('#net_wages'+emp_id).html();
 			
 			
 			total_data_0 = parseInt(total_data_0) + parseInt(data_0);
@@ -418,6 +430,7 @@ get_grand_total();
 			total_data_13 = parseInt(total_data_13) + parseInt(data_13);
 			total_data_14 = parseInt(total_data_14) + parseInt(data_14);
 			total_data_15 = parseInt(total_data_15) + parseInt(data_15);
+			total_data_16 = parseInt(total_data_16) + parseInt(data_16);
 			}
 		
 			$('#total_data_0').html(total_data_0);
@@ -436,6 +449,7 @@ get_grand_total();
 			$('#total_data_13').html(total_data_13);
 			$('#total_data_14').html(total_data_14);
 			$('#total_data_15').html(total_data_15);
+			$('#total_data_16').html(total_data_16);
 			
 			
 		}

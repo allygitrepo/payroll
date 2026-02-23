@@ -57,6 +57,7 @@ $(document).ready(function() {
 				'<th>Bonus</th>'+  			
 				'<th>Total</th>'+  			
 				'<th>PF</th>'+  			
+				'<th>ESIC</th>'+  			
 				'<th>Net Wages</th>'+  			
 
 					'</tr></thead><tbody id="">';
@@ -72,6 +73,7 @@ $(document).ready(function() {
 					var data_7 = 0;
 					var data_8 = 0;
 					var data_9 = 0;
+					var data_10 = 0;
 
 
 					
@@ -104,6 +106,7 @@ $(document).ready(function() {
 								'<td id="bonus'+data1[0]+'">'+data1[13]+'</td>'+
 								'<td id="total'+data1[0]+'">'+data1[14]+'</td>'+
 								'<td id="pf'+data1[0]+'">'+data1[15]+'</td>'+
+								'<td id="esic'+data1[0]+'">'+data1[28]+'</td>'+
 								'<td id="net_wages'+data1[0]+'">'+data1[16]+'</td>'+
 								'<td  style="display:none;" id="ac1male'+data1[0]+'">'+data1[22]+'</td>'+
 								'<td  style="display:none;" id="ncp_days'+data1[0]+'">'+data1[23]+'</td>'+
@@ -133,7 +136,8 @@ $(document).ready(function() {
 						data_6 =	parseInt(data_6)+parseInt(data1[13]);
 						data_7 =	parseInt(data_7)+parseInt(data1[14]);
 						data_8 =	parseInt(data_8)+parseInt(data1[15]);
-						data_9 =	parseInt(data_9)+parseInt(data1[16]);
+						data_9 =	parseInt(data_9)+parseInt(data1[28]);
+						data_10 =	parseInt(data_10)+parseInt(data1[16]);
 						
 						
 
@@ -148,7 +152,8 @@ $(document).ready(function() {
 				'<th id="total_data_6">'+data_6+'</th>'+ 			
 				'<th id="total_data_7">'+data_7+'</th>'+
 				'<th id="total_data_8">'+data_8+'</th>'+		
-				'<th id="total_data_9">'+data_9+'</th>'+  			
+				'<th id="total_data_9">'+data_9+'</th>'+		
+				'<th id="total_data_10">'+data_10+'</th>'+  			
 				'</tr></tfoot>';
 	                html += '</table>';
 		            $('#table_data1').html(html);
@@ -237,8 +242,22 @@ $(document).ready(function() {
 		var pf = (parseInt(wages)*parseInt(pf_rate))/100;
 		$('#pf'+emp_id).html(parseInt(pf));
 
-		var net_wages = parseInt(total)-parseInt(pf);	
-		$('#net_wages'+emp_id).html(parseInt(net_wages));
+		// Get ESIC from backend
+		$.ajax({
+			type: "POST",
+			url: baseurl+"Packingwages/get_ptax",
+			dataType: "JSON",
+			data: { salary: total },
+			async: false,
+			success: function(data){
+				var data1 = data.split("####");
+				var esic = parseInt(data1[2]) || 0;
+				$('#esic'+emp_id).html(esic);
+				
+				var net_wages = parseInt(total)-parseInt(pf)-parseInt(esic);	
+				$('#net_wages'+emp_id).html(parseInt(net_wages));
+			}
+		});
 		
 		
 		 get_grand_total();
@@ -284,8 +303,22 @@ $(document).ready(function() {
 		var pf = (parseInt(wages)*parseInt(pf_rate))/100;
 		$('#pf'+emp_id).html(parseInt(pf));
 
-		var net_wages = parseInt(total)-parseInt(pf);	
-		$('#net_wages'+emp_id).html(parseInt(net_wages));
+		// Get ESIC from backend
+		$.ajax({
+			type: "POST",
+			url: baseurl+"Packingwages/get_ptax",
+			dataType: "JSON",
+			data: { salary: total },
+			async: false,
+			success: function(data){
+				var data1 = data.split("####");
+				var esic = parseInt(data1[2]) || 0;
+				$('#esic'+emp_id).html(esic);
+				
+				var net_wages = parseInt(total)-parseInt(pf)-parseInt(esic);	
+				$('#net_wages'+emp_id).html(parseInt(net_wages));
+			}
+		});
 		
 		
 		 get_grand_total();
@@ -331,8 +364,22 @@ $(document).ready(function() {
 		var pf = (parseInt(wages)*parseInt(pf_rate))/100;
 		$('#pf'+emp_id).html(parseInt(pf));
 
-		var net_wages = parseInt(total)-parseInt(pf);	
-		$('#net_wages'+emp_id).html(parseInt(net_wages));
+		// Get ESIC from backend
+		$.ajax({
+			type: "POST",
+			url: baseurl+"Packingwages/get_ptax",
+			dataType: "JSON",
+			data: { salary: total },
+			async: false,
+			success: function(data){
+				var data1 = data.split("####");
+				var esic = parseInt(data1[2]) || 0;
+				$('#esic'+emp_id).html(esic);
+				
+				var net_wages = parseInt(total)-parseInt(pf)-parseInt(esic);	
+				$('#net_wages'+emp_id).html(parseInt(net_wages));
+			}
+		});
 		
 		
 		 get_grand_total();

@@ -378,22 +378,28 @@ class Packingwagesmodel extends CI_Model{
 		$ac1eemf = 0;
 		$ac1eemale = 0;
 		$ac10 = 0;
+		$esic_wages = 0;
+		$employee_share = 0;
 		if($gender=="MALE"){
-		$query5 = $this->db->query('select ac1eemale,ac10 from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select ac1eemale,ac10,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 			foreach($query5->result() as $acentry)
 			{
 			$ac1eemf = $acentry->ac1eemale;
 			$ac1eemale = $acentry->ac1eemale;
 			$ac10 = $acentry->ac10;
+			$esic_wages = $acentry->esic_wages;
+			$employee_share = $acentry->employee_share;
 			}  
 		}
 		else{
-		$query5 = $this->db->query('select ac1eemale,ac1eefemale,ac10 from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select ac1eemale,ac1eefemale,ac10,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 			foreach($query5->result() as $acentry)
 			{
 			$ac1eemf = $acentry->ac1eemale;
 			$ac1eemale = $acentry->ac1eefemale;
 			$ac10 = $acentry->ac10;
+			$esic_wages = $acentry->esic_wages;
+			$employee_share = $acentry->employee_share;
 			}  
 		}	
 		   $pw_id =0;
@@ -425,6 +431,7 @@ class Packingwagesmodel extends CI_Model{
 		   $total = 0;
 		   $pf = 0;
 			$pt = 0;
+		   $esic = 0;
 		   $net_wages = 0;
 		
 		if($entry_count>0){
@@ -455,7 +462,14 @@ $query5 = $this->db->query('select pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,pe.ad
 				   if($total != 0){
 					$pt = $tax_rate;
 					
-					$net_wages = ($total)-($pt+$pf);
+					// Calculate ESIC
+					if($total <= $esic_wages && $esic_wages > 0 && $employee_share > 0){
+						$esic = round(($total * $employee_share) / 100);
+					} else {
+						$esic = 0;
+					}
+					
+					$net_wages = ($total)-($pt+$pf+$esic);
 					   
 				   }
 
@@ -477,6 +491,7 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 	$row .= '####'.$count_challan_date;
 	$row .= '####'.$total_no_of_days;
 	$row .= '####'.$tax_id;
+	$row .= '####'.round($esic);
 
 	
 		if($rdate==0){
@@ -494,7 +509,20 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
    		 $query4 = $this->db->query('select `tax_rate`,`id` from professional_tax where "'.$salary.'" between `from` and `to`  LIMIT 1 ');
 		 $tax_rate = $query4->row()->tax_rate;		   
 		 $tax_id = $query4->row()->id;		   
-		return $tax_rate.'####'.$tax_id;	
+		 
+		 // Get ESIC calculation
+		 $esic = 0;
+		 $query5 = $this->db->query('select esic_wages, employee_share from challan_setup ORDER BY from_date DESC LIMIT 1');
+		 if($query5->num_rows() > 0){
+			 $esic_wages = $query5->row()->esic_wages;
+			 $employee_share = $query5->row()->employee_share;
+			 
+			 if($salary <= $esic_wages && $esic_wages > 0 && $employee_share > 0){
+				 $esic = round(($salary * $employee_share) / 100);
+			 }
+		 }
+		 
+		return $tax_rate.'####'.$tax_id.'####'.$esic;	
 
    }
 

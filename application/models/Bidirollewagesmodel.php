@@ -385,26 +385,30 @@ $query6 = $this->db->query('select leaving_date from resignation_master where me
 
 		if($gender=="MALE"){
 			
-		$query5 = $this->db->query('select ac1eemale,ac10 from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select ac1eemale,ac10,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 
 			foreach($query5->result() as $challan_setup){
 	
 			$ac1eemf = $challan_setup->ac1eemale;		   			
 			$ac1eemale = $challan_setup->ac1eemale;		   			
 			$ac10 = $challan_setup->ac10;		   			
+			$esic_wages = $challan_setup->esic_wages;
+			$employee_share = $challan_setup->employee_share;
 				
 			}
 
 		}
 		else{
 			
-		$query5 = $this->db->query('select ac1eemale,ac1eefemale,ac10 from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select ac1eemale,ac1eefemale,ac10,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 
 			foreach($query5->result() as $challan_setup){
 	
 			$ac1eemf = $challan_setup->ac1eefemale;		   			
 			$ac1eemale = $challan_setup->ac1eemale;		   			
 			$ac10 = $challan_setup->ac10;		   			
+			$esic_wages = $challan_setup->esic_wages;
+			$employee_share = $challan_setup->employee_share;
 				
 			}
 
@@ -433,6 +437,7 @@ $query6 = $this->db->query('select leaving_date from resignation_master where me
 					
 			$total = "";
 			$pf = "";
+			$esic = 0;
 			$net_wages = "";
 		
 		if($entry_count>0){
@@ -462,7 +467,15 @@ $query5 = $this->db->query('select be.*,bw.rate1,bw.rate2 from bidi_roller_entry
 		$total = $wages+$bonus;
 		if($total != 0){
 					$pf = (($wages)*($ac1eemf))/100;
-					$net_wages = $total-$pf;	
+					
+					// Calculate ESIC
+					if($total <= $esic_wages && $esic_wages > 0 && $employee_share > 0){
+						$esic = round(($total * $employee_share) / 100);
+					} else {
+						$esic = 0;
+					}
+					
+					$net_wages = $total-$pf-$esic;	
 		}
 	
 	}
@@ -498,6 +511,7 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 	$row .= '####'.$status;
 	$row .= '####'.$entry_count;
 	$row .= '####'.$count_challan_date;
+	$row .= '####'.round((float)$esic);
 	$row .= '####'.$total_no_of_days;
 	
 		if($rdate==0){

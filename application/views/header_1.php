@@ -359,7 +359,7 @@
 
                         <li class=" ">
                            <a href="<?php echo base_url('payroll/challandate'); ?>" title="Projects Basic">
-								<span><em class="icon-plus"></em> Challan Date</span>
+								<span><em class="icon-plus"></em> EPF Challan Date</span>
                            </a>
                         </li>
                         <li class=" ">
