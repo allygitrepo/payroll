@@ -43,8 +43,8 @@ $(document).ready(function() {
 	'<th style="whiteSpace:nowrap;" >PF</th>  			'+
 	'<th style="whiteSpace:nowrap;" >Net Amount Paid</th>  			'+
 	'<th style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" >Signature of The Employee</th>'+
-	'<th style="whiteSpace:nowrap;" >ER E.P.F</th>'+
-	'<th style="whiteSpace:nowrap;" >SHARE E.P.S</th>'+  			
+	//'<th style="whiteSpace:nowrap;" >ER E.P.F</th>'+
+	//'<th style="whiteSpace:nowrap;" >SHARE E.P.S</th>'+  			
 	'</tr>'+
     '</thead>'+
     '<tbody>';
@@ -80,8 +80,8 @@ $('#month_year').val(data1[3]);
 								'<td>'+data1[11]+'</td>'+	
 								'<td>'+data1[12]+'</td>'+	
 								'<td style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"></td>'+	
-								'<td>'+data1[13]+'</td>'+	
-								'<td>'+data1[14]+'</td>'+	
+								//'<td>'+data1[13]+'</td>'+	
+								//'<td>'+data1[14]+'</td>'+	
 		                        '</tr>';
 								
 							
@@ -112,8 +112,8 @@ $('#month_year').val(data1[3]);
 	'<th  >'+data11+'</th>  			'+
 	'<th  >'+data12+'</th>  			'+
 	'<th  ></th>'+
-	'<th  >'+data13+'</th>'+
-	'<th  >'+data14+'</th>'+  			
+	//'<th  >'+data13+'</th>'+
+	//'<th  >'+data14+'</th>'+  			
 	'</tr>'+
     '</tfoot>'+				
 					'</table>';

@@ -48,8 +48,8 @@ $(document).ready(function() {
 	'<th>PF</th>  			'+
 	'<th>Net Amount Payable</th>  			'+
 	'<th style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"  >Signature of The Employee</th>'+
-	'<th>ER E.P.F</th>'+
-	'<th>SHARE E.P.S</th>'+  			
+	//'<th>ER E.P.F</th>'+
+	//'<th>SHARE E.P.S</th>'+  			
     '</tr>'+
     '</thead>'+
     '<tbody>';
@@ -92,8 +92,8 @@ $('#month_year').val(data1[3]);
 								'<td>'+data1[17]+'</td>'+	
 								'<td>'+data1[18]+'</td>'+	
 								'<td style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" ></td>'+	
-								'<td>'+data1[19]+'</td>'+	
-								'<td>'+data1[20]+'</td>'+	
+								//'<td>'+data1[19]+'</td>'+	
+								//'<td>'+data1[20]+'</td>'+	
 		                        '</tr>';
 								
 								
@@ -131,8 +131,8 @@ $('#month_year').val(data1[3]);
 	'<th  >'+data17+'</th>  		'+	
 	'<th  >'+data18+'</th>  			'+
 	'<th  style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"  ></th>  			'+
-	'<th  >'+data19+'</th>  			'+
-	'<th  >'+data20+'</th>  			'+
+	//'<th  >'+data19+'</th>  			'+
+	//'<th  >'+data20+'</th>  			'+
 	'</tr>'+
     '</tfoot></table>';				
 	

@@ -70,8 +70,8 @@ $(document).ready(function() {
                     '<th>Total</th>  			' +
                     '<th>PF(EE)</th>   			' +
                     '<th>ABRY</th>   			' +
-                    '<th>ER EPF</th>  		' +
-                    '<th>SHARE EPS</th>  		' +
+                    //'<th>ER EPF</th>  		' +
+                    //'<th>SHARE EPS</th>  		' +
                     '<th>Net Wages</th>  			' +
                     '<th style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"  >Signature of The Employee</th>' +
 
@@ -113,8 +113,8 @@ $(document).ready(function() {
                         '<td>' + data1[8] + '</td>' +
                         '<td>' + data1[9] + '</td>' +
                         '<td>' + abry + '</td>' +
-                        '<td>' + data1[10] + '</td>' +
-                        '<td>' + data1[11] + '</td>' +
+                        //'<td>' + data1[10] + '</td>' +
+                        //'<td>' + data1[11] + '</td>' +
                         '<td>' + data1[12] + '</td>' +
                         '<td></td>' +
                         '</tr>';
@@ -142,8 +142,8 @@ $(document).ready(function() {
                     '<th  >' + data8 + '</th>  		' +
                     '<th  >' + data9 + '</th>  			' +
                     '<th  >' + data13 + '</th>  			' +
-                    '<th  >' + data10 + '</th>  			' +
-                    '<th  >' + data11 + '</th>  			' +
+                    //'<th  >' + data10 + '</th>  			' +
+                    //'<th  >' + data11 + '</th>  			' +
                     '<th  >' + data12 + '</th>  			' +
                     '<th  ></th>  			' +
                     '</tr>' +
