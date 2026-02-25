@@ -470,6 +470,21 @@ class Payroll extends CI_Controller {
 		}
 	}
 	
+	public function esic_report()
+	{
+				   	$result['access'] = $this->Usermanagementmodel->get_access();			
+		$this->load->view('header',$result);	
+
+	   	$check = $this->Usermanagementmodel->check_access('5','r_2');			
+				
+		if($check>0){
+	$this->load->view('esicreport');
+		}
+		else{
+			redirect('payroll/error');
+		}
+	}
+	
 	
 	
 	

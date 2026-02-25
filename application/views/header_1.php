@@ -557,6 +557,12 @@
                            </a>
                         </li>
 
+                        <li class=" ">
+                           <a href="<?php echo base_url('payroll/esic_report'); ?>" title="Projects Basic">
+								<span><em class="icon-plus"></em> ESIC Report </span>
+                           </a>
+                        </li>
+
 
                         <li class=" ">
                            <a href="<?php echo base_url('payroll/pmrpy_report'); ?>" title="Projects Basic">
