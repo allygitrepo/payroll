@@ -128,8 +128,8 @@
 <script src="<?php echo base_url().'assets/js/js/resignation_js.js';?>"></script>   
 <script>
    $(document).ready(function() {
-		$('.starttoenddate1').datetimepicker({format:"DD/MM/YYYY",});
-		$('.starttoenddate2').datetimepicker({format:"MM/YYYY",});
+		$('.starttoenddate1').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
+		$('.starttoenddate2').datetimepicker({format:"MM/YYYY", maxDate: new Date()});
    });
    
 </script> 

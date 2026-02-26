@@ -165,7 +165,7 @@
 	<script>
    $(document).ready(function() {
 		
-		$('#doj').datetimepicker({format:"DD/MM/YYYY",});
+		$('#doj').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
 		 });
 </script> 
 

@@ -167,8 +167,8 @@ $title = "EPF Challan Date Entry";
 <script>
    $(document).ready(function() {
 		
-		$('.starttoenddate').datetimepicker({format:"DD/MM/YYYY",});
-		$('.month_year').datetimepicker({format:"MM/YYYY",});
+		$('.starttoenddate').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
+		$('.month_year').datetimepicker({format:"MM/YYYY", maxDate: new Date()});
 		
 		     $('#example4').dataTable({ 
 		'scrollX': true,

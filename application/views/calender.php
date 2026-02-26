@@ -161,8 +161,8 @@ $title = "Calender";
    <script src="<?php echo base_url().'assets/js/js/calender_js.js';?>"></script>   
 <script>
    $(document).ready(function() {		
-		$('.starttoenddate').datetimepicker({format:"DD/MM/YYYY",});
-		$('.years').datetimepicker({format:"YYYY",});
+		$('.starttoenddate').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
+		$('.years').datetimepicker({format:"YYYY", maxDate: new Date()});
 		 });
 </script>    
 

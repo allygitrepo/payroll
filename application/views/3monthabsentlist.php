@@ -68,7 +68,7 @@ $title = "3 Month Absent List";
     });
    $(document).ready(function() {
 		
-		$('.note_date').datetimepicker({format:"DD/MM/YYYY",});
+		$('.note_date').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
 		 });
 </script> 
 

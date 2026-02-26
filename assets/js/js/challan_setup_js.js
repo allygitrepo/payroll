@@ -90,7 +90,7 @@ $(document).ready(function () {
 		$.ajax({
 			type: 'ajax',
 			url: baseurl + "challansetup/show_challansetup",
-			async: false,
+			async: true,
 			dataType: 'json',
 			success: function (data) {
 
@@ -159,13 +159,12 @@ $(document).ready(function () {
 
 				var msg = "challansetup List";
 				$('#example1').dataTable({
-					'scrollX': true,  // Table pagination
-					'paging': true,  // Table pagination
-					'ordering': true,  // Column ordering
-					'info': true,  // Bottom left status text
-					//       'responsive': true, // https://datatables.net/extensions/responsive/examples/
-					// Text translation options
-					// Note the required keywords between underscores (e.g _MENU_)
+					'bDestroy': true,
+					'scrollX': true,
+					'paging': true,
+					'ordering': true,
+					'info': true,
+					'deferRender': true,
 					oLanguage: {
 						sSearch: 'Search all columns:',
 						sLengthMenu: '_MENU_ records per page',
@@ -174,7 +173,6 @@ $(document).ready(function () {
 						infoEmpty: 'No records available',
 						infoFiltered: '(filtered from _MAX_ total records)'
 					},
-					// Datatable Buttons setup
 					dom: '<"html5buttons"B>lTfgitp',
 					buttons: [
 						{ extend: 'copy', className: 'btn-sm', title: msg },

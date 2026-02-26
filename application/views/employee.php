@@ -850,12 +850,12 @@ $('#uploadFile_emp').ajaxfileupload({
 
 <script>
    $(document).ready(function() {
-		$('#dob').datetimepicker({format:"DD/MM/YYYY",useCurrent: false});
-		$('#doj').datetimepicker({format:"DD/MM/YYYY",useCurrent: false});
-		$('.nomi_dob').datetimepicker({format:"DD/MM/YYYY",useCurrent: false});
-		$('.family_dob').datetimepicker({format:"DD/MM/YYYY",useCurrent: false});
-		$('.validefrom').datetimepicker({format:"DD/MM/YYYY",useCurrent: false});
-		$('.validetill').datetimepicker({format:"DD/MM/YYYY",useCurrent: false});
+		$('#dob').datetimepicker({format:"DD/MM/YYYY", useCurrent: false, maxDate: new Date()});
+		$('#doj').datetimepicker({format:"DD/MM/YYYY", useCurrent: false, maxDate: new Date()});
+		$('.nomi_dob').datetimepicker({format:"DD/MM/YYYY", useCurrent: false, maxDate: new Date()});
+		$('.family_dob').datetimepicker({format:"DD/MM/YYYY", useCurrent: false, maxDate: new Date()});
+		$('.validefrom').datetimepicker({format:"DD/MM/YYYY", useCurrent: false});
+		$('.validetill').datetimepicker({format:"DD/MM/YYYY", useCurrent: false});
 		
 		
 		

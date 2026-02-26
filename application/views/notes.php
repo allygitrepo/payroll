@@ -70,7 +70,7 @@ $title = "Notes";
    <?php include('footer.php');?>
 <script>
    $(document).ready(function() {
-		$('.note_date').datetimepicker({format:"DD/MM/YYYY",});
+		$('.note_date').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
 		 });
 </script> 
    <script src="<?php echo base_url().'assets/js/js/notes_js.js';?>"></script>   

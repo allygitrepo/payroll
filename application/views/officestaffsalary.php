@@ -117,7 +117,7 @@
 
 <script>
    $(document).ready(function() {
-		$('.starttoenddate').datetimepicker({format:"DD/MM/YYYY",});
+		$('.starttoenddate').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
 		 });
 </script> 
    <script>
