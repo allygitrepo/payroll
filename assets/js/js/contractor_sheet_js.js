@@ -1,34 +1,57 @@
-$(document).ready(function() {
+function show_contractor() {
+    console.log("ALLY: Initializing contractor load...");
+    if (typeof baseurl === 'undefined') {
+        console.error("ALLY: baseurl is not defined!");
+        return;
+    }
 
-    show_contractor(); //call function show all address
-    function show_contractor() {
-        $.ajax({
-            type: 'ajax',
-            url: baseurl + "contractorcontroller/view_contractor",
-            async: false,
-            dataType: 'json',
-            success: function(data) {
-                var html = '';
-                var html1 = '';
-                var i;
-                html += '<option value="all" selected >ALL</option>';
+    $.ajax({
+        type: 'ajax',
+        url: baseurl + "contractorcontroller/view_contractor",
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+            console.log("ALLY: Contractors data received:", data);
+            var html = '';
+            var i;
+            if (data && Array.isArray(data)) {
                 for (i = 0; i < data.length; i++) {
-                    var sr = i + 1;
                     html += '<option value="' + data[i].contractor_id + '" >' + data[i].contractor_name + ' - ' + data[i].pf_code + '</option>';
                 }
-                $('#contractor1').html(html);
-
-
+            } else {
+                console.warn("ALLY: No contractor data found or invalid format.", data);
             }
+            $('#contractor1').html(html);
 
-        });
-    }
+            // Initialize Select2
+            if ($.fn.select2) {
+                $('#contractor1').select2({
+                    theme: "bootstrap",
+                    placeholder: "Select Contractors",
+                    allowClear: true,
+                    closeOnSelect: true,
+                    width: '100%'
+                });
+                console.log("ALLY: Select2 initialized successfully.");
+            } else {
+                console.error("ALLY: Select2 library NOT LOADED in jQuery context!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("ALLY: AJAX error loading contractors:", status, error, xhr.responseText);
+        }
+    });
+}
+
+$(document).ready(function () {
+
+    show_contractor(); //call function show all address
 
 
     var buttonCommon = {
         exportOptions: {
             format: {
-                body: function(data, row, column, node) {
+                body: function (data, row, column, node) {
                     // Strip $ from salary column to make it numeric
                     return column === 1 ?
                         //                        data.replace( /[$,]/g, '' ) :
@@ -48,16 +71,18 @@ $(document).ready(function() {
     function show_packer_entry() {
         var month_year = $('#month_year').val();
         var contractor = $('#contractor1').val();
-        console.log("ALLY SOFT SOLUTIONS" + contractor);
-        if (contractor == null) {
-            contractor = "all";
+        console.log("ALLY SOFT SOLUTIONS", contractor);
+
+        if (!contractor || contractor.length === 0) {
+            contractor = ["all"];
         }
+
         $.ajax({
             type: 'POST',
             url: baseurl + "contractorsheet/contractorsalarysheet_show",
             data: { month_year: month_year, contractor: contractor },
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 var html = '<table id="example1" class="table table-striped table-bordered table-hover" style="font-Size:12px;" cellspacing="0" width="100%">' +
                     '<thead>' +
                     '<tr>' +
@@ -74,8 +99,7 @@ $(document).ready(function() {
                     //'<th>SHARE EPS</th>  		' +
                     '<th>Net Wages</th>  			' +
                     '<th style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"  >Signature of The Employee</th>' +
-
-                    '</tr>' +
+                    '+					</tr>' +
                     '</thead>' +
                     '<tbody>';
                 var i;
@@ -97,10 +121,10 @@ $(document).ready(function() {
 
                     $('#month_year').val(data1[3]);
 
-                    if(data1[18] == 1){
-                        
+                    if (data1[18] == 1) {
+
                         abry = -data1[9];
-                    }else{
+                    } else {
                         abry = 0;
                     }
                     html += '<tr>' +
@@ -151,34 +175,46 @@ $(document).ready(function() {
                     '</table>';
                 $('#table_data1').html(html);
                 var month_year = $('#month_year').val();
-                var contractor1 = $("#contractor1 option:selected").text();
-                // alert(contractor1);
+
+                // For multi-select, getting text is more complex, just show a summary in PDF title
+                var selectedCount = $('#contractor1').val() ? $('#contractor1').val().length : 0;
+                var contractorSummary = selectedCount > 0 ? selectedCount + " Contractors" : "ALL";
+
                 var msg = '';
                 var pdfFilename = '';
 
-                if (contractor1 == 'ALL') {
+                if (contractorSummary == 'ALL') {
                     msg = "Contractor Salary Sheet_" + month_year;
                     pdfFilename = "All_Contractors_" + month_year.replace('/', '_');
                 } else {
-                    // Extract contractor name (before the dash)
-                    var contractorParts = contractor1.split('-');
-                    var contractorName = contractorParts[0].trim();
-                    
-                    msg = "Home Worker" + "---------------------------------------------------------------------------------------------------------------" + month_year;
-                    pdfFilename = contractorName.replace(/\s+/g, '_') + "_" + month_year.replace('/', '_');
+                    msg = "Home Worker (" + contractorSummary + ") - " + month_year;
+                    pdfFilename = "Salary_Sheet_" + month_year.replace('/', '_');
                 }
 
+
+                // Group data by contractor for ZIP export
+                var contractorGroups = {};
+                var allRowsData = [];
+                for (var j = 0; j < data.length; j++) {
+                    var rowData = data[j].split("####");
+                    var cId = rowData[20];
+                    var cName = rowData[19];
+                    if (!contractorGroups[cId]) {
+                        contractorGroups[cId] = {
+                            name: cName,
+                            rows: []
+                        };
+                    }
+                    contractorGroups[cId].rows.push(rowData);
+                    allRowsData.push(rowData);
+                }
 
                 $('#example1').dataTable({
                     'stateSave': true,
                     'bDestroy': true,
-                    'paging': true, // Table pagination
-                    'ordering': true, // Column ordering
-                    'info': true, // Bottom left status text
-                    //"lengthMenu": [ 8, 16, 32],
-                    //       'responsive': true, // https://datatables.net/extensions/responsive/examples/
-                    // Text translation options
-                    // Note the required keywords between underscores (e.g _MENU_)
+                    'paging': true,
+                    'ordering': true,
+                    'info': true,
                     oLanguage: {
                         sSearch: 'Search all columns:',
                         sLengthMenu: '_MENU_ records per page',
@@ -187,23 +223,15 @@ $(document).ready(function() {
                         infoEmpty: 'No records available',
                         infoFiltered: '(filtered from _MAX_ total records)'
                     },
-
-                    /*		columnDefs: [
-                               { width: 400, targets: 11 }
-                           ],
-                    	*/
-
-
-                    // Datatable Buttons setup
                     dom: 'Bfrtip',
                     lengthMenu: [
                         [10, 25, 50, -1],
                         ['10 rows', '25 rows', '50 rows', 'Show all']
                     ],
                     buttons: [
-
                         $.extend(true, {}, buttonCommon, {
                             extend: 'pdfHtml5',
+                            text: 'PDF',
                             className: 'btn-sm',
                             title: msg,
                             messageTop: msgtop,
@@ -215,22 +243,103 @@ $(document).ready(function() {
                                 columns: ':visible'
                             },
                             filename: pdfFilename,
-                            customize: function(doc) {
-                                doc.defaultStyle.fontSize = 8; //<-- set fontsize to 16 instead of 10
+                            action: function (e, dt, node, config) {
+                                var groupCount = Object.keys(contractorGroups).length;
+
+                                if (groupCount > 1) {
+                                    console.log("ALLY: Multiple contractors detected, generating ZIP...");
+                                    var zip = new JSZip();
+                                    var zipFilename = "Contractor_Salaries_" + month_year.replace('/', '_') + ".zip";
+                                    var count = 0;
+                                    var totalGroups = groupCount;
+
+                                    $.each(contractorGroups, function (cid, group) {
+                                        var groupMsgTop = "COMPANY NAME : " + group.rows[0][13] + " , ADDRESS:  " + group.rows[0][14] + " , POSTOFFICE:  " + group.rows[0][15] + " , DISTRICT:  " + group.rows[0][16] + " , PINCODE:  " + group.rows[0][17];
+                                        var groupMsg = month_year;
+                                        var groupPdfFilename = group.name.replace(/\s+/g, '_') + "_" + month_year.replace('/', '_') + ".pdf";
+
+                                        var body = [];
+                                        body.push(['SR .NO.', 'Employee Name', 'Quantity', 'No. of working Day', 'Wages', 'HRA', 'Total', 'PF(EE)', 'ABRY', 'Net Wages', 'Signature']);
+
+                                        var gTotalQty = 0, gTotalDays = 0, gTotalWages = 0, gTotalBonus = 0, gTotalAll = 0, gTotalPF = 0, gTotalABRY = 0, gTotalNet = 0;
+
+                                        for (var k = 0; k < group.rows.length; k++) {
+                                            var r = group.rows[k];
+                                            var gAbry = (r[18] == "1") ? -parseFloat(r[9]) : 0;
+                                            body.push([
+                                                (k + 1).toString(),
+                                                r[0] + "\nMember Id:" + r[1] + "\nUAN:" + r[2],
+                                                r[4], r[5], r[6], r[7], r[8], r[9], gAbry.toString(), r[12], ''
+                                            ]);
+                                            gTotalQty += parseInt(r[4]);
+                                            gTotalDays += parseInt(r[5]);
+                                            gTotalWages += parseInt(r[6]);
+                                            gTotalBonus += parseInt(r[7]);
+                                            gTotalAll += parseInt(r[8]);
+                                            gTotalPF += parseInt(r[9]);
+                                            gTotalABRY += gAbry;
+                                            gTotalNet += parseInt(r[12]);
+                                        }
+
+                                        body.push(['', 'Total', gTotalQty.toString(), gTotalDays.toString(), gTotalWages.toString(), gTotalBonus.toString(), gTotalAll.toString(), gTotalPF.toString(), gTotalABRY.toString(), gTotalNet.toString(), '']);
+
+                                        var docDefinition = {
+                                            pageOrientation: 'landscape',
+                                            pageSize: 'A4',
+                                            content: [
+                                                { text: groupMsg, style: 'header' },
+                                                { text: groupMsgTop, style: 'subheader' },
+                                                {
+                                                    table: {
+                                                        headerRows: 1,
+                                                        widths: ['auto', '15%', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
+                                                        body: body
+                                                    }
+                                                }
+                                            ],
+                                            styles: {
+                                                header: { fontSize: 10, bold: true, margin: [0, 0, 0, 10], alignment: 'center' },
+                                                subheader: { fontSize: 8, margin: [0, 0, 0, 5], alignment: 'center' },
+                                                tableExample: { margin: [0, 5, 0, 15] }
+                                            },
+                                            defaultStyle: { fontSize: 8, alignment: 'center' }
+                                        };
+
+                                        pdfMake.createPdf(docDefinition).getBlob(function (blob) {
+                                            zip.file(groupPdfFilename, blob);
+                                            count++;
+                                            if (count === totalGroups) {
+                                                zip.generateAsync({ type: "blob" }).then(function (content) {
+                                                    if (typeof saveAs !== 'undefined') {
+                                                        saveAs(content, zipFilename);
+                                                    } else if (typeof Blob !== 'undefined') {
+                                                        var link = document.createElement('a');
+                                                        link.href = window.URL.createObjectURL(content);
+                                                        link.download = zipFilename;
+                                                        document.body.appendChild(link);
+                                                        link.click();
+                                                        document.body.removeChild(link);
+                                                    } else {
+                                                        alert("Your browser does not support downloading files.");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    });
+                                } else {
+                                    console.log("ALLY: Single contractor or all, downloading standard PDF...");
+                                    $.fn.dataTable.ext.buttons.pdfHtml5.action.call(this, e, dt, node, config);
+                                }
+                            },
+                            customize: function (doc) {
+                                doc.defaultStyle.fontSize = 8;
                                 doc.styles.tableHeader.fontSize = 8;
                                 doc.styles.tableFooter.fontSize = 8;
                                 doc.defaultStyle.alignment = 'center';
-
                                 doc.content[2].table.widths = ['2%', '15%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '40%'];
-
                             }
-
                         })
-                    ],
-
-                    defaultStyle: {
-                        fontSize: 8
-                    }
+                    ]
                 });
 
             }
@@ -242,7 +351,7 @@ $(document).ready(function() {
 
 
 
-    $(document).on('click', '#btn_insert', function() {
+    $(document).on('click', '#btn_insert', function () {
         show_packer_entry(); //call function show all packingwages		
     });
 

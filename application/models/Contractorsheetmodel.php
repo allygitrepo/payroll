@@ -80,11 +80,16 @@ class Contractorsheetmodel extends CI_Model{
 						$pincode = "";	
 					}
 
-if($contractor=="all"){
-$query5 = $this->db->query('select em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id where  month_year="'.$month_year.'" and em.status="1" and em.employee_type="BIDI MAKER" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
+if($contractor=="all" || (is_array($contractor) && in_array("all", $contractor))){
+$query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.status="1" and em.employee_type="BIDI MAKER" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
 }
 else{
-$query5 = $this->db->query('select em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id where  month_year="'.$month_year.'" and em.status="1" and em.employee_type="BIDI MAKER" and em.contractor="'.$contractor.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
+    if(is_array($contractor)){
+        $contractor_list = '"' . implode('","', $contractor) . '"';
+        $query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.status="1" and em.employee_type="BIDI MAKER" and em.contractor IN ('.$contractor_list.') and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
+    } else {
+        $query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.status="1" and em.employee_type="BIDI MAKER" and em.contractor="'.$contractor.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
+    }
 }
 			foreach($query5->result() as $oldentry)
 			{
@@ -96,6 +101,8 @@ $query5 = $this->db->query('select em.member_id,em.gender,em.emp_id,em.name_as_a
 		   $gender 		= $oldentry->gender;
 		   $no_of_days	= $oldentry->no_of_days;
 		   $abry	= $oldentry->ABRY;
+		   $contractor_name_row = $oldentry->contractor_name;
+		   $contractor_id_row = $oldentry->contractor_id_raw;
 		   
 		$week_day = "";
 		$query2 = $this->db->query('select week_day from calender_master where holiday_type="WEEKLY" and year="'.$year.'" ');
@@ -238,6 +245,8 @@ $query5 = $this->db->query('select em.member_id,em.gender,em.emp_id,em.name_as_a
 	$row .= '####'.$district;
 	$row .= '####'.$pincode;	
 	$row .= '####'.$abry;	
+	$row .= '####'.$contractor_name_row;	
+	$row .= '####'.$contractor_id_row;	
 	array_push($result,$row);
 		   
 		}  
