@@ -154,13 +154,18 @@ $(document).ready(function() {
                 var contractor1 = $("#contractor1 option:selected").text();
                 // alert(contractor1);
                 var msg = '';
+                var pdfFilename = '';
 
                 if (contractor1 == 'ALL') {
                     msg = "Contractor Salary Sheet_" + month_year;
+                    pdfFilename = "All_Contractors_" + month_year.replace('/', '_');
                 } else {
-                    contractor1 = contractor1.split('-');
-                    //msg = contractor1[0] + "---------------------------------------------------------------------------------------------------------------" + month_year;
+                    // Extract contractor name (before the dash)
+                    var contractorParts = contractor1.split('-');
+                    var contractorName = contractorParts[0].trim();
+                    
                     msg = "Home Worker" + "---------------------------------------------------------------------------------------------------------------" + month_year;
+                    pdfFilename = contractorName.replace(/\s+/g, '_') + "_" + month_year.replace('/', '_');
                 }
 
 
@@ -206,6 +211,10 @@ $(document).ready(function() {
                             header: true,
                             orientation: 'landscape',
                             pageSize: 'A4',
+                            exportOptions: {
+                                columns: ':visible'
+                            },
+                            filename: pdfFilename,
                             customize: function(doc) {
                                 doc.defaultStyle.fontSize = 8; //<-- set fontsize to 16 instead of 10
                                 doc.styles.tableHeader.fontSize = 8;
