@@ -968,6 +968,9 @@ show_address_personal_info();	//call function show all address
             var emp_image      = $('#emp_image_name').html(); 
 			var member_id      = $('#member_id').val(); 
 			var uan_id      = $('#uan_id').val(); 
+			var ip_number   = $('#ip_number').val();
+			console.log('IP Number from form:', ip_number);
+			
 			if(emp_image){}
 			else{
 				var emp_image="";
@@ -1043,9 +1046,11 @@ show_address_personal_info();	//call function show all address
                 type : "POST",
 				url  : baseurl+"employee/save_employee",
                 dataType : "JSON",
-                data : {pmrpy:pmrpy,id:save_update1,uan_id:uan_id,member_id:member_id,nationality:nationality,emailid:emailid,locomotive:locomotive,hearing:hearing,visual:visual,physical_handicap:physical_handicap,passportno:passportno,validefrom:validefrom,validetill:validetill,contry:contry,international_worker:international_worker,empName:empName ,dob:dob,adharno:adharno, gender:gender,fhName:fhName,relation:relation,status:status,mobile:mobile ,qualification:qualification,doj:doj, typeEmp:typeEmp,contractor1:contractor1,address_list:address_list,postoffice:postoffice,district:district,pincode:pincode,emp_image:emp_image},
+                data : {pmrpy:pmrpy,id:save_update1,uan_id:uan_id,ip_number:ip_number,member_id:member_id,nationality:nationality,emailid:emailid,locomotive:locomotive,hearing:hearing,visual:visual,physical_handicap:physical_handicap,passportno:passportno,validefrom:validefrom,validetill:validetill,contry:contry,international_worker:international_worker,empName:empName ,dob:dob,adharno:adharno, gender:gender,fhName:fhName,relation:relation,status:status,mobile:mobile ,qualification:qualification,doj:doj, typeEmp:typeEmp,contractor1:contractor1,address_list:address_list,postoffice:postoffice,district:district,pincode:pincode,emp_image:emp_image},
                 success: function(data){
 				
+				console.log('Employee save/update response:', data);
+				console.log('Save/Update mode:', save_update1);
 				
 					if(save_update1 != "add"){
 						employee_id = save_update1;			

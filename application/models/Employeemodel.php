@@ -191,6 +191,10 @@ class Employeemodel extends CI_Model{
 		
 
 		$id = $this->input->post('id');
+		
+		// Log received data for debugging
+		log_message('debug', 'Employee Update - ID: ' . $id);
+		log_message('debug', 'Employee Update - IP Number received: ' . $this->input->post('ip_number'));
 
         $this->db->where('emp_id', $id);
         $this->db->delete('kyc_master');
@@ -210,6 +214,10 @@ class Employeemodel extends CI_Model{
 //		$doj = date("Y-m-d", strtotime($doj));
 		$uan=strtoupper($this->input->post('uan_id'));
 		$ip_number=strtoupper($this->input->post('ip_number'));
+		
+		// Log the processed IP number
+		log_message('debug', 'Employee Update - IP Number after strtoupper: ' . $ip_number);
+		
                 $gender  = strtoupper($this->input->post('gender')); 
         $father_husband  = strtoupper($this->input->post('fhName')); 
                $relation = strtoupper($this->input->post('relation')); 
@@ -269,6 +277,11 @@ class Employeemodel extends CI_Model{
 		
         $this->db->where('emp_id', $id);
         $result=$this->db->update('employee_master');
+		
+		// Log the update result
+		log_message('debug', 'Employee Update - Update result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+		log_message('debug', 'Employee Update - Last query: ' . $this->db->last_query());
+		
 	return $result;
 	
 	}
