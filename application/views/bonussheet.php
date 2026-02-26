@@ -50,6 +50,7 @@
                                            <div class="form-group">
                                               <label class="control-label"><?= $typeEmp; ?> *</label>
                                               <select type="text" name="typeEmp" form="employee_form" id="typeEmp" class="form-control"  required>
+												<option value="BIDI MAKER">Bidi Maker</option>
 												<option value="BIDI PACKER">Bidi Packer</option>
 												<option value="OFFICE STAFF">Office Staff</option>
 											  </select>

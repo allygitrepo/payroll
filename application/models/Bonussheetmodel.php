@@ -115,13 +115,22 @@ class Bonussheetmodel extends CI_Model{
 					$sb_rate = $officestaff->bonus;
 				
 					$alltotal = $alltotal+$total; 
-
-//					if($lastmonth==$entry_month)
-//					{
-						$standard_bonus =	($alltotal*$sb_rate)/100;
-						$additional_bonus =	0;
-//					}
+					$standard_bonus =	($alltotal*$sb_rate)/100;
+					$additional_bonus =	0;
+				}
+			}
+		   elseif($employee_type=="BIDI MAKER"){
+				$query1 = $this->db->query('select be.*,bw.bonus1,bw.bonus2,bw.rate1,bw.rate2 from bidi_roller_entry be inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id where be.employee_id="'.$emp_id.'" and be.month_year="'.$entry_month.'" ');			
+				foreach($query1->result() as $bidimaker)
+				{
+					$wages1 = ($bidimaker->unit_1_days * $bidimaker->rate1) + ($bidimaker->unit_2_days * $bidimaker->rate2);
+					$wages2 = ($bidimaker->no_of_days == 0) ? 0 : (($wages1 / $bidimaker->no_of_days) * $bidimaker->leave_with_pay);
+					$total = $wages1 + $wages2;
 					
+					$alltotal = $alltotal + $total; 
+					$m_bonus = ($bidimaker->unit_1_days * $bidimaker->bonus1) + ($bidimaker->unit_2_days * $bidimaker->bonus2);
+					$standard_bonus = $standard_bonus + $m_bonus;
+					$additional_bonus = 0;
 				}
 			}
 //							$gmonth_total =	$gmonth_total+$total;
