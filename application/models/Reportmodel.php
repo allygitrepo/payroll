@@ -212,11 +212,31 @@ $this->db->order_by("dob", "asc");
 //	$emptype = "OFFICE STAFF";	
 			
 		
-	   if(($emptype=="BIDI MAKER")&&($contractor != "all")){
-			$query = $this->db->query('select em.doj,em.member_id,em.UAN,em.name_as_aadhaar,em.emp_id,em.employee_type from employee_master em where employee_type="'.$emptype.'" and contractor="'.$contractor.'" and  substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC');			
+	   if(($emptype=="BIDI MAKER")&&($contractor != "")){
+	        $this->db->select('em.doj, em.member_id, em.UAN, em.name_as_aadhaar, em.emp_id, em.employee_type, cm.contractor_name, em.contractor as contractor_id');
+            $this->db->from('employee_master em');
+            $this->db->join('contractor_master cm', 'em.contractor = cm.contractor_id', 'left');
+            $this->db->where('em.employee_type', $emptype);
+            $this->db->where('substr(em.member_id_org,1,15)', $_SESSION['company_id']);
+            
+            if ($contractor != "all") {
+                if (is_array($contractor)) {
+                    $this->db->where_in('em.contractor', $contractor);
+                } else {
+                    $this->db->where('em.contractor', $contractor);
+                }
+            }
+            $this->db->order_by('em.member_id', 'ASC');
+            $query = $this->db->get();
 		}
 		else{
-			$query = $this->db->query('select em.doj,em.member_id,em.UAN,em.name_as_aadhaar,em.emp_id,em.employee_type from employee_master em where employee_type="'.$emptype.'" and  substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC');						
+		    $this->db->select('em.doj, em.member_id, em.UAN, em.name_as_aadhaar, em.emp_id, em.employee_type, cm.contractor_name, em.contractor as contractor_id');
+            $this->db->from('employee_master em');
+            $this->db->join('contractor_master cm', 'em.contractor = cm.contractor_id', 'left');
+            $this->db->where('em.employee_type', $emptype);
+            $this->db->where('substr(em.member_id_org,1,15)', $_SESSION['company_id']);
+            $this->db->order_by('em.member_id', 'ASC');
+            $query = $this->db->get();
 		}
 	
 		foreach($query->result() as $employee)
@@ -226,6 +246,9 @@ $this->db->order_by("dob", "asc");
 						
 						$emp_id = $employee->emp_id;			
 		   $result2['name_as_aadhaar'] = $employee->name_as_aadhaar;			
+		   $result2['contractor_name'] = $employee->contractor_name ? $employee->contractor_name : "N/A";
+           $result2['contractor_id'] = $employee->contractor_id ? $employee->contractor_id : "0";
+
 		   $doj = $employee->doj;			
 		   			$timestamp = strtotime($doj);
 		   $result2['doj']= date('d/m/Y',$timestamp);
