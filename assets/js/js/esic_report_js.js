@@ -1,10 +1,17 @@
 $(document).ready(function() {
 	
-	show_esic_report();	//call function show ESIC report
+	// Set default month_year to last month
+	var today = new Date();
+	var lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+	var defaultMonthYear = ('0' + (lastMonth.getMonth() + 1)).slice(-2) + '/' + lastMonth.getFullYear();
+	$('#month_year').val(defaultMonthYear);
+	
+	show_esic_report();	//call function show ESIC report with default last month
 		
 	
 	function show_esic_report(){
 		var month_year = $('#month_year').val();
+		console.log('Loading ESIC report for month:', month_year);
 		
 		$.ajax({
 			type  : 'POST',
@@ -97,3 +104,4 @@ $(document).ready(function() {
 	});
 	
 });
+

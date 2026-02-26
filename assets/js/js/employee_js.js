@@ -1049,8 +1049,7 @@ show_address_personal_info();	//call function show all address
                 data : {pmrpy:pmrpy,id:save_update1,uan_id:uan_id,ip_number:ip_number,member_id:member_id,nationality:nationality,emailid:emailid,locomotive:locomotive,hearing:hearing,visual:visual,physical_handicap:physical_handicap,passportno:passportno,validefrom:validefrom,validetill:validetill,contry:contry,international_worker:international_worker,empName:empName ,dob:dob,adharno:adharno, gender:gender,fhName:fhName,relation:relation,status:status,mobile:mobile ,qualification:qualification,doj:doj, typeEmp:typeEmp,contractor1:contractor1,address_list:address_list,postoffice:postoffice,district:district,pincode:pincode,emp_image:emp_image},
                 success: function(data){
 				
-				console.log('Employee save/update response:', data);
-				console.log('Save/Update mode:', save_update1);
+		
 				
 					if(save_update1 != "add"){
 						employee_id = save_update1;			
@@ -1097,7 +1096,6 @@ show_address_personal_info();	//call function show all address
 
 		var tdateAr = dob.split('/');
 		var dob = tdateAr[2] + '-' + tdateAr[1] + '-' + tdateAr[0].slice();
-		console.log(dob);
 
 			var share = $(r1[i]).find('td:eq(9)').html();
 		
@@ -1120,7 +1118,6 @@ show_address_personal_info();	//call function show all address
 			var family_aadhaar = $(r1[i]).find('td:eq(3)').html();
 					var tdateAr = dob.split('/');
 		var dob = tdateAr[2] + '-' + tdateAr[1] + '-' + tdateAr[0].slice();
-		console.log(dob);
 			
 //			var employee_id = data;
 			$.ajax({
