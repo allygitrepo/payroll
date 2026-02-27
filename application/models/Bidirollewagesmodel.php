@@ -170,7 +170,7 @@ class Bidirollewagesmodel extends CI_Model{
 		$date_doj = $year."-".$month."-01";
 
 		if(($contractor==null)||($contractor=="")){
-		$query = $this->db->query('select em.member_id,em.status,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN from employee_master em where em.employee_type="BIDI MAKER" and  substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  and em.doj<=LAST_DAY("'.$date_doj.'")  order by em.member_id ASC');			
+		$query = $this->db->query('select em.member_id,em.status,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN from employee_master em where em.employee_type="BIDI MAKER" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'" and em.doj<=LAST_DAY("'.$date_doj.'") order by em.member_id ASC');			
 //		$query = $this->db->query('select em.member_id,em.status,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN from employee_master em where em.employee_type="BIDI MAKER" and em.status="1" or (em.member_id IN (select rm.member_id from resignation_master rm inner join employee_master ep on ep.member_id=rm.member_id where em.employee_type="BIDI MAKER" and rm.leaving_date between "'.$lmfd.'" and "'.$lmld.'") ) and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'" order by em.member_id ASC');			
 		}
 		else{
@@ -187,10 +187,8 @@ class Bidirollewagesmodel extends CI_Model{
 		   $gender = $kyc->gender;
 $rdate = 0;		   
 		if($status==0){
-		//	$query6 = $this->db->query('select leaving_date from resignation_master where member_id="'.$member_id .'"  and (month(leaving_date)<="'.$month.'") and year(leaving_date)<="'.$year.'"   ');
 
-
-$query6 = $this->db->query('select leaving_date from resignation_master where member_id="'.$member_id .'"  and (month(leaving_date)<="'.$month.'" or month(leaving_date)>="'.$month.'") and year(leaving_date)<="'.$year.'"   ');
+    		$query6 = $this->db->query('select leaving_date from resignation_master where member_id="'.$member_id .'"  and (month(leaving_date)<="'.$month.'" or month(leaving_date)>="'.$month.'") and year(leaving_date)<="'.$year.'"    ');
 			if($query6->num_rows() > 0){
 			$leaving_date = $query6->row()->leaving_date;		   			
 		//	$lmld = $leaving_date;
