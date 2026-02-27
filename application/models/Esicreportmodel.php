@@ -29,14 +29,19 @@ class Esicreportmodel extends CI_Model{
 		}
 		else
 		{
-			// Calculate last day of the selected month
+			// Parse the selected month/year
 			$date_parts = explode("/",$month_year);
 			$month = $date_parts[0];
 			$year = $date_parts[1];
-			$lmld = date('d/m/Y', strtotime("last day of $year-$month"));
 			
 			log_message('debug', 'ESIC Report - Using selected month: ' . $month_year);
 		}
+		
+		// Calculate last day of PREVIOUS month (one month before the selected month)
+		$prev_month_timestamp = strtotime("$year-$month-01 -1 month");
+		$lmld = date('d/m/Y', strtotime("last day of", $prev_month_timestamp));
+		
+		log_message('debug', 'ESIC Report - Last working day (previous month last date): ' . $lmld);
 
 		$result = array();
 		
@@ -102,9 +107,10 @@ class Esicreportmodel extends CI_Model{
 				$no_days_working = $entry->no_of_days;
 			}
 			
-			if($entry && $no_days_working > 0){
+			if($entry){
 				$gross_wages = $entry->gross_wages;			
-				$reason_code = "";  
+				// Reason code: 11 if no_days_working = 0, else 0
+				$reason_code = ($no_days_working == 0) ? "11" : "0";  
 				// Format: IP Number####IP Name####No of Days####Total Wages####Reason Code####Last Working Day####Month Year
 				$row_str = $ip_number.'####'.$name_as_aadhaar.'####'.$no_days_working.'####'.$gross_wages.'####'.$reason_code.'####'.$lmld.'####'.$month_year;
 				array_push($result, $row_str);
