@@ -39,60 +39,75 @@ class Esicreportmodel extends CI_Model{
 		}
 
 		$result = array();
-		$row = "";
 		
-		// Fetch all employees
-		$query = $this->db->query('select em.member_id,em.ip_number,em.name_as_aadhaar,em.emp_id,em.employee_type from employee_master em where substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'" order by em.member_id ASC');						
+		// Fetch all employees for this company
+		$company_id = $_SESSION['company_id'];
+		$employees_query = $this->db->query("SELECT em.member_id, em.ip_number, em.name_as_aadhaar, em.emp_id, em.employee_type FROM employee_master em WHERE substr(`member_id_org`,1,15) = ? ORDER BY em.member_id ASC", array($company_id));
 		
-		log_message('debug', 'ESIC Report - Total employees found: ' . $query->num_rows());
+		if ($employees_query->num_rows() == 0) {
+			return $result;
+		}
+
+		$employees = $employees_query->result();
+		log_message('debug', 'ESIC Report - Total employees found: ' . count($employees));
 		
-		foreach($query->result() as $employee)
+		// Batch fetch data from all 3 entry tables (Limited to this company)
+		$office_entries = array();
+		$packer_entries = array();
+		$bidi_entries = array();
+
+		$q1 = $this->db->query("SELECT t.employee_id, t.no_of_days_worked, t.gross_wages FROM office_staff_entry t 
+								JOIN employee_master em ON em.emp_id = t.employee_id 
+								WHERE t.month_year = ? AND substr(em.member_id_org,1,15) = ?", array($month_year, $company_id));
+		foreach($q1->result() as $row) {
+			$office_entries[$row->employee_id] = $row;
+		}
+
+		$q2 = $this->db->query("SELECT t.employee_id, t.no_of_worked_days, t.gross_wages FROM packers_entry t 
+								JOIN employee_master em ON em.emp_id = t.employee_id 
+								WHERE t.month_year = ? AND substr(em.member_id_org,1,15) = ?", array($month_year, $company_id));
+		foreach($q2->result() as $row) {
+			$packer_entries[$row->employee_id] = $row;
+		}
+
+		$q3 = $this->db->query("SELECT t.employee_id, t.no_of_days, t.gross_wages FROM bidi_roller_entry t 
+								JOIN employee_master em ON em.emp_id = t.employee_id 
+								WHERE t.month_year = ? AND substr(em.member_id_org,1,15) = ?", array($month_year, $company_id));
+		foreach($q3->result() as $row) {
+			$bidi_entries[$row->employee_id] = $row;
+		}
+		
+		foreach($employees as $employee)
 		{
-		   $member_id = $employee->member_id;			
 		   $emp_id = $employee->emp_id;			
 		   $name_as_aadhaar = $employee->name_as_aadhaar;			
 		   $ip_number = $employee->ip_number;			
 		   $employee_type = $employee->employee_type;			
 
-		   // Fetch wage data based on employee type
-		   if($employee_type=="OFFICE STAFF"){
-				$query1 = $this->db->query('select * from office_staff_entry where employee_id="'.$emp_id.'" and month_year="'.$month_year.'" ');						   
+		   $entry = null;
+		   $no_days_working = 0;
+		   $gross_wages = 0;
+
+		   // Look up in pre-fetched data
+		   if($employee_type=="OFFICE STAFF" && isset($office_entries[$emp_id])){
+				$entry = $office_entries[$emp_id];
+				$no_days_working = $entry->no_of_days_worked;
 		   }
-		   elseif($employee_type=="BIDI PACKER"){
-				$query1 = $this->db->query('select * from packers_entry where employee_id="'.$emp_id.'" and month_year="'.$month_year.'" ');			
+		   elseif($employee_type=="BIDI PACKER" && isset($packer_entries[$emp_id])){
+				$entry = $packer_entries[$emp_id];
+				$no_days_working = $entry->no_of_worked_days;
 			}
-		   elseif($employee_type=="BIDI MAKER"){
-				$query1 = $this->db->query('select * from bidi_roller_entry where employee_id="'.$emp_id.'" and month_year="'.$month_year.'" ');			
+		   elseif($employee_type=="BIDI MAKER" && isset($bidi_entries[$emp_id])){
+				$entry = $bidi_entries[$emp_id];
+				$no_days_working = $entry->no_of_days;
 			}
 			
-			if(isset($query1)){
-				foreach($query1->result() as $entry)
-				{
-					// Get number of days worked based on employee type
-					if($employee_type=="OFFICE STAFF"){
-						$no_days_working = $entry->no_of_days_worked;									   						   
-					}
-					elseif($employee_type=="BIDI PACKER"){
-						$no_days_working = $entry->no_of_worked_days;									   						   
-					}
-					elseif($employee_type=="BIDI MAKER"){
-						$no_days_working = $entry->no_of_days;									   						   
-					}
-					
-					$gross_wages = $entry->gross_wages;			
-					$reason_code = "";  // Keep blank as per requirement
-					
-					// Format: IP Number####IP Name####No of Days####Total Wages####Reason Code####Last Working Day####Month Year
-					$row = $ip_number.'####'.$name_as_aadhaar.'####'.$no_days_working.'####'.$gross_wages.'####'.$reason_code.'####'.$lmld.'####'.$month_year;
-				}
-				
-				// Only add if there's data
-				if($query1->num_rows()>0){
-					if($no_days_working == 0){}
-					else{	
-						array_push($result,$row);
-					}		
-				}	
+			if($entry && $no_days_working > 0){
+				$gross_wages = $entry->gross_wages;			
+				$reason_code = "";  
+				// Format: IP Number####IP Name####No of Days####Total Wages####Reason Code####Last Working Day####Month Year
+				$row_str = $ip_number.'####'.$name_as_aadhaar.'####'.$no_days_working.'####'.$gross_wages.'####'.$reason_code.'####'.$lmld.'####'.$month_year;
+				array_push($result, $row_str);
 			}
 		}
 		
