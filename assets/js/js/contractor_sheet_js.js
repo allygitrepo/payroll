@@ -7,7 +7,7 @@ function show_contractor() {
 
     $.ajax({
         type: 'ajax',
-        url: baseurl + "contractorcontroller/view_contractor",
+        url: baseurl + "contractorcontroller/view_only_contractor",
         async: false,
         dataType: 'json',
         success: function (data) {

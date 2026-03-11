@@ -435,13 +435,14 @@ $rdate = 0;
 					
 			$total = "";
 			$pf = "";
+			$pt = 0;
 			$esic = 0;
 			$net_wages = "";
 		
 		if($entry_count>0){
 
 
-$query5 = $this->db->query('select be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id where be.employee_id="'.$emp_id.'" and month_year="'.$month_year.'" ');
+$query5 = $this->db->query('select be.*,bw.rate1,bw.rate2,pt.tax_rate from bidi_roller_entry be inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id left join professional_tax pt on pt.id=be.pt_id where be.employee_id="'.$emp_id.'" and month_year="'.$month_year.'" ');
 			foreach($query5->result() as $oldentry)
 			{
 				
@@ -465,20 +466,37 @@ $query5 = $this->db->query('select be.*,bw.rate1,bw.rate2 from bidi_roller_entry
 		$total = $wages+$bonus;
 		if($total != 0){
 					$pf = (($wages)*($ac1eemf))/100;
+
+					// PT Lookup
+					$querypt = $this->db->query('select tax_rate, id from professional_tax where "'.round($total).'" between `from` and `to` LIMIT 1');
+					if($querypt->num_rows() > 0){
+						$pt = $querypt->row()->tax_rate;
+						$pt_id = $querypt->row()->id;
+					} else {
+						$pt = 0;
+						$pt_id = 0;
+					}
 					
-					// Calculate ESIC
-					if($total <= $esic_wages && $esic_wages > 0 && $employee_share > 0){
-						$esic = round(($total * $employee_share) / 100);
+					// Calculate ESIC based on Weekly Leave + Worked Days
+					$divisor = $no_of_days + $leave_with_pay;
+					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
+					
+					if($daily_wage > 176){
+						$esic = ceil($total * 0.0075);
 					} else {
 						$esic = 0;
 					}
 					
-					$net_wages = $total-$pf-$esic;	
+					$net_wages = $total-$pf-$pt-$esic;	
 		}
 	
 	}
 			}
-		}	
+		}	else {
+			// If no entries, we might still need PT ID for the UI if total can be calculated
+			// But for bidi rollers, it depends on input.
+			$pt_id = 0;
+		}
 		
 $today_date = date('Y-m-d');		
 
@@ -511,6 +529,8 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 	$row .= '####'.$count_challan_date;
 	$row .= '####'.round((float)$esic);
 	$row .= '####'.$total_no_of_days;
+	$row .= '####'.round((float)$pt);
+	$row .= '####'.$pt_id;
 	
 		if($rdate==0){
 					array_push($result,$row);					
@@ -588,6 +608,7 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
                 'bidiroller_wages_id'  => $this->input->post('br_id'), 
                 'net_wages'  => $this->input->post('net_wages'), 
                 'month_year'  => $this->input->post('month_year'), 
+                'pt_id'  => $this->input->post('pt_id'), 
             );
 		$result=$this->db->insert('bidi_roller_entry',$data);
 	return $result;

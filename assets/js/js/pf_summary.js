@@ -20,11 +20,12 @@ console.log("month_year:",month_year);
                     '<th style="white-space:nowrap;">Wages</th>' +
                     '<th style="white-space:nowrap;display:none;">Bonus & Others</th>' +
                     '<th style="white-space:nowrap;display:none;">Total</th>' +
-                    '<th style="white-space:nowrap;">PF on Wages</th>' +
-                    '<th style="white-space:nowrap;">EPF</th>' +
-                    '<th style="white-space:nowrap;">EPS</th>' +
-                    '<th style="white-space:nowrap;">Net Payment</th>' +
-                    '</tr></thead><tbody id="">';
+                     '<th style="white-space:nowrap;">PF on Wages</th>' +
+                     '<th style="white-space:nowrap;">ESIC</th>' +
+                     '<th style="white-space:nowrap;">EPF</th>' +
+                     '<th style="white-space:nowrap;">EPS</th>' +
+                     '<th style="white-space:nowrap;">Net Payment</th>' +
+                     '</tr></thead><tbody id="">';
                 var i;
 
 
@@ -32,19 +33,20 @@ console.log("month_year:",month_year);
                 var unit = 0;
                 var wages = 0;
                 var bonus = 0;
-                var total = 0;
-                var pf = 0;
-                var epf = 0;
-                var eps = 0;
-                var net = 0;
+                 var total = 0;
+                 var pf = 0;
+                 var esic = 0;
+                 var epf = 0;
+                 var eps = 0;
+                 var net = 0;
 
                 for (i = 0; i < data.length; i++) {
 
                     //console.log(data[i]);
-                    var data1 = data[i].split("####");
-
-
-                    $('#month_year').val(data1[10]);
+                     var data1 = data[i].split("####");
+ 
+ 
+                     $('#month_year').val(data1[11]);
                     var sr = i + 1;
 
                     if (data1[0] == "OFFICE STAFF TOTAL") {
@@ -69,9 +71,10 @@ console.log("month_year:",month_year);
 
                                 '<td  style="display:none;"><b>' + data1[5] + '</b></td>' +
                                 '<td ><b>' + data1[6] + '</b></td>' +
-                                '<td ><b>' + data1[7] + '</b></td>' +
-                                '<td ><b>' + data1[8] + '</b></td>' +
-                                '<td ><b>' + data1[9] + '</b></td>' +
+                                '<td ><b>' + data1[7] + '</b></td>' + // ESIC
+                                '<td ><b>' + data1[8] + '</b></td>' + // EPF
+                                '<td ><b>' + data1[9] + '</b></td>' + // EPS
+                                '<td ><b>' + data1[10] + '</b></td>' + // Net Payment
                                 '</tr>';
                         } else {
                             html += '<tr>' +
@@ -85,9 +88,10 @@ console.log("month_year:",month_year);
 
                                 '<td  style="display:none;"><b>' + data1[5] + '</b></td>' +
                                 '<td ><b>' + data1[6] + '</b></td>' +
-                                '<td ><b>' + data1[7] + '</b></td>' +
-                                '<td ><b>' + data1[8] + '</b></td>' +
-                                '<td ><b>' + data1[9] + '</b></td>' +
+                                '<td ><b>' + data1[7] + '</b></td>' + // ESIC
+                                '<td ><b>' + data1[8] + '</b></td>' + // EPF
+                                '<td ><b>' + data1[9] + '</b></td>' + // EPS
+                                '<td ><b>' + data1[10] + '</b></td>' + // Net Payment
                                 '</tr>';
                         }
 
@@ -104,9 +108,10 @@ console.log("month_year:",month_year);
                             '<td style="display:none;">' + data1[4] + '</td>' +
                             '<td style="display:none;">' + data1[5] + '</td>' +
                             '<td >' + data1[6] + '</td>' +
-                            '<td >' + data1[7] + '</td>' +
-                            '<td >' + data1[8] + '</td>' +
-                            '<td >' + data1[9] + '</td>' +
+                            '<td >' + data1[7] + '</td>' + // ESIC
+                            '<td >' + data1[8] + '</td>' + // EPF
+                            '<td >' + data1[9] + '</td>' + // EPS
+                            '<td >' + data1[10] + '</td>' + // Net Payment
                             '</tr>';
 
 
@@ -123,9 +128,10 @@ console.log("month_year:",month_year);
                             '<td style="display:none;">' + data1[4] + '</td>' +
                             '<td style="display:none;">' + data1[5] + '</td>' +
                             '<td >' + data1[6] + '</td>' +
-                            '<td >' + data1[7] + '</td>' +
-                            '<td >' + data1[8] + '</td>' +
-                            '<td >' + data1[9] + '</td>' +
+                            '<td >' + data1[7] + '</td>' + // ESIC
+                            '<td >' + data1[8] + '</td>' + // EPF
+                            '<td >' + data1[9] + '</td>' + // EPS
+                            '<td >' + data1[10] + '</td>' + // Net Payment
                             '</tr>';
 
                     }
@@ -139,10 +145,11 @@ console.log("month_year:",month_year);
                         wages = parseInt(wages) + parseInt(data1[3]);
                         bonus = parseInt(bonus) + parseInt(data1[4]);
                         total = parseInt(total) + parseInt(data1[5]);
-                        pf = parseInt(pf) + parseInt(data1[6]);
-                        epf = parseInt(epf) + parseInt(data1[7]);
-                        eps = parseInt(eps) + parseInt(data1[8]);
-                        net = parseInt(net) + parseInt(data1[9]);
+                         pf = parseInt(pf) + parseInt(data1[6]);
+                         esic = parseInt(esic) + parseInt(data1[7]);
+                         epf = parseInt(epf) + parseInt(data1[8]);
+                         eps = parseInt(eps) + parseInt(data1[9]);
+                         net = parseInt(net) + parseInt(data1[10]);
 
                     }
 
@@ -155,12 +162,13 @@ console.log("month_year:",month_year);
                     '<th >' + unit + '</th>' +
                     '<th >' + wages + '</th>' +
                     '<th style="display:none;">' + bonus + '</th>' +
-                    '<th style="display:none;" >' + total + '</th>' +
-                    '<th >' + pf + '</th>' +
-                    '<th >' + epf + '</th>' +
-                    '<th >' + eps + '</th>' +
-                    '<th >' + net + '</th>' +
-                    '</tr></tfoot>';
+                     '<th style="display:none;" >' + total + '</th>' +
+                     '<th >' + pf + '</th>' +
+                     '<th >' + esic + '</th>' +
+                     '<th >' + epf + '</th>' +
+                     '<th >' + eps + '</th>' +
+                     '<th >' + net + '</th>' +
+                     '</tr></tfoot>';
                 html += '</table>';
                 $('#table_data1').html(html);
                 var month_year = $('#month_year').val();
@@ -190,7 +198,7 @@ console.log("month_year:",month_year);
                         filename: msg,
                         title: msg,
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 7, 8, 9, 10]
+                            columns: [0, 1, 2, 3, 4, 7, 8, 9, 10, 11]
                         },
                         footer: true
                     }, ]

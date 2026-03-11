@@ -462,9 +462,12 @@ $query5 = $this->db->query('select pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,pe.ad
 				   if($total != 0){
 					$pt = $tax_rate;
 					
-					// Calculate ESIC
-					if($total <= $esic_wages && $esic_wages > 0 && $employee_share > 0){
-						$esic = round(($total * $employee_share) / 100);
+					// Calculate ESIC based on Worked Days (Packers don't have explicit leave_with_pay field in model)
+					$divisor = $worked_days;
+					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
+					
+					if($daily_wage > 176){
+						$esic = ceil($total * 0.0075);
 					} else {
 						$esic = 0;
 					}
@@ -510,16 +513,16 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 		 $tax_rate = $query4->row()->tax_rate;		   
 		 $tax_id = $query4->row()->id;		   
 		 
-		 // Get ESIC calculation
+		 // Get ESIC calculation based on 176 threshold
 		 $esic = 0;
-		 $query5 = $this->db->query('select esic_wages, employee_share from challan_setup ORDER BY from_date DESC LIMIT 1');
-		 if($query5->num_rows() > 0){
-			 $esic_wages = $query5->row()->esic_wages;
-			 $employee_share = $query5->row()->employee_share;
-			 
-			 if($salary <= $esic_wages && $esic_wages > 0 && $employee_share > 0){
-				 $esic = round(($salary * $employee_share) / 100);
-			 }
+		 $worked_days = $this->input->post('worked_days');
+		 $leave_with_pay = $this->input->post('leave_with_pay');
+		 
+		 $divisor = (int)$worked_days + (int)$leave_with_pay;
+		 $daily_wage = ($divisor > 0) ? ((float)$salary / $divisor) : 0;
+		 
+		 if($daily_wage > 176){
+			 $esic = ceil((float)$salary * 0.0075);
 		 }
 		 
 		return $tax_rate.'####'.$tax_id.'####'.$esic;	

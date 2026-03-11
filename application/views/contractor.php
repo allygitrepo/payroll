@@ -122,6 +122,14 @@
                                               <input type="text" name="ifsc" id="ifsc" class="form-control" placeholder="Enter <?= $ifsc; ?>" >
                                            </div>
                                         </div>
+                                         <div class="col-md-3">
+                                            <div class="form-group">
+                                               <label class="control-label">Status (Active)</label>
+                                               <br>
+                                               <input type="checkbox" id="status_checkbox" checked style="width: 20px; height: 20px; margin-top: 10px;">
+                                               <input type="hidden" name="status" id="status" value="Active">
+                                            </div>
+                                         </div>
                                         </div>
 						       <div class="col-md-12">
                                     <center> 

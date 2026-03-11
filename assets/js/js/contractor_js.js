@@ -16,12 +16,13 @@ $(document).on('submit','#contractor_form',function(e){
             var gstno1 = $('#gstno').val();
             var bankac1 = $('#bankac').val();
 			var bankname1 = $('#bankname').val();  
-			var ifsc1 = $('#ifsc').val();  
-			$.ajax({
+ 			var ifsc1 = $('#ifsc').val();  
+ 			var status1 = $('#status').val();  
+ 			$.ajax({
                 type : "POST",
 				url  : baseurl+"contractorcontroller/save_contractor",
                 dataType : "JSON",
-                data : {id:save_update1 ,ccode:ccode1,name:name1,address:address1 , pfcode:pfcode1, doj:doj1,pan:pan1,adhar:adhar1,gstno:gstno1,bankac:bankac1,bankname:bankname1,ifsc:ifsc1},
+                data : {id:save_update1 ,ccode:ccode1,name:name1,address:address1 , pfcode:pfcode1, doj:doj1,pan:pan1,adhar:adhar1,gstno:gstno1,bankac:bankac1,bankname:bankname1,ifsc:ifsc1,status:status1},
                 success: function(data){
 				if(data == true){
 				
@@ -42,6 +43,14 @@ $(document).on('submit','#contractor_form',function(e){
 
 	
 });
+  $(document).on('change', '#status_checkbox', function() {
+ 	if($(this).is(':checked')){
+ 		$('#status').val("Active");
+ 	} else {
+ 		$('#status').val("Inactive");
+ 	}
+  });
+ 
 /*---------insert/update contractor form end------------------*/
 	
   	$(document).on('click','#close',function(){
@@ -61,10 +70,12 @@ $(document).on('submit','#contractor_form',function(e){
 					$('#gstno').val("");
 					$('#bankac').val("");
 					$('#bankname').val("");
-					$('#ifsc').val("");  
-					$('#pfcode').val("");  
-					$("#btn_insert").removeAttr('disabled'); 
-	                $('#save_update').val("add");
+ 					$('#ifsc').val("");  
+ 					$('#pfcode').val("");  
+ 					$('#status_checkbox').prop('checked', true);
+ 					$('#status').val("Active");  
+ 					$("#btn_insert").removeAttr('disabled'); 
+ 	                $('#save_update').val("add");
 
 		}
 		
@@ -89,7 +100,7 @@ $(document).on('submit','#contractor_form',function(e){
 		            $('#show_contractor_list').html("");
 
 			
-		            var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">  <thead><tr><th>Sr No.</th><th>Ccode</th>  			<th>Name</th>  			<th>Address</th>  			<th>Postoffice</th>  			<th>District</th>  			<th>Pincode</th>  			<th>Pf Code</th> <th>Date of Joining</th>  			<th>PAN</th>  			<th>Adhar</th>  			<th>GST No.</th>  			<th>Bank A/c</th> <th>Bank Name</th><th>IFSC</th>  			<th style="width:15%;"><center>Action</center></th>  </tr></thead><tbody>';
+ 		            var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">  <thead><tr><th>Sr No.</th><th>Ccode</th>  			<th>Name</th>  			<th>Address</th>  			<th>Postoffice</th>  			<th>District</th>  			<th>Pincode</th>  			<th>Pf Code</th> <th>Date of Joining</th>  			<th>PAN</th>  			<th>Adhar</th>  			<th>GST No.</th>  			<th>Bank A/c</th> <th>Bank Name</th><th>IFSC</th><th>Status</th>  			<th style="width:15%;"><center>Action</center></th>  </tr></thead><tbody>';
 		            var i;
 					
 		            for(i=0; i<data.length; i++){
@@ -108,9 +119,10 @@ $(document).on('submit','#contractor_form',function(e){
 	                        '<td id="aadhar'+data[i].contractor_id+'">'+data[i].aadhar+'</td>'+
 	                        '<td id="gst_no'+data[i].contractor_id+'">'+data[i].gst_no+'</td>'+
 		                        '<td id="bank_ac'+data[i].contractor_id+'">'+data[i].bank_ac+'</td>'+
-	                        '<td id="bank_name'+data[i].contractor_id+'" >'+data[i].bank_name+'</td>'+
-	                        '<td id="ifsc'+data[i].contractor_id+'">'+data[i].ifsc+'</td>'+
-		                        '<td><a  class="edit_contractor btn btn-xs btn-primary"  id="'+data[i].contractor_id+'" value="'+data[i].contractor_address+'"  ><i class="fa fa-edit"></i></a> <a class="delete_contractor btn btn-xs btn-danger" type="submit"  id="'+data[i].contractor_id+'" ><i class="fa fa-trash" ></i></a></td>'+
+ 	                        '<td id="bank_name'+data[i].contractor_id+'" >'+data[i].bank_name+'</td>'+
+ 	                        '<td id="ifsc'+data[i].contractor_id+'">'+data[i].ifsc+'</td>'+
+ 	                        '<td id="status'+data[i].contractor_id+'">'+data[i].status+'</td>'+
+ 		                        '<td><a  class="edit_contractor btn btn-xs btn-primary"  id="'+data[i].contractor_id+'" value="'+data[i].contractor_address+'"  ><i class="fa fa-edit"></i></a> <a class="delete_contractor btn btn-xs btn-danger" type="submit"  id="'+data[i].contractor_id+'" ><i class="fa fa-trash" ></i></a></td>'+
 		                        '</tr>';
 		            }
 
@@ -176,23 +188,30 @@ $(document).on('submit','#contractor_form',function(e){
 	                    var adhar   = $('#aadhar'+id1).html();
 	                    var gstno   = $('#gst_no'+id1).html();
 		                var bankac   = $('#bank_ac'+id1).html();
-	                    var bankname   = $('#bank_name'+id1).html();
-	                    var ifsc   = $('#ifsc'+id1).html();
-
-					$('#address_list').val(address_id1);
-                    $('#postoffice').val(post_office);
-                    $('#district').val(district);
-                    $('#pincode').val(pincode);
-					$('#ccode').val(ccode);
-					$('#name').val(name);
-					$('#pfcode').val(pfcode);
-					$('#doj').val(doj);  
-					$('#pan').val(pan);
-					$('#adhar').val(adhar);
-					$('#gstno').val(gstno);
-					$('#bankac').val(bankac);
-					$('#bankname').val(bankname);  
-					$('#ifsc').val(ifsc);  
+ 	                    var bankname   = $('#bank_name'+id1).html();
+ 	                    var ifsc   = $('#ifsc'+id1).html();
+ 	                    var status   = $('#status'+id1).html();
+ 
+ 					$('#address_list').val(address_id1);
+                     $('#postoffice').val(post_office);
+                     $('#district').val(district);
+                     $('#pincode').val(pincode);
+ 					$('#ccode').val(ccode);
+ 					$('#name').val(name);
+ 					$('#pfcode').val(pfcode);
+ 					$('#doj').val(doj);  
+ 					$('#pan').val(pan);
+ 					$('#adhar').val(adhar);
+ 					$('#gstno').val(gstno);
+ 					$('#bankac').val(bankac);
+ 					$('#bankname').val(bankname);  
+ 					$('#ifsc').val(ifsc);  
+ 					$('#status').val(status);  
+ 					if(status == "Active"){
+ 						$('#status_checkbox').prop('checked', true);
+ 					} else {
+ 						$('#status_checkbox').prop('checked', false);
+ 					}
 
 					$('#save_update').val(id1);
 

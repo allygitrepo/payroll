@@ -234,7 +234,19 @@ $('#month_year').val(data1[7]);
 		var pf = (parseInt(total)*10)/100;
 		$('#pf'+emp_id).html(Math.round(pf));
 
-//		var pt = $('#pt'+emp_id).html();
+		// Dynamic ESIC calculation
+		var daysofwork = $('#daysofwork'+emp_id).val();
+		var divisor = parseInt(daysofwork);
+		var daily_wage = (divisor > 0) ? (parseFloat(total) / divisor) : 0;
+		var esic = 0;
+		if(daily_wage > 176){
+			esic = Math.ceil(parseFloat(total) * 0.0075);
+		}
+		$('#esic'+emp_id).html(esic);
+
+		var pt = $('#pt'+emp_id).html();
+		var net_wages = parseInt(total)-(parseInt(pt)+Math.round(pf)+parseInt(esic));
+		$('#net_wages'+emp_id).html(parseInt(net_wages));
 
 get_grand_total();
 
@@ -271,8 +283,14 @@ get_grand_total();
 		$('#pt'+emp_id).html(parseInt(pt));
 		$('#pt_id'+emp_id).html(parseInt(data1[1]));
 		
-		// Get ESIC value
-		var esic = parseInt(data1[2]) || 0;
+		// ESIC logic matching 176 threshold
+		var daysofwork = $('#daysofwork'+emp_id).val();
+		var divisor = parseInt(daysofwork);
+		var daily_wage = (divisor > 0) ? (parseFloat(salary) / divisor) : 0;
+		var esic = 0;
+		if(daily_wage > 176){
+			esic = Math.ceil(parseFloat(salary) * 0.0075);
+		}
 		$('#esic'+emp_id).html(esic);
 		
 			var net_wages = parseInt(salary)-(parseInt(pt)+parseInt(pf)+parseInt(esic));

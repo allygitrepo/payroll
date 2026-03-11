@@ -15,6 +15,7 @@ class Contractormodel extends CI_Model{
                'bank_ac' => strtoupper($this->input->post('bankac')), 
             'bank_name'  => strtoupper($this->input->post('bankname')), 
                  'ifsc'  => strtoupper($this->input->post('ifsc')), 
+                 'status' => $this->input->post('status') ? $this->input->post('status') : 'Active',
             );
         $result=$this->db->insert('contractor_master',$data);
         return $result;
@@ -35,6 +36,7 @@ function contractor_update(){
                'bank_ac' => strtoupper($this->input->post('bankac')), 
             'bank_name'  => strtoupper($this->input->post('bankname')), 
                  'ifsc'  => strtoupper($this->input->post('ifsc')), 
+                 'status' => $this->input->post('status'),
                 );
 				
         $this->db->set($data);
@@ -62,8 +64,8 @@ function contractor_update(){
 	
 	    function only_contractor_view(){
 	
-					$this->db->select('*');    
-					$this->db->from('contractor_master');
+					$this->db->select('*');    					$this->db->from('contractor_master');
+ 					$this->db->where('status', 'Active');
 //					$this->db->join('address_master', 'contractor_master.contractor_address = address_master.id');
 					$query = $this->db->get();
         return $query->result();

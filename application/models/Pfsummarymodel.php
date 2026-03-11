@@ -67,9 +67,10 @@ class Pfsummarymodel extends CI_Model{
 			$bidi_total_pf = 0;
 			$bidi_total_eps_wages = 0;
 			$bidi_total_epf_wages = 0;
-			$bidi_total_net_wages = 0;
-
-		$query = $this->db->query('select cm.contractor_id,cm.contractor_name from contractor_master cm   order by cm.contractor_name ASC');			
+ 			$bidi_total_net_wages = 0;
+ 			$bidi_total_esic = 0;
+ 
+ 		$query = $this->db->query('select cm.contractor_id,cm.contractor_name from contractor_master cm  where cm.status = "Active" order by cm.contractor_name ASC');			
 		foreach($query->result() as $contractor)
 		{
 		   $contractor_id = $contractor->contractor_id;			
@@ -81,10 +82,11 @@ class Pfsummarymodel extends CI_Model{
 			$total_bonus = 0;
 			$total_total = 0;
 			$total_pf = 0;
-			$total_eps_wages = 0;
-			$total_epf_wages = 0;
-			$total_net_wages = 0;
-			$query1 = $this->db->query('select be.leave_with_pay,em.gender,be.net_wages,be.no_of_days,be.unit_1_days,be.unit_2_days,be.bidiroller_wages_id,be.gross_wages,be.epf_wages,be.eps_wages from employee_master em inner join bidi_roller_entry be on be.employee_id=em.emp_id where em.employee_type="BIDI MAKER" and em.status="1" and  em.contractor="'.$contractor_id.'" and be.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
+ 			$total_eps_wages = 0;
+ 			$total_epf_wages = 0;
+ 			$total_net_wages = 0;
+ 			$total_esic = 0;
+ 			$query1 = $this->db->query('select be.leave_with_pay,em.gender,be.net_wages,be.no_of_days,be.unit_1_days,be.unit_2_days,be.bidiroller_wages_id,be.gross_wages,be.epf_wages,be.eps_wages from employee_master em inner join bidi_roller_entry be on be.employee_id=em.emp_id where em.employee_type="BIDI MAKER" and em.status="1" and  em.contractor="'.$contractor_id.'" and be.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
 			foreach($query1->result() as $bidiroller)
 			{
 				$total_employee = $total_employee+1;
@@ -167,9 +169,15 @@ class Pfsummarymodel extends CI_Model{
 					$epf_wages = $a-$eps_wages;
 					$total_epf_wages = $total_epf_wages+round($epf_wages);
 
-					
-					
-
+ 					// ESIC Calculation based on Daily Wage threshold
+ 					$divisor = $no_of_days + $leave_with_pay;
+ 					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
+ 					if($daily_wage > 176){
+ 						$esic = ceil($total * 0.0075);
+ 					} else {
+ 						$esic = 0;
+ 					}
+ 					$total_esic = $total_esic + $esic;
 
 
 					
@@ -186,25 +194,26 @@ class Pfsummarymodel extends CI_Model{
 		$row .= '####'.$total_unit;	   
 		$row .= '####'.$total_wages;	   
 		$row .= '####'.$total_bonus;	   
-		$row .= '####'.$total_total;	   
-		$row .= '####'.$total_pf;	   
-		$row .= '####'.$total_epf_wages;	   
-		$row .= '####'.$total_eps_wages;	   
-		$row .= '####'.$total_net_wages;	   
-		$row .= '####'.$month_year;	   
-		
-		
-	array_push($result,$row);
-	
-				$bidi_total_employee 	=$bidi_total_employee + 	$total_employee;	
-			$bidi_total_unit12 		=$bidi_total_unit12 +		$total_unit;	
-			$bidi_total_wages 		=$bidi_total_wages 	+	$total_wages;	
-			$bidi_total_bonus 		=$bidi_total_bonus 	+	$total_bonus;	
-			$bidi_total_total 		=$bidi_total_total 	+	$total_total;	
-			$bidi_total_pf 			=$bidi_total_pf 	+		$total_pf;	   
-			$bidi_total_eps_wages 	=$bidi_total_eps_wages +	$total_epf_wages;
-			$bidi_total_epf_wages 	=$bidi_total_epf_wages +	$total_eps_wages;
-			$bidi_total_net_wages	=$bidi_total_net_wages+	$total_net_wages;	   
+		$row .= '####'.$total_total;	   		$row .= '####'.$total_pf;	   
+ 		$row .= '####'.$total_esic;	   
+ 		$row .= '####'.$total_epf_wages;	   
+ 		$row .= '####'.$total_eps_wages;	   
+ 		$row .= '####'.$total_net_wages;	   
+ 		$row .= '####'.$month_year;	   
+ 		
+ 		
+ 	array_push($result,$row);
+ 	
+ 				$bidi_total_employee 	=$bidi_total_employee + 	$total_employee;	
+ 			$bidi_total_unit12 		=$bidi_total_unit12 +		$total_unit;	
+ 			$bidi_total_wages 		=$bidi_total_wages 	+	$total_wages;	
+ 			$bidi_total_bonus 		=$bidi_total_bonus 	+	$total_bonus;	
+ 			$bidi_total_total 		=$bidi_total_total 	+	$total_total;	
+ 			$bidi_total_pf 			=$bidi_total_pf 	+		$total_pf;	   
+ 			$bidi_total_esic 			=$bidi_total_esic 	+		$total_esic;	   
+ 			$bidi_total_eps_wages 	=$bidi_total_eps_wages +	$total_epf_wages;
+ 			$bidi_total_epf_wages 	=$bidi_total_epf_wages +	$total_eps_wages;
+ 			$bidi_total_net_wages	=$bidi_total_net_wages+	$total_net_wages;	   
 
 		
 		}
@@ -225,12 +234,12 @@ class Pfsummarymodel extends CI_Model{
 		$row .= '####'.$bidi_total_unit12;   
 		$row .= '####'.$bidi_total_wages;   
 		$row .= '####'.$bidi_total_bonus;   
-		$row .= '####'.$bidi_total_total;   
-		$row .= '####'.$bidi_total_pf;
-		$row .= '####'.$bidi_total_eps_wages;	   
-		$row .= '####'.$bidi_total_epf_wages;	   
-		$row .= '####'.$bidi_total_net_wages;
-		$row .= '####'.$month_year;
+		$row .= '####'.$bidi_total_total;   		$row .= '####'.$bidi_total_pf;
+ 		$row .= '####'.$bidi_total_esic;
+ 		$row .= '####'.$bidi_total_eps_wages;	   
+ 		$row .= '####'.$bidi_total_epf_wages;	   
+ 		$row .= '####'.$bidi_total_net_wages;
+ 		$row .= '####'.$month_year;
 		
 	array_push($result,$row);
 	
@@ -243,10 +252,11 @@ class Pfsummarymodel extends CI_Model{
 			$total_total = 0;
 			$total_pf = 0;
 			$total_eps_wages = 0;
-			$total_epf_wages = 0;
-			$total_net_wages = 0;
-		
-			$query2 = $this->db->query('select em.gender,oe.net_wages,oe.office_staff_salary_id,oe.gross_wages,oe.epf_wages,oe.eps_wages from employee_master em inner join office_staff_entry oe on oe.employee_id=em.emp_id where em.employee_type="OFFICE STAFF"  and oe.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
+ 			$total_epf_wages = 0;
+ 			$total_net_wages = 0;
+ 			$total_esic = 0;
+ 		
+ 			$query2 = $this->db->query('select em.gender,oe.no_of_days_worked,oe.net_wages,oe.office_staff_salary_id,oe.gross_wages,oe.epf_wages,oe.eps_wages from employee_master em inner join office_staff_entry oe on oe.employee_id=em.emp_id where em.employee_type="OFFICE STAFF"  and oe.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
 			foreach($query2->result() as $officestaff)
 			{
 				$total_employee = $total_employee+1;
@@ -308,8 +318,19 @@ class Pfsummarymodel extends CI_Model{
 					$total_eps_wages = $total_eps_wages+round($eps_wages);
 	
 					$a= ($total * $employer_share)/100;
-					$epf_wages = $a-$eps_wages;
-					$total_epf_wages = $total_epf_wages+round($epf_wages);
+ 					$epf_wages = $a-$eps_wages;
+ 					$total_epf_wages = $total_epf_wages+round($epf_wages);
+ 
+ 					// ESIC Calculation for Office Staff based on Daily Wage threshold
+ 					$week_holiday_count = 0; // Assuming this variable might be defined elsewhere or needs to be initialized
+ 					$divisor = $officestaff->no_of_days_worked + $week_holiday_count;
+ 					$daily_wage = ($divisor > 0) ? ($wages / $divisor) : 0;
+ 					if($daily_wage > 176){
+ 						$esic = ceil($wages * 0.0075);
+ 					} else {
+ 						$esic = 0;
+ 					}
+ 					$total_esic = $total_esic + $esic;
 
    
 
@@ -319,11 +340,11 @@ class Pfsummarymodel extends CI_Model{
 		$row .= '####';   
 		$row .= '####';   
 		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';
-		$row .= '####';	   
-		$row .= '####';	   
-				$row .= '####'.$month_year;	   
+		$row .= '####';   		$row .= '####';
+ 		$row .= '####';	   
+ 		$row .= '####';	   
+ 		$row .= '####';	   
+ 				$row .= '####'.$month_year;	   
 	array_push($result,$row);
 
 	$row = 'OFFICE STAFF TOTAL';	   
@@ -333,6 +354,7 @@ class Pfsummarymodel extends CI_Model{
 		$row .= '####0';	   
 		$row .= '####'.$total_total;	   
 		$row .= '####'.$total_pf;	   
+		$row .= '####'.$total_esic;	   
 		$row .= '####'.$total_epf_wages;	   
 		$row .= '####'.$total_eps_wages;	   
 		$row .= '####'.$total_net_wages;	   
@@ -347,12 +369,13 @@ class Pfsummarymodel extends CI_Model{
 			$total_total = 0;
 			$total_pf = 0;
 			$total_eps_wages = 0;
-			$total_epf_wages = 0;
-			$total_net_wages = 0;
-
-		$total_unit = 0;
-	
-			$query2 = $this->db->query('select pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,em.gender,pe.net_wages,pe.packing_wages_id,pe.gross_wages,pe.epf_wages,pe.eps_wages from employee_master em inner join packers_entry pe on pe.employee_id=em.emp_id where em.employee_type="BIDI PACKER"  and pe.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
+ 			$total_epf_wages = 0;
+ 			$total_net_wages = 0;
+ 			$total_esic = 0;
+ 
+ 		$total_unit = 0;
+ 	
+ 			$query2 = $this->db->query('select pe.no_of_worked_days,pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,em.gender,pe.net_wages,pe.packing_wages_id,pe.gross_wages,pe.epf_wages,pe.eps_wages from employee_master em inner join packers_entry pe on pe.employee_id=em.emp_id where em.employee_type="BIDI PACKER"  and pe.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
 			foreach($query2->result() as $packers)
 			{
 				$total_employee = $total_employee+1;
@@ -428,11 +451,18 @@ class Pfsummarymodel extends CI_Model{
 			$eps_wages = ($eps_total*$ac10)/100;
 					$total_eps_wages = $total_eps_wages+round($eps_wages);
 					$a= ($total * $employer_share)/100;
-					$epf_wages = $a-$eps_wages;
-					$total_epf_wages = $total_epf_wages+round($epf_wages);
-
-   
-
+ 					$epf_wages = $a-$eps_wages;
+ 					$total_epf_wages = $total_epf_wages+round($epf_wages);
+ 
+ 					// ESIC Calculation for Packing Staff based on Daily Wage threshold
+ 					$divisor = $packers->no_of_worked_days;
+ 					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
+ 					if($daily_wage > 176){
+ 						$esic = ceil($total * 0.0075);
+ 					} else {
+ 						$esic = 0;
+ 					}
+ 					$total_esic = $total_esic + $esic;
 			}
 			$row = '####';	   
 		$row .= '####';   
@@ -451,13 +481,13 @@ class Pfsummarymodel extends CI_Model{
 		$row .= '####'.$total_unit;	   
 		$row .= '####'.$total_wages;	   
 		$row .= '####0';	   
-		$row .= '####'.$total_total;	   
-		$row .= '####'.$total_pf;	   
-		$row .= '####'.$total_epf_wages;	   
-		$row .= '####'.$total_eps_wages;	   
-		$row .= '####'.$total_net_wages;	   
-		$row .= '####'.$month_year;	   
-	array_push($result,$row);
+		$row .= '####'.$total_total;	   		$row .= '####'.$total_pf;	   
+ 		$row .= '####'.$total_esic;	   
+ 		$row .= '####'.$total_epf_wages;	   
+ 		$row .= '####'.$total_eps_wages;	   
+ 		$row .= '####'.$total_net_wages;	   
+ 		$row .= '####'.$month_year;	   
+ 	array_push($result,$row);
 	
 			$row = '####';	   
 		$row .= '####';   

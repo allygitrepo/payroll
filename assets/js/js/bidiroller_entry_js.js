@@ -57,6 +57,7 @@ $(document).ready(function() {
 				'<th>Bonus</th>'+  			
 				'<th>Total</th>'+  			
 				'<th>PF</th>'+  			
+				'<th>PT</th>'+  			
 				'<th>ESIC</th>'+  			
 				'<th>Net Wages</th>'+  			
 
@@ -106,6 +107,8 @@ $(document).ready(function() {
 								'<td id="bonus'+data1[0]+'">'+data1[13]+'</td>'+
 								'<td id="total'+data1[0]+'">'+data1[14]+'</td>'+
 								'<td id="pf'+data1[0]+'">'+data1[15]+'</td>'+
+								'<td id="pt'+data1[0]+'">'+data1[29]+'</td>'+
+								'<td style="display:none;" id="pt_id'+data1[0]+'">'+data1[30]+'</td>'+
 								'<td id="esic'+data1[0]+'">'+data1[28]+'</td>'+
 								'<td id="net_wages'+data1[0]+'">'+data1[16]+'</td>'+
 								'<td  style="display:none;" id="ac1male'+data1[0]+'">'+data1[22]+'</td>'+
@@ -136,6 +139,7 @@ $(document).ready(function() {
 						data_6 =	parseInt(data_6)+parseInt(data1[13]);
 						data_7 =	parseInt(data_7)+parseInt(data1[14]);
 						data_8 =	parseInt(data_8)+parseInt(data1[15]);
+						data_pt =	parseInt(data_pt || 0)+parseInt(data1[29]);
 						data_9 =	parseInt(data_9)+parseInt(data1[28]);
 						data_10 =	parseInt(data_10)+parseInt(data1[16]);
 						
@@ -152,6 +156,7 @@ $(document).ready(function() {
 				'<th id="total_data_6">'+data_6+'</th>'+ 			
 				'<th id="total_data_7">'+data_7+'</th>'+
 				'<th id="total_data_8">'+data_8+'</th>'+		
+				'<th id="total_data_pt">'+(data_pt || 0)+'</th>'+		
 				'<th id="total_data_9">'+data_9+'</th>'+		
 				'<th id="total_data_10">'+data_10+'</th>'+  			
 				'</tr></tfoot>';
@@ -242,19 +247,24 @@ $(document).ready(function() {
 		var pf = (parseInt(wages)*parseInt(pf_rate))/100;
 		$('#pf'+emp_id).html(parseInt(pf));
 
-		// Get ESIC from backend
+		// Get PT and ESIC from backend
 		$.ajax({
 			type: "POST",
 			url: baseurl+"Packingwages/get_ptax",
 			dataType: "JSON",
-			data: { salary: total },
+			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay },
 			async: false,
 			success: function(data){
 				var data1 = data.split("####");
+				var pt = parseInt(data1[0]) || 0;
+				var pt_id = parseInt(data1[1]) || 0;
 				var esic = parseInt(data1[2]) || 0;
+				
+				$('#pt'+emp_id).html(pt);
+				$('#pt_id'+emp_id).html(pt_id);
 				$('#esic'+emp_id).html(esic);
 				
-				var net_wages = parseInt(total)-parseInt(pf)-parseInt(esic);	
+				var net_wages = parseInt(total)-parseInt(pf)-parseInt(pt)-parseInt(esic);	
 				$('#net_wages'+emp_id).html(parseInt(net_wages));
 			}
 		});
@@ -303,19 +313,24 @@ $(document).ready(function() {
 		var pf = (parseInt(wages)*parseInt(pf_rate))/100;
 		$('#pf'+emp_id).html(parseInt(pf));
 
-		// Get ESIC from backend
+		// Get PT and ESIC from backend
 		$.ajax({
 			type: "POST",
 			url: baseurl+"Packingwages/get_ptax",
 			dataType: "JSON",
-			data: { salary: total },
+			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay },
 			async: false,
 			success: function(data){
 				var data1 = data.split("####");
+				var pt = parseInt(data1[0]) || 0;
+				var pt_id = parseInt(data1[1]) || 0;
 				var esic = parseInt(data1[2]) || 0;
+				
+				$('#pt'+emp_id).html(pt);
+				$('#pt_id'+emp_id).html(pt_id);
 				$('#esic'+emp_id).html(esic);
 				
-				var net_wages = parseInt(total)-parseInt(pf)-parseInt(esic);	
+				var net_wages = parseInt(total)-parseInt(pf)-parseInt(pt)-parseInt(esic);	
 				$('#net_wages'+emp_id).html(parseInt(net_wages));
 			}
 		});
@@ -433,7 +448,7 @@ $(document).ready(function() {
 				url  : baseurl+"bidirollewages/bidiroller_entry_save",
                 dataType : "JSON",
 				data : {member_id:member_id,br_id:br_id,month_year:month_year,ac10:ac10,pf_rate:pf_rate,worked_days:worked_days,leave_with_pay:leave_with_pay,wages:wages,bonus:bonus,total:total,pf:pf,net_wages:net_wages,save_update:save_update,emp_id:emp_id,member_name:member_name,uan:uan,unit_days1:unit_days1,unit_days2:unit_days2,ac1male:ac1male
-				,ncp_days:ncp_days,status1:status1,total_no_of_days:total_no_of_days},
+				,ncp_days:ncp_days,status1:status1,total_no_of_days:total_no_of_days,pt:pt,pt_id:pt_id},
 				success: function(data){
 								if(data == true){
 									msg = 1;
