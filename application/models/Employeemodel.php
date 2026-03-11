@@ -46,7 +46,7 @@ class Employeemodel extends CI_Model{
    
    }		
 //   $uae = "";
-	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY;
+	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY.'####'.$rows1->ip_number;
 
 				array_push($result,$row);
    }	
@@ -541,7 +541,7 @@ function family_detail_save(){
    
    }		
 //   $uae = "";
-	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id;
+	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY.'####'.$rows1->ip_number;
 
 				array_push($result,$row);
    }	
@@ -738,7 +738,7 @@ function family_detail_save(){
 		   }
    
    }		
-	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id;
+	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY.'####'.$rows1->ip_number;
 
 				array_push($result,$row);
    }	

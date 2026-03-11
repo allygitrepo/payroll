@@ -2491,6 +2491,7 @@ show_employee();
 		    html += '<th style="white-space:nowrap;"><center>Action (Edit/Delete)</center></th>';
 			html += '<th style="white-space:nowrap;">ABRY Applicable?</th>';  			 
 			html += '<th style="white-space:nowrap;">UAN</th>';  			 
+			html += '<th style="white-space:nowrap;">IP Number</th>';  			 
 			html += '<th style="white-space:nowrap;">Member Id</th>';  			
 			html += '<th style="white-space:nowrap;">Member Name</th>';  			
 			html += '<th style="white-space:nowrap;">Date Of Birth</th>';  			
@@ -2540,6 +2541,7 @@ show_employee();
 			}
 			html += '<td><center><input type="checkbox" class="form-check-input abry_applicable" id="'+data1[0]+'" '+checked+'></center></td>';
 			html += '<td>'+data1[1]+'</td>';	
+			html += '<td>'+data1[34]+'</td>';	
 			html += '<td>'+data1[31]+'</td>';
 			html += '<td style="white-space:nowrap;" >'+data1[30]+'</td>';	
 

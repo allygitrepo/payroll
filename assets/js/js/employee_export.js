@@ -17,6 +17,7 @@ show_employee();
         '<thead>'+
 		    '<tr>'+
 		'<th style="white-space:nowrap;">UAN</th>'+  			 
+		'<th style="white-space:nowrap;">IP Number</th>'+  			 
 		'<th style="white-space:nowrap;">Previous Member Id</th>'+  			
 		'<th style="white-space:nowrap;">Member Name</th>'+  			
 		'<th style="white-space:nowrap;">Date Of Birth</th>'+  			
@@ -63,6 +64,7 @@ show_employee();
 					var sr = i+1;
 		                html += '<tr>';
 			html += '<td  >'+data1[1]+'</td>';	
+			html += '<td  >'+data1[34]+'</td>';	
 			html += '<td>'+data1[2]+'</td>';	
 			html += '<td  style="white-space:nowrap;"  >'+data1[30]+'</td>';
 
@@ -277,6 +279,7 @@ columns:[0,1,2,3,4,6,7,9,10,11,12,13,15,17,18,19,20,21,22,23,24,25,26,28,29,30,3
         '<thead>'+
 		    '<tr>'+
 		'<th style="white-space:nowrap;">UAN</th>'+  			 
+		'<th style="white-space:nowrap;">IP Number</th>'+  			 
 		'<th style="white-space:nowrap;">Previous Member Id</th>'+  			
 		'<th style="white-space:nowrap;">Member Name</th>'+  			
 		'<th style="white-space:nowrap;">Date Of Birth</th>'+  			
@@ -324,6 +327,7 @@ columns:[0,1,2,3,4,6,7,9,10,11,12,13,15,17,18,19,20,21,22,23,24,25,26,28,29,30,3
 					var sr = i+1;
 		                html1 += '<tr>';
 			html1 += '<td  >'+data1[1]+'</td>';	
+			html1 += '<td  >'+data1[34]+'</td>';	
 			html1 += '<td>'+data1[2]+'</td>';	
 			html1 += '<td  style="white-space:nowrap;"  >'+data1[30]+'</td>';
 
@@ -557,6 +561,7 @@ columns:[0,1,2,3,4,6,7,9,10,11,12,13,15,17,18,19,20,21,22,23,24,25,26,28,29,30,3
         '<thead>'+
 		    '<tr>'+
 			'<th style="white-space:nowrap;">UAN</th>'+  			 
+			'<th style="white-space:nowrap;">IP Number</th>'+  			 
 			'<th style="white-space:nowrap;">Previous Member Id</th>'+  			
 			'<th style="white-space:nowrap;">Member Name</th>'+  			
 			'<th style="white-space:nowrap;">Date Of Birth</th>'+  			
@@ -599,6 +604,7 @@ columns:[0,1,2,3,4,6,7,9,10,11,12,13,15,17,18,19,20,21,22,23,24,25,26,28,29,30,3
 					var sr = i+1;
 		                html1 += '<tr>';
 			html1 += '<td  >'+data1[1]+'</td>';	
+			html1 += '<td  >'+data1[34]+'</td>';	
 			html1 += '<td>'+data1[2]+'</td>';	
 			html1 += '<td  style="white-space:nowrap;"  >'+data1[30]+'</td>';
 
