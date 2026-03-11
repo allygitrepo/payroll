@@ -358,9 +358,12 @@ $query5 = $this->db->query('select oe.no_of_days_worked,oe.addition_if_any,os.sa
 if($totalmonthsalary!=0){
 					$pt = $tax_rate1;	
 					
-					// Calculate ESIC
-					if($totalmonthsalary <= $esic_wages && $esic_wages > 0 && $employee_share > 0){
-						$esic = round(($totalmonthsalary * $employee_share) / 100);
+					// Calculate ESIC based on Weekly Leave + Worked Days
+					$divisor = $no_of_days_worked + $leave_with_pay;
+					$daily_wage = ($divisor > 0) ? ($totalmonthsalary / $divisor) : 0;
+					
+					if($daily_wage > 176){
+						$esic = ceil($totalmonthsalary * 0.0075);
 					} else {
 						$esic = 0;
 					}
@@ -606,21 +609,25 @@ $count_challan_date = $challan_date->row()->countdate;
 				$ac10 		= 0;   							
 		if($gender=="MALE"){
 			
-		$query5 = $this->db->query('select ac1eemale,ac10,count(ac10) as account from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select ac1eemale,ac10,esic_wages,employee_share,count(ac10) as account from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$account = $query5->row()->account;
 			if($account>0){
 				$ac1eemf = $query5->row()->ac1eemale;		   			
 				$ac1eemale = $query5->row()->ac1eemale;		   			
 				$ac10 = $query5->row()->ac10;		   							
+				$esic_wages = $query5->row()->esic_wages;
+				$employee_share = $query5->row()->employee_share;
 			}
 		}
 		else{
-		$query5 = $this->db->query('select ac1eemale,ac1eefemale,ac10,count(ac10) as account from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select ac1eemale,ac1eefemale,ac10,esic_wages,employee_share,count(ac10) as account from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$account = $query5->row()->account;
 			if($account>0){
 				$ac1eemf = $query5->row()->ac1eefemale;		   			
 				$ac1eemale = $query5->row()->ac1eemale;		   			
 				$ac10 = $query5->row()->ac10;		   							
+				$esic_wages = $query5->row()->esic_wages;
+				$employee_share = $query5->row()->employee_share;
 			}
 		}	
 
@@ -670,7 +677,17 @@ $query5 = $this->db->query('select oe.no_of_days_worked,oe.addition_if_any,os.sa
 							
 							$pt = $tax_rate1;	
 
-							$net_wages = $totalmonthsalary-(round($pf)+($pt));
+							// Calculate ESIC based on Weekly Leave + Worked Days
+							$divisor = $no_of_days_worked + $leave_with_pay;
+							$daily_wage = ($divisor > 0) ? ($totalmonthsalary / $divisor) : 0;
+							
+							if($daily_wage > 176){
+								$esic = ceil($totalmonthsalary * 0.0075);
+							} else {
+								$esic = 0;
+							}
+
+							$net_wages = $totalmonthsalary-(round($pf)+($pt)+($esic));
 											
 							}
 
@@ -691,7 +708,7 @@ $count_challan_date = $challan_date->row()->countdate;
 			$net_wages = 0;
 		}
 
-	$row = $emp_id.'####'.$name.'####'.$uan.'####'.$leave_with_pay.'####'.$leave_without_pay.'####'.$salary.'####'.$tax_rate.'####'.$salary_id.'####'.$tax_id.'####'.$ac1eemf.'####'.$ac10.'####'.$no_of_days_worked.'####'.$leave_without_pay1.'####'.$addition_if_any.'####'.round($basic_salary).'####'.$totalmonthsalary.'####'.round($pf).'####'.round($pt).'####'.round($net_wages).'####'.$member_id.'####'.$ncp_days1.'####'.$ac1eemale.'####'.$entry_count.'####'.$count_challan_date;
+	$row = $emp_id.'####'.$name.'####'.$uan.'####'.$leave_with_pay.'####'.$leave_without_pay.'####'.$salary.'####'.$tax_rate.'####'.$month.'/'.$year.'####'.$salary_id.'####'.$tax_id.'####'.$ac1eemf.'####'.$ac10.'####'.$no_of_days_worked.'####'.$leave_without_pay1.'####'.$addition_if_any.'####'.round($basic_salary).'####'.$totalmonthsalary.'####'.round($pf).'####'.round($pt).'####'.round($net_wages).'####'.$member_id.'####'.$ncp_days1.'####'.$ac1eemale.'####'.$entry_count.'####'.$count_challan_date.'####'.round($esic);
 				if($rdate==0){
 					array_push($result,$row);			
 			}

@@ -32,13 +32,15 @@ class Officestaffsalary extends CI_Controller{
 	}
 	
 	function show_office_staff_month(){
-		
+		log_message('debug', 'Request - show_office_staff_month: ' . json_encode($this->input->post()));
 	    $data=$this->Officestaffsalarymodel->officestaff_show_month();			
+		log_message('debug', 'Response - show_office_staff_month: ' . json_encode($data));
         echo json_encode($data);	
 	}
 	
 	function save_office_staff_entry(){
 					   $save_update = $this->input->post('save_update'); 
+		log_message('debug', 'Request - save_office_staff_entry: ' . json_encode($this->input->post()));
 
 		if($save_update=="0")
 		{
@@ -48,6 +50,7 @@ class Officestaffsalary extends CI_Controller{
 	    $this->Officestaffsalarymodel->office_staff_entry_delete();									
 	    $data=$this->Officestaffsalarymodel->office_staff_entry_save();						
 		}
+		log_message('debug', 'Response - save_office_staff_entry: ' . json_encode($data));
         echo json_encode($data);	
 	}
 	

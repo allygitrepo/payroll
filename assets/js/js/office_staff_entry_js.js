@@ -12,6 +12,8 @@ $(document).ready(function() {
 		        async : false,
 		        dataType : 'json',
 		        success : function(data){
+					console.log("Request: show_office_staff");
+					console.log("Response:", data);
 				if(data=="salary"){
 	
 							swal("Some Employee's Salary Not Define ...!")
@@ -335,6 +337,7 @@ $('#month_year').val(data1[7]);
 					   //     $("#wait").css("display", "block");
 
 		var month_year = $('#month_year').val();
+		console.log("Request: show_office_staff_month", {month_year: month_year});
 		
 		    $.ajax({
 		        type  : 'POST',
@@ -342,6 +345,7 @@ $('#month_year').val(data1[7]);
 		        data : {month_year:month_year},
 		        dataType : 'json',
 		        success : function(data){
+					console.log("Response:", data);
 	//				alert('ok');
 					
 			if(data=="salary"){
@@ -360,6 +364,7 @@ $('#month_year').val(data1[7]);
 				'<th>Total</th>'+  			
 				'<th>PF</th>'+  			
 				'<th>PT</th>'+  			
+				'<th>ESIC</th>'+  			
 				'<th>Net Wages</th>'+  			
 
 					'</tr></thead><tbody id="">';
@@ -373,6 +378,7 @@ $('#month_year').val(data1[7]);
 					var data_7 = 0;
 					var data_8 = 0;
 					var data_9 = 0;
+					var data_10 = 0;
 
 					
 //					alert(data.length);
@@ -381,57 +387,58 @@ $('#month_year').val(data1[7]);
 			console.log(data[i]);			
 			var data1 = data[i].split("####");
 					
-//$('#month_year').val(data1[7]);					
+$('#month_year').val(data1[7]);					
 //					$('#leave_without_pay').val(data1[4]);
 	//	            for(j=0;j<data1.length;j++){
 		                html += '<tr>'+
 								'<td style="display:none;" >'+data1[0]+'</td>'+
 								'<td style="display:none;">'+data1[1]+'</td>'+
 								'<td style="display:none;">'+data1[2]+'</td>'+
-								'<td style="whiteSpace:nowrap;">'+data1[1]+'<br>'+data1[19]+'<br>'+data1[2]+'</td>'+
-				'<td><input type="text" id="'+data1[0]+'"  class="worked_days" value="'+data1[11]+'" style="width:50%;" /></td>'+
+								'<td style="whiteSpace:nowrap;">'+data1[1]+'<br>'+data1[20]+'<br>'+data1[2]+'</td>'+
+				'<td><input type="text" id="'+data1[0]+'"  class="worked_days" value="'+data1[12]+'" style="width:50%;" /></td>'+
 								'<td  id="leave_with_pay'+data1[0]+'"  >'+data1[3]+'</td>'+
-								'<td id="leave_without_pay'+data1[0]+'" >'+data1[12]+'</td>'+
-				'<td><input type="text" id="addition'+data1[0]+'" class="addition" name="'+data1[0]+'" style="width:100%;" value="'+data1[13]+'" /></td>'+
-								'<td style="display:none;" id="office_staff_entry_id'+data1[0]+'" >'+data1[7]+'</td>'+
-								'<td style="display:none;" id="salary_id'+data1[0]+'" >'+data1[7]+'</td>'+
+								'<td id="leave_without_pay'+data1[0]+'" >'+data1[13]+'</td>'+
+				'<td><input type="text" id="addition'+data1[0]+'" class="addition" name="'+data1[0]+'" style="width:100%;" value="'+data1[14]+'" /></td>'+
+								'<td style="display:none;" id="salary_id'+data1[0]+'" >'+data1[8]+'</td>'+
 								'<td  id="total_salary'+data1[0]+'"  >'+data1[5]+'</td>'+
-								'<td id="totalmonthsalary'+data1[0]+'" >'+data1[15]+'</td>'+
-								'<td id="pf'+data1[0]+'" >'+data1[16]+'</td>'+
-								'<td style="display:none;" id="pt_id'+data1[0]+'" >'+data1[8]+'</td>'+
+								'<td id="totalmonthsalary'+data1[0]+'" >'+data1[16]+'</td>'+
+								'<td id="pf'+data1[0]+'" >'+data1[17]+'</td>'+
+								'<td style="display:none;" id="pt_id'+data1[0]+'" >'+data1[9]+'</td>'+
 								'<td style="display:none;" id="pt_rate'+data1[0]+'" >'+data1[6]+'</td>'+
-								'<td id="pt'+data1[0]+'" >'+data1[17]+'</td>'+
-								'<td id="net_wages'+data1[0]+'" >'+data1[18]+'</td>'+
-								'<td  style="display:none;"  id="ac1eemf'+data1[0]+'" >'+data1[9]+'</td>'+
-								'<td  style="display:none;"  id="ac10'+data1[0]+'" >'+data1[10]+'</td>'+
-								'<td  style="display:none;"  id="ncp_days'+data1[0]+'" >'+data1[20]+'</td>'+
+								'<td id="pt'+data1[0]+'" >'+data1[18]+'</td>'+
+								'<td id="esic'+data1[0]+'" >'+data1[25]+'</td>'+
+								'<td id="net_wages'+data1[0]+'" >'+data1[19]+'</td>'+
+								'<td  style="display:none;"  id="ac1eemf'+data1[0]+'" >'+data1[10]+'</td>'+
+								'<td  style="display:none;"  id="ac10'+data1[0]+'" >'+data1[11]+'</td>'+
+								'<td  style="display:none;"  id="ncp_days'+data1[0]+'" >'+data1[21]+'</td>'+
 								'<td  style="display:none;"  id="leave_without_pay_'+data1[0]+'" >'+data1[4]+'</td>'+
-								'<td  style="display:none;"  id="ac1eemale'+data1[0]+'" >'+data1[21]+'</td>'+
+								'<td  style="display:none;"  id="ac1eemale'+data1[0]+'" >'+data1[22]+'</td>'+
 												
 
 								
 		                        '</tr>';
-								if(parseInt(data1[22])>0){
+								if(parseInt(data1[23])>0){
 							$('#save_update').val('update');
 						}
 						else{
 							$('#save_update').val('add');							
 						}
-										if(data1[23]>0){
+										if(data1[24]>0){
 				$('#save_table').attr('disabled','disabled');												
 						}
 						else{
 				$('#save_table').removeAttr('disabled');																			
 						}		
-						data_1 =	parseInt(data_1)+parseInt(data1[11]);
+						data_1 =	parseInt(data_1)+parseInt(data1[12]);
 						data_2 =	parseInt(data_2)+parseInt(data1[3]);
-						data_3 =	parseInt(data_3)+parseInt(data1[12]);
-						data_4 =	parseInt(data_4)+parseInt(data1[13]);
+						data_3 =	parseInt(data_3)+parseInt(data1[13]);
+						data_4 =	parseInt(data_4)+parseInt(data1[14]);
 						data_5 =	parseInt(data_5)+parseInt(data1[5]);
-						data_6 =	parseInt(data_6)+parseInt(data1[15]);
-						data_7 =	parseInt(data_7)+parseInt(data1[16]);
-						data_8 =	parseInt(data_8)+parseInt(data1[17]);
-						data_9 =	parseInt(data_9)+parseInt(data1[18]);
+						data_6 =	parseInt(data_6)+parseInt(data1[16]);
+						data_7 =	parseInt(data_7)+parseInt(data1[17]);
+						data_8 =	parseInt(data_8)+parseInt(data1[18]);
+						data_9 =	parseInt(data_9)+parseInt(data1[25]);
+						data_10 =	parseInt(data_10)+parseInt(data1[19]);
 
 		            }
 					html += '</tbody><tfoot><tr>'+
@@ -445,6 +452,7 @@ $('#month_year').val(data1[7]);
 				'<th id="total_data_7">'+data_7+'</th>'+
 				'<th id="total_data_8">'+data_8+'</th>'+		
 				'<th id="total_data_9">'+data_9+'</th>'+  			
+				'<th id="total_data_10">'+data_10+'</th>'+  			
 				'</tr></tfoot>';
 	                html += '</table>';
 
@@ -548,13 +556,17 @@ $('#month_year').val(data1[7]);
 			var ac1eemale = $('#ac1eemale'+emp_id).html();
 			var net_wages = $('#net_wages'+emp_id).html();
 			
+			var requestData = {net_wages:net_wages,remainig_days:remainig_days,ac1eemale:ac1eemale,save_update:save_update,emp_id:emp_id,ncp_days:ncp_days,ac10:ac10,ac1eemf:ac1eemf,member_name:member_name ,uan:uan,worked_days:worked_days,month_year:month_year,addition:addition,pt_id:pt_id,salary_id:salary_id,total:total};
+			console.log("Request: save_office_staff_entry", requestData);
+
 			$.ajax({
 				
                 type : "POST",		
 				url  : baseurl+"officestaffsalary/save_office_staff_entry",
                 dataType : "JSON",
-                data : {net_wages:net_wages,remainig_days:remainig_days,ac1eemale:ac1eemale,save_update:save_update,emp_id:emp_id,ncp_days:ncp_days,ac10:ac10,ac1eemf:ac1eemf,member_name:member_name ,uan:uan,worked_days:worked_days,month_year:month_year,addition:addition,pt_id:pt_id,salary_id:salary_id,total:total},
+                data : requestData,
 				success: function(data){
+					console.log("Response:", data);
 								if(data == true){
 									msg = 1;
 					}
@@ -596,12 +608,14 @@ $('#month_year').val(data1[7]);
 				$('#esic'+emp_id11).html('0');
 		}
 			
+		console.log("Request: get_ptax", { salary:salary11 });
 				$.ajax({
                 type : "POST",
 				url  : baseurl+"Packingwages/get_ptax",
                 dataType : "JSON",
                 data : { salary:salary11 },
                 success: function(data){
+					console.log("Response:", data);
 				var data1 = data.split("####");
 
 						var pt = data1[0];
@@ -610,8 +624,16 @@ $('#month_year').val(data1[7]);
 		$('#pt'+emp_id11).html(parseInt(pt));
 		$('#pt_id'+emp_id11).html(parseInt(data1[1]));
 		
-		// Get ESIC value
-		var esic = parseInt(data1[2]) || 0;
+		// Calculate ESIC based on Weekly Leave + Worked Days
+		var worked_days = $('#'+emp_id11).val();
+		var leave_with_pay = $('#leave_with_pay'+emp_id11).html();
+		var divisor = parseInt(worked_days) + parseInt(leave_with_pay);
+		var daily_wage = (divisor > 0) ? (parseFloat(salary11) / divisor) : 0;
+		var esic = 0;
+		if(daily_wage > 176){
+			esic = Math.ceil(parseFloat(salary11) * 0.0075);
+		}
+		
 		$('#esic'+emp_id11).html(esic);
 		
 			var net_wages = parseInt(salary11)-(parseInt(pt)+parseInt(pf11)+parseInt(esic));
