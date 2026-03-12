@@ -517,6 +517,13 @@ class Payroll extends CI_Controller {
 			redirect('payroll/error');
 		}
 	}
+	public function esic_challan_yearly()
+	{
+				   	$result['access'] = $this->Usermanagementmodel->get_access();			
+		$this->load->view('header',$result);	
+
+		$this->load->view('esicchallanyearly');
+	}
 	public function pf_challan()
 	{
 				   	$result['access'] = $this->Usermanagementmodel->get_access();			

@@ -73,6 +73,7 @@ else{
 					if($submenu[$i]=="r_8"){ $r_8 = 0; }
 					if($submenu[$i]=="r_9"){ $r_9 = 0; }
  					if($submenu[$i]=="r_10"){ $r_10 = 0; }
+ 					if($submenu[$i]=="r_11"){ $r_11 = 0; }
 				}
 				if($menu==6){ 
  					if($submenu[$i]=="u_0"){ $u_0 = 0; }
@@ -652,6 +653,11 @@ else{
                            </a>
                         </li>
 				 <?php		 }  ?>	 						
+                        <li class=" ">
+                           <a href="<?php echo base_url('payroll/esic_challan_yearly'); ?>" title="Projects Basic">
+								<span><em class="icon-plus"></em> ESIC Challan Yearly</span>
+                           </a>
+                        </li>
 				 <?php		 if(isset($r_5)) {  ?>	 
 						
                         <li class=" ">
