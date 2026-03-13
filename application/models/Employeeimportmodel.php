@@ -3,7 +3,7 @@ class Employeeimportmodel extends CI_Model{
 
 
 		public function employee_import_file($result){
-			if((trim($result[0])=="")&&(trim($result[1])=="")&&(trim($result[2])=="")&&(trim($result[3])=="")&&(trim($result[4])=="")&&(trim($result[5])=="")&&(trim($result[6])=="")&&(trim($result[7])=="")&&(trim($result[8])=="")&&(trim($result[9])=="")&&(trim($result[10])=="")&&(trim($result[11])=="")&&(trim($result[12])=="")&&(trim($result[13])=="")&&(trim($result[14])=="")&&(trim($result[15])=="")&&(trim($result[16])=="")&&(trim($result[17])=="")&&(trim($result[18])==""))
+			if((trim($result[0])=="")&&(trim($result[1])=="")&&(trim($result[2])=="")&&(trim($result[3])=="")&&(trim($result[4])=="")&&(trim($result[5])=="")&&(trim($result[6])=="")&&(trim($result[7])=="")&&(trim($result[8])=="")&&(trim($result[9])=="")&&(trim($result[10])=="")&&(trim($result[11])=="")&&(trim($result[12])=="")&&(trim($result[13])=="")&&(trim($result[14])=="")&&(trim($result[15])=="")&&(trim($result[16])=="")&&(trim($result[17])=="")&&(trim($result[18])=="")&&(trim($result[19])==""))
 			{}
 			else{	
 				
@@ -11,13 +11,14 @@ class Employeeimportmodel extends CI_Model{
 			
 			$getdata = "";
  			$UAN = 				 	trim($result[0]);
- 			$pmid = 	trim($result[1]);
+ 			$ip_number = 	        trim($result[1]);
+ 			$pmid = 	trim($result[2]);
 			$previus_member_id = substr($pmid,-7);
 			$previus_member_id = trim($previus_member_id);
-			$emptype =	strtoupper($result[3]);
+			$emptype =	strtoupper($result[4]);
 			$emptype =	trim($emptype);
 			if($emptype=="BIDI MAKER"){
-		$ccode = $result[2];
+		$ccode = $result[3];
 		$contractor_id = "";
 		$query = $this->db->query('select contractor_id from contractor_master where ccode="'.$ccode.'" '); 
 	
@@ -30,7 +31,7 @@ class Employeeimportmodel extends CI_Model{
 $contractor_id = "";
 			}
 			
-			$employee_name = strtoupper($result[4]);
+			$employee_name = strtoupper($result[5]);
 			$employee_name = trim($employee_name);
 
 			$emp_name1 = explode(".",$employee_name);
@@ -42,18 +43,18 @@ $contractor_id = "";
 			$emp_name = trim($employee_name);				
 			}
 			
-			if($result[6]!="")
+			if($result[7]!="")
 			{
-			$dobtimestamp = strtotime($result[6]);	
+			$dobtimestamp = strtotime($result[7]);	
 			$dob1 = date('Y-m-d',$dobtimestamp);				
 			}
 			else{
 			$dob1 = "";	
 			}
 
-			if($result[7]!="")
+			if($result[8]!="")
 			{
-			$dojtimestamp = strtotime($result[7]);	
+			$dojtimestamp = strtotime($result[8]);	
 			$doj1 = date('Y-m-d',$dojtimestamp);
 			}
 			else{
@@ -62,17 +63,17 @@ $contractor_id = "";
 
 			
 
-			$gender = 				strtoupper(trim($result[5]));
-			$father_husband = 		strtoupper(trim($result[8]));
-			$relation = 			strtoupper(trim($result[9]));
-			$status = 				strtoupper(trim($result[10]));
-			$mobile = 				trim($result[11]);
-			$bank_accno = 			trim($result[15]);
-			$pan = 					trim($result[14]);
-			$aadhaar_no = 			trim($result[13]);
-			$nationality = 			strtoupper(trim($result[16]));
-			$pmrpy = 			strtoupper(trim($result[17]));
-			$ifsc = 			strtoupper(trim($result[18]));
+			$gender = 				strtoupper(trim($result[6]));
+			$father_husband = 		strtoupper(trim($result[9]));
+			$relation = 			strtoupper(trim($result[10]));
+			$status = 				strtoupper(trim($result[11]));
+			$mobile = 				trim($result[12]);
+			$bank_accno = 			trim($result[16]);
+			$pan = 					trim($result[15]);
+			$aadhaar_no = 			trim($result[14]);
+			$nationality = 			strtoupper(trim($result[17]));
+			$pmrpy = 			strtoupper(trim($result[18]));
+			$ifsc = 			strtoupper(trim($result[19]));
 //			$email_id = 
 
 					$this->db->select('website');    
@@ -137,6 +138,7 @@ echo $query->num_rows();
     	if(($nationality !="")&&($nationality!="NOT AVAILABLE")){    $this->db->set('nationality',$nationality); }
     	if(($pmrpy !="")&&($pmrpy!="NOT AVAILABLE")){    $this->db->set('pmrpy',$pmrpy); 	}
     	if(($pmid !="")&&($pmid!="NOT AVAILABLE")){    $this->db->set('member_id_org','WBDGP0034083000'.$pmid); 	}
+    	if(($ip_number !="")&&($ip_number!="NOT AVAILABLE")){    $this->db->set('ip_number',$ip_number); 	}
 
 		if($a==1){
 				$this->db->where('aadhaar_no',$aadhaar_no);			
@@ -288,7 +290,8 @@ $date = date("Y/m/d");
 					'employee_type'=>$emptype,
 					'status'=>'1',
 					'nationality'=>$nationality,
-					'pmrpy'=>$pmrpy					
+					'pmrpy'=>$pmrpy,
+					'ip_number'=>$ip_number					
 				);
 				
         $getdata=$this->db->insert('employee_master',$data);

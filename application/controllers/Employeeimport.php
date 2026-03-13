@@ -115,10 +115,10 @@ readfile($file);
 		for ($row = 2; $row <= $highestRow; $row++) {
 		$result = array();
 			
-			for ($column = 'A'; $column !='T'; $column++) {
-				if(($column=='G')||($column=='H')){
-				if($column=='G'){ $column_id = 6;  }	
-				if($column=='H'){ $column_id = 7;  }
+			for ($column = 'A'; $column !='U'; $column++) {
+				if(($column=='H')||($column=='I')){
+				if($column=='H'){ $column_id = 7;  }	
+				if($column=='I'){ $column_id = 8;  }
 
 				$cell1 = $objPHPExcel->setActiveSheetIndex(0)->getCell($column.$row);	
 				
