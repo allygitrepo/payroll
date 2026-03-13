@@ -41,6 +41,7 @@ $(document).ready(function() {
 	'<th style="whiteSpace:nowrap;" >Total Amount</th>  			'+
 	'<th style="whiteSpace:nowrap;" >PT</th>  			'+
 	'<th style="whiteSpace:nowrap;" >PF</th>  			'+
+	'<th style="whiteSpace:nowrap;" >ESIC</th>  			'+
 	'<th style="whiteSpace:nowrap;" >Net Amount Paid</th>  			'+
 	'<th style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" >Signature of The Employee</th>'+
 	//'<th style="whiteSpace:nowrap;" >ER E.P.F</th>'+
@@ -60,6 +61,7 @@ $(document).ready(function() {
 					var data12 = 0;	
 					var data13 = 0;	
 					var data14 = 0;	
+					var data15 = 0;	
 		            for(i=0; i<data.length; i++){
 					var sr = i+1;
 			console.log(data[i]);			
@@ -78,6 +80,7 @@ $('#month_year').val(data1[3]);
 								'<td>'+data1[9]+'</td>'+	
 								'<td>'+data1[10]+'</td>'+	
 								'<td>'+data1[11]+'</td>'+	
+								'<td>'+data1[20]+'</td>'+	
 								'<td>'+data1[12]+'</td>'+	
 								'<td style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"></td>'+	
 								//'<td>'+data1[13]+'</td>'+	
@@ -96,6 +99,7 @@ $('#month_year').val(data1[3]);
 					data12 	=	parseInt(data12)+parseInt(data1[12]);	
 					data13 	=	parseInt(data13)+parseInt(data1[13]);	
 					data14 	=	parseInt(data14)+parseInt(data1[14]);	
+					data15 	=	parseInt(data15)+parseInt(data1[20]);	
 						var msgtop = "COMPANY NAME : "+data1[15]+" , ADDRESS:  "+data1[16]+" , POSTOFFICE:  "+data1[17]+" , DISTRICT:  "+data1[18]+" , PINCODE:  "+data1[19];
 		            }
 	                html += '</tbody>'+
@@ -110,6 +114,7 @@ $('#month_year').val(data1[3]);
 	'<th  >'+data9+'</th>  			'+
 	'<th  >'+data10+'</th>  			'+
 	'<th  >'+data11+'</th>  			'+
+	'<th  >'+data15+'</th>  			'+
 	'<th  >'+data12+'</th>  			'+
 	'<th  ></th>'+
 	//'<th  >'+data13+'</th>'+
@@ -168,7 +173,7 @@ $('#month_year').val(data1[3]);
 						doc.styles.tableHeader.fontSize = 8;
 						doc.styles.tableFooter.fontSize = 8;
 						doc.defaultStyle.alignment = 'center';
-doc.content[2].table.widths = [ '2%', '20%', '5%', '5%', '5%', '5%', '6%', '5%', '4%', '4%', '5%', '25%', '5%', '5%'];
+doc.content[2].table.widths = [ '2%', '15%', '5%', '5%', '5%', '5%', '6%', '5%', '4%', '4%', '4%', '5%', '25%'];
 						
 							}
 							

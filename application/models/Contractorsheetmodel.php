@@ -81,14 +81,14 @@ class Contractorsheetmodel extends CI_Model{
 					}
 
 if($contractor=="all" || (is_array($contractor) && in_array("all", $contractor))){
-$query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.employee_type="BIDI MAKER" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
+$query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,em.ip_number,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.employee_type="BIDI MAKER" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
 }
 else{
     if(is_array($contractor)){
         $contractor_list = '"' . implode('","', $contractor) . '"';
-        $query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.employee_type="BIDI MAKER" and em.contractor IN ('.$contractor_list.') and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
+        $query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,em.ip_number,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.employee_type="BIDI MAKER" and em.contractor IN ('.$contractor_list.') and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
     } else {
-        $query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.employee_type="BIDI MAKER" and em.contractor="'.$contractor.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
+        $query5 = $this->db->query('select cm.contractor_name, em.contractor as contractor_id_raw, em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ABRY,em.ip_number,be.*,bw.rate1,bw.rate2 from bidi_roller_entry be inner join employee_master em on em.emp_id=be.employee_id inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id inner join contractor_master cm on cm.contractor_id = em.contractor where  month_year="'.$month_year.'" and em.employee_type="BIDI MAKER" and em.contractor="'.$contractor.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');	
     }
 }
 			foreach($query5->result() as $oldentry)
@@ -101,6 +101,7 @@ else{
 		   $gender 		= $oldentry->gender;
 		   $no_of_days	= $oldentry->no_of_days;
 		   $abry	= $oldentry->ABRY;
+		   $ip_number = $oldentry->ip_number;
 		   $contractor_name_row = $oldentry->contractor_name;
 		   $contractor_id_row = $oldentry->contractor_id_raw;
 		   
@@ -206,7 +207,12 @@ else{
 		if($abry == 1){
 			$net_wages = $total;
 		}else{
-			$net_wages = $total-$pf;
+			if($ip_number != "" && $ip_number != "0" && $ip_number != "NOT AVAILABLE"){
+				$esic = round($wages * 0.75 / 100);
+			}else{
+				$esic = 0;
+			}
+			$net_wages = $total-($pf+$esic);
 		}
 			
 
@@ -247,6 +253,7 @@ else{
 	$row .= '####'.$abry;	
 	$row .= '####'.$contractor_name_row;	
 	$row .= '####'.$contractor_id_row;	
+	$row .= '####'.$esic;
 	array_push($result,$row);
 		   
 		}  

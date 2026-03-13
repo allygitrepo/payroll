@@ -94,6 +94,7 @@ $(document).ready(function () {
                     '<th>HRA</th>  		' +
                     '<th>Total</th>  			' +
                     '<th>PF(EE)</th>   			' +
+                    '<th>ESIC</th>   			' +
                     '<th>ABRY</th>   			' +
                     //'<th>ER EPF</th>  		' +
                     //'<th>SHARE EPS</th>  		' +
@@ -113,6 +114,7 @@ $(document).ready(function () {
                 var data11 = 0;
                 var data12 = 0;
                 var data13 = 0;
+                var data14 = 0;
 
                 for (i = 0; i < data.length; i++) {
                     var sr = i + 1;
@@ -136,6 +138,7 @@ $(document).ready(function () {
                         '<td>' + data1[7] + '</td>' +
                         '<td>' + data1[8] + '</td>' +
                         '<td>' + data1[9] + '</td>' +
+                        '<td>' + data1[21] + '</td>' +
                         '<td>' + abry + '</td>' +
                         //'<td>' + data1[10] + '</td>' +
                         //'<td>' + data1[11] + '</td>' +
@@ -152,6 +155,7 @@ $(document).ready(function () {
                     data11 = parseInt(data11) + parseInt(data1[11]);
                     data12 = parseInt(data12) + parseInt(data1[12]);
                     data13 = parseInt(data13) + parseInt(abry);
+                    data14 = parseInt(data14) + parseInt(data1[21]);
                     var msgtop = "COMPANY NAME : " + data1[13] + " , ADDRESS:  " + data1[14] + " , POSTOFFICE:  " + data1[15] + " , DISTRICT:  " + data1[16] + " , PINCODE:  " + data1[17];
 
                 }
@@ -165,6 +169,7 @@ $(document).ready(function () {
                     '<th  >' + data7 + '</th>  			' +
                     '<th  >' + data8 + '</th>  		' +
                     '<th  >' + data9 + '</th>  			' +
+                    '<th  >' + data14 + '</th>  			' +
                     '<th  >' + data13 + '</th>  			' +
                     //'<th  >' + data10 + '</th>  			' +
                     //'<th  >' + data11 + '</th>  			' +
@@ -259,17 +264,18 @@ $(document).ready(function () {
                                         var groupPdfFilename = group.name.replace(/\s+/g, '_') + "_" + month_year.replace('/', '_') + ".pdf";
 
                                         var body = [];
-                                        body.push(['SR .NO.', 'Employee Name', 'Quantity', 'No. of working Day', 'Wages', 'HRA', 'Total', 'PF(EE)', 'ABRY', 'Net Wages', 'Signature']);
+                                        body.push(['SR .NO.', 'Employee Name', 'Quantity', 'No. of working Day', 'Wages', 'HRA', 'Total', 'PF(EE)', 'ESIC', 'ABRY', 'Net Wages', 'Signature']);
 
-                                        var gTotalQty = 0, gTotalDays = 0, gTotalWages = 0, gTotalBonus = 0, gTotalAll = 0, gTotalPF = 0, gTotalABRY = 0, gTotalNet = 0;
+                                        var gTotalQty = 0, gTotalDays = 0, gTotalWages = 0, gTotalBonus = 0, gTotalAll = 0, gTotalPF = 0, gTotalABRY = 0, gTotalNet = 0, gTotalESIC = 0;
 
                                         for (var k = 0; k < group.rows.length; k++) {
                                             var r = group.rows[k];
                                             var gAbry = (r[18] == "1") ? -parseFloat(r[9]) : 0;
+                                            var gEsic = r[21];
                                             body.push([
                                                 (k + 1).toString(),
                                                 r[0] + "\nMember Id:" + r[1] + "\nUAN:" + r[2],
-                                                r[4], r[5], r[6], r[7], r[8], r[9], gAbry.toString(), r[12], ''
+                                                r[4], r[5], r[6], r[7], r[8], r[9], gEsic, gAbry.toString(), r[12], ''
                                             ]);
                                             gTotalQty += parseInt(r[4]);
                                             gTotalDays += parseInt(r[5]);
@@ -277,11 +283,12 @@ $(document).ready(function () {
                                             gTotalBonus += parseInt(r[7]);
                                             gTotalAll += parseInt(r[8]);
                                             gTotalPF += parseInt(r[9]);
+                                            gTotalESIC += parseInt(gEsic);
                                             gTotalABRY += gAbry;
                                             gTotalNet += parseInt(r[12]);
                                         }
 
-                                        body.push(['', 'Total', gTotalQty.toString(), gTotalDays.toString(), gTotalWages.toString(), gTotalBonus.toString(), gTotalAll.toString(), gTotalPF.toString(), gTotalABRY.toString(), gTotalNet.toString(), '']);
+                                        body.push(['', 'Total', gTotalQty.toString(), gTotalDays.toString(), gTotalWages.toString(), gTotalBonus.toString(), gTotalAll.toString(), gTotalPF.toString(), gTotalESIC.toString(), gTotalABRY.toString(), gTotalNet.toString(), '']);
 
                                         var docDefinition = {
                                             pageOrientation: 'landscape',
@@ -292,7 +299,7 @@ $(document).ready(function () {
                                                 {
                                                     table: {
                                                         headerRows: 1,
-                                                        widths: ['auto', '15%', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
+                                                        widths: ['2%', '15%', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
                                                         body: body
                                                     }
                                                 }
@@ -336,7 +343,7 @@ $(document).ready(function () {
                                 doc.styles.tableHeader.fontSize = 8;
                                 doc.styles.tableFooter.fontSize = 8;
                                 doc.defaultStyle.alignment = 'center';
-                                doc.content[2].table.widths = ['2%', '15%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '40%'];
+                                doc.content[2].table.widths = ['2%', '15%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '5%', '38%'];
                             }
                         })
                     ]

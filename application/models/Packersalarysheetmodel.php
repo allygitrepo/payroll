@@ -84,7 +84,7 @@ class Packersalarysheetmodel extends CI_Model{
 
 		
 //$query5 = $this->db->query('select em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,pe.additional_paid_wages,pe.no_of_worked_days,pt.tax_rate from packers_entry pe  inner join employee_master em on em.emp_id=pe.employee_id inner join  packing_wages pw on pw.id=pe.packing_wages_id inner join professional_tax pt on pt.id=pe.pt_id where  pe.month_year="'.$month_year.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
-	$query5 = $this->db->query('select em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,pe.additional_paid_wages,pe.no_of_worked_days,pe.pt_id from packers_entry pe  inner join employee_master em on em.emp_id=pe.employee_id inner join  packing_wages pw on pw.id=pe.packing_wages_id  where  pe.month_year="'.$month_year.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
+	$query5 = $this->db->query('select em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN,em.ip_number,pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,pe.additional_paid_wages,pe.no_of_worked_days,pe.pt_id from packers_entry pe  inner join employee_master em on em.emp_id=pe.employee_id inner join  packing_wages pw on pw.id=pe.packing_wages_id  where  pe.month_year="'.$month_year.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
 			foreach($query5->result() as $oldentry)
 			{
 				
@@ -92,6 +92,7 @@ class Packersalarysheetmodel extends CI_Model{
 		   $emp_id 		= $oldentry->emp_id;
 		   $name 		= $oldentry->name_as_aadhaar;
 		   $uan 		= $oldentry->UAN;
+		   $ip_number 		= $oldentry->ip_number;
 		   $gender 		= $oldentry->gender;
 		   $pt_id 		= $oldentry->pt_id;
 		   
@@ -209,7 +210,13 @@ class Packersalarysheetmodel extends CI_Model{
 
 			$pt = $tax_rate;
 			
-			$net_wages = ($total)-($pt+$pf);
+			if($ip_number != "" && $ip_number != "0" && $ip_number != "NOT AVAILABLE"){
+				$esic = round($total * 0.75 / 100);
+			}else{
+				$esic = 0;
+			}
+			
+			$net_wages = ($total)-($pt+$pf+$esic);
 
 		}
 //					$a= ($total * $ac1er)/100;
@@ -258,6 +265,7 @@ class Packersalarysheetmodel extends CI_Model{
 	$row .= '####'.$post_office;
 	$row .= '####'.$district;
 	$row .= '####'.$pincode;	
+	$row .= '####'.$esic;
 	array_push($result,$row);
 		   
 			

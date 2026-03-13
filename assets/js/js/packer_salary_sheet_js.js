@@ -13,7 +13,7 @@ $(document).ready(function() {
 				data;
                 }
             },
-			 columns: [ 0, 1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16 ]
+			 columns: [ 0, 1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 ]
         }
     };
 	
@@ -46,6 +46,7 @@ $(document).ready(function() {
 	'<th>Total Gross Amount</th>  			'+
 	'<th>PT</th>  			'+
 	'<th>PF</th>  			'+
+	'<th>ESIC</th>  			'+
 	'<th>Net Amount Payable</th>  			'+
 	'<th style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"  >Signature of The Employee</th>'+
 	//'<th>ER E.P.F</th>'+
@@ -68,6 +69,7 @@ $(document).ready(function() {
 					var data18 = 0;	
 					var data19 = 0;	
 					var data20 = 0;	
+					var data21 = 0;	
 					
 					var total_wages = 0;
 		            for(i=0; i<data.length; i++){
@@ -90,6 +92,7 @@ $('#month_year').val(data1[3]);
 								'<td>'+data1[15]+'</td>'+	
 								'<td>'+data1[16]+'</td>'+	
 								'<td>'+data1[17]+'</td>'+	
+								'<td>'+data1[30]+'</td>'+	
 								'<td>'+data1[18]+'</td>'+	
 								'<td style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" ></td>'+	
 								//'<td>'+data1[19]+'</td>'+	
@@ -111,6 +114,7 @@ $('#month_year').val(data1[3]);
 						data18 = parseInt(data18)+parseInt(data1[18]);				
 						data19 = parseInt(data19)+parseInt(data1[19]);				
 						data20 = parseInt(data20)+parseInt(data1[20]);				
+						data21 = parseInt(data21)+parseInt(data1[30]);				
 								var msgtop = "COMPANY NAME : "+data1[25]+" , ADDRESS:  "+data1[26]+" , POSTOFFICE:  "+data1[27]+" , DISTRICT:  "+data1[28]+" , PINCODE:  "+data1[29];
 		
 		            }
@@ -129,6 +133,7 @@ $('#month_year').val(data1[3]);
 	'<th  >'+data15+'</th>  		'+	
 	'<th  >'+data16+'</th>  			'+
 	'<th  >'+data17+'</th>  		'+	
+	'<th  >'+data21+'</th>  			'+
 	'<th  >'+data18+'</th>  			'+
 	'<th  style="max-width:125%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"  ></th>  			'+
 	//'<th  >'+data19+'</th>  			'+

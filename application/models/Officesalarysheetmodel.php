@@ -82,7 +82,7 @@ class Officesalarysheetmodel extends CI_Model{
 		
 		
 			$result = array();
-			$query5 = $this->db->query('select em.emp_id,em.gender,em.name_as_aadhaar,em.member_id,em.UAN,oe.no_of_days_worked,oe.addition_if_any,os.salary,pt.tax_rate from employee_master em inner join office_staff_entry oe on oe.employee_id=em.emp_id inner join office_staff_salary os on os.id=oe.office_staff_salary_id inner join professional_tax pt on pt.id=oe.pt_id where oe.month_year="'.$month_year.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
+			$query5 = $this->db->query('select em.emp_id,em.gender,em.name_as_aadhaar,em.member_id,em.UAN,em.ip_number,oe.no_of_days_worked,oe.addition_if_any,os.salary,pt.tax_rate from employee_master em inner join office_staff_entry oe on oe.employee_id=em.emp_id inner join office_staff_salary os on os.id=oe.office_staff_salary_id inner join professional_tax pt on pt.id=oe.pt_id where oe.month_year="'.$month_year.'" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC ');
 				foreach($query5->result() as $oldentry)
 				{
 					
@@ -183,6 +183,7 @@ $salary = "";
 					
 					$name_as_aadhaar = $oldentry->name_as_aadhaar;
 					$UAN = $oldentry->UAN;
+					$ip_number = $oldentry->ip_number;
 					$member_id = $oldentry->member_id;
 					$no_of_days_worked = $oldentry->no_of_days_worked;
 					$addition_if_any = $oldentry->addition_if_any;
@@ -201,8 +202,15 @@ $salary = "";
 					
 					$pt = $tax_rate1;	
 					
+					$employee_wage = $perdaysalary1 * $no_of_days_worked;
+					if($ip_number != "" && $ip_number != "0" && $ip_number != "NOT AVAILABLE"){
+						$esic = round($employee_wage * 0.75 / 100);
+					}else{
+						$esic = 0;
+					}
+
 					if($totalmonthsalary!=0){
-									$net_wages = $totalmonthsalary-(($pf)+($pt));	
+									$net_wages = $totalmonthsalary-(($pf)+($pt)+($esic));	
 					}
 					else{
 									$net_wages = 0;	
@@ -237,6 +245,7 @@ $salary = "";
 					$row .= '####'.$post_office;
 					$row .= '####'.$district;
 					$row .= '####'.$pincode;	
+					$row .= '####'.$esic;
 					
 					array_push($result,$row);
 		   
