@@ -1,6 +1,47 @@
    <?php
    $title = "Bonus Sheet";
   include('label.php'); ?>
+<!-- Required CSS -->
+<link rel="stylesheet" href="<?php echo base_url('assets/vendor/select2/dist/css/select2.css'); ?>">
+<link rel="stylesheet" href="<?php echo base_url('assets/vendor/select2-bootstrap-theme/dist/select2-bootstrap.css'); ?>">
+
+<style>
+  /* SaaS-style Multi-select Dropdown styling */
+  .select2-container--bootstrap .select2-selection--multiple {
+    min-height: 34px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !important;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s !important;
+  }
+  
+  .select2-container--bootstrap.select2-container--focus .select2-selection--multiple {
+    border-color: #66afe9 !important;
+    outline: 0 !important;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6) !important;
+  }
+
+  .select2-container--bootstrap .select2-selection--multiple .select2-selection__choice {
+    background-color: #337ab7 !important;
+    border: 1px solid #2e6da4 !important;
+    color: #fff !important;
+    padding: 2px 8px !important;
+    margin-top: 4px !important;
+    margin-bottom: 2px !important;
+    border-radius: 3px !important;
+    font-size: 12px !important;
+  }
+  
+  .select2-container--bootstrap .select2-selection--multiple .select2-selection__choice__remove {
+    color: #fff !important;
+    margin-right: 5px !important;
+    cursor: pointer !important;
+  }
+  
+  .select2-container--bootstrap .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #ffdada !important;
+  }
+</style>
    <!-- Main section-->
    <section>
     <div class="content-wrapper">
@@ -49,17 +90,25 @@
 																			<div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label"><?= $typeEmp; ?> *</label>
-                                              <select type="text" name="typeEmp" form="employee_form" id="typeEmp" class="form-control"  required>
-												<option value="BIDI MAKER">Bidi Maker</option>
-												<option value="BIDI PACKER">Bidi Packer</option>
-												<option value="OFFICE STAFF">Office Staff</option>
+                                               <select name="typeEmp" form="employee_form" id="typeEmp" class="form-control"  required>
+                                                  <option value="OFFICE STAFF">Office Staff</option>
+                                                  <option value="BIDI PACKER">Bidi Packer</option>
+                                                  <option value="BIDI MAKER">Bidi Maker</option>
 											  </select>
                                            </div>
                                         </div>
+
+                                        <div class="col-md-3" id="contractor_div" style="display:none;">
+                                           <div class="form-group">
+                                              <label class="control-label">Contractor Name - Pf Code</label>
+                                              <select name="contractor1[]" id="contractor1" class="form-control" multiple="multiple">
+                                              </select>
+                                           </div>
+                                        </div>
 	
-										      <div class="col-md-3">
+										      <div class="col-md-12">
                                     <center> 
-                                        <button type="submit" id="btn_insert" class="btn btn-primary button_change">Search</button>													
+                                        <button type="submit" id="btn_insert" class="btn btn-primary button_change" style="width: 200px; margin-top: 10px;">Search</button>													
                                        <!-- <button type="button" id="btn_update" class="btn btn-primary btn_update button_change" disabled>Update</button>	-->
                                         <input type="hidden" id="hid_id" value=""/>
 										<input type="hidden" id="hid_up" value="Add"/>
@@ -74,7 +123,7 @@
 				
  			</div>	
 <div class="panel-footer">
-	<div id="wait" style="display:none;width:100px;height:100px;position:absolute;top:;left:45%;padding:2px;"><img src="<?php echo base_url('assets/images/loader.gif'); ?>" width="100" height="100" /><br><center><h5>Loading...</h5></center></div>
+	<div id="wait" style="display:none;width:100px;height:100px;position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-50px;padding:2px;z-index:9999;"><img src="<?php echo base_url('assets/images/loader.gif'); ?>" width="100" height="100" /><br><center><h5>Loading...</h5></center></div>
                      					                     
 									                     
           <div class="table-responsive" id="table_data1">
@@ -94,11 +143,11 @@
 
 
 <script>
-         $(document).ajaxStart(function(){
-        $("#wait").css("display", "block");
+    $(document).ajaxStart(function(){
+        $("#wait").show();
     });
     $(document).ajaxComplete(function(){
-        $("#wait").css("display", "none");
+        $("#wait").hide();
     });
    $(document).ready(function() {
 		
@@ -107,7 +156,8 @@
 </script> 
 
 
-   <script src="<?php echo base_url().'assets/js/js/bonussheet_js.js';?>"></script>   
+   <script src="<?php echo base_url('assets/vendor/select2/dist/js/select2.js'); ?>"></script>
+   <script src="<?php echo base_url().'assets/js/js/bonussheet_js.js';?>"></script>
 
    <script>
 

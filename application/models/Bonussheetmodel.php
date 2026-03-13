@@ -5,6 +5,7 @@ class Bonussheetmodel extends CI_Model{
 	$month_year1 = $this->input->post('month_year1');
 	$month_year2 = $this->input->post('month_year2');
 	$employee_type = $this->input->post('employee_type');
+	$contractors = $this->input->post('contractor');
 //	$employee_type = "OFFICE STAFF";
 //	$employee_type = "BIDI PACKER";
 //	$month_year1 = "04/2018";
@@ -72,13 +73,72 @@ class Bonussheetmodel extends CI_Model{
 				$row1 = "TOTAL : ";
 	//$query = $this->db->query('select em.UAN,em.member_id,em.name_as_aadhaar,em.emp_id from employee_master em where em.employee_type="'.$employee_type.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
 	//$query = $this->db->query('select em.UAN,em.member_id,em.name_as_aadhaar,em.emp_id from employee_master em where em.employee_type="'.$employee_type.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  and em.doj between "'.$date1.'" and "'.$date3.'" and  em.member_id NOT IN(select member_id from resignation_master) order by em.member_id ASC');			
-	$query = $this->db->query('select em.UAN,em.member_id,em.name_as_aadhaar,em.emp_id from employee_master em where em.employee_type="'.$employee_type.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  and em.doj NOT BETWEEN "'.$date1.'" and "'.$date3.'" and  em.member_id NOT IN(select member_id from resignation_master) order by em.member_id ASC');			
-			foreach($query->result() as $employee_msater)
-			{
-				$name = $employee_msater->name_as_aadhaar;			
-				$emp_id = $employee_msater->emp_id;			
-				$uan = $employee_msater->UAN;			
-				$member_id = $employee_msater->member_id;			
+	$this->db->select('em.UAN, em.member_id, em.name_as_aadhaar, em.emp_id');
+	$this->db->from('employee_master em');
+	$this->db->where('em.employee_type', $employee_type);
+	$this->db->where("substr(em.member_id_org, 1, 15) =", $_SESSION['company_id']);
+	$this->db->where("em.doj NOT BETWEEN '$date1' AND '$date3'", NULL, FALSE);
+	$this->db->where("em.member_id NOT IN (select member_id from resignation_master)", NULL, FALSE);
+
+	if (!empty($contractors)) {
+		if (is_array($contractors)) {
+			if (!in_array('all', $contractors)) {
+				$this->db->where_in('em.contractor', $contractors);
+			}
+		} else {
+			if ($contractors !== 'all') {
+				$this->db->where('em.contractor', $contractors);
+			}
+		}
+	}
+
+	$this->db->order_by('em.member_id', 'ASC');
+	$query = $this->db->get();
+	$employees = $query->result();
+
+	// BATCH DATA FETCHING
+	$all_emp_ids = array();
+	foreach ($employees as $e) {
+		$all_emp_ids[] = $e->emp_id;
+	}
+
+	$entry_lookup = array();
+	if (!empty($all_emp_ids)) {
+		if ($employee_type == "OFFICE STAFF") {
+			$this->db->select('oe.employee_id, oe.month_year, oe.gross_wages, os.standard_bonus, os.additional_bonus');
+			$this->db->from('office_staff_entry oe');
+			$this->db->join('office_staff_salary os', 'os.id = oe.office_staff_salary_id');
+			$this->db->where_in('oe.employee_id', $all_emp_ids);
+			$entry_query = $this->db->get();
+			foreach ($entry_query->result() as $row_data) {
+				$entry_lookup[$row_data->employee_id][$row_data->month_year] = $row_data;
+			}
+		} elseif ($employee_type == "BIDI PACKER") {
+			$this->db->select('pe.employee_id, pe.month_year, pe.gross_wages, pw.bonus');
+			$this->db->from('packers_entry pe');
+			$this->db->join('packing_wages pw', 'pw.id = pe.packing_wages_id');
+			$this->db->where_in('pe.employee_id', $all_emp_ids);
+			$entry_query = $this->db->get();
+			foreach ($entry_query->result() as $row_data) {
+				$entry_lookup[$row_data->employee_id][$row_data->month_year] = $row_data;
+			}
+		} elseif ($employee_type == "BIDI MAKER") {
+			$this->db->select('be.*, bw.bonus1, bw.bonus2, bw.rate1, bw.rate2');
+			$this->db->from('bidi_roller_entry be');
+			$this->db->join('bidiroller_wages bw', 'bw.id = be.bidiroller_wages_id');
+			$this->db->where_in('be.employee_id', $all_emp_ids);
+			$entry_query = $this->db->get();
+			foreach ($entry_query->result() as $row_data) {
+				$entry_lookup[$row_data->employee_id][$row_data->month_year] = $row_data;
+			}
+		}
+	}
+
+	foreach ($employees as $employee_msater) {
+		$name = $employee_msater->name_as_aadhaar;
+		$emp_id = $employee_msater->emp_id;
+		$uan = $employee_msater->UAN;
+		$member_id = $employee_msater->member_id;
 
 				$row = $name.'####'.$member_id.'####'.$uan;
 
@@ -88,56 +148,36 @@ class Bonussheetmodel extends CI_Model{
 						$additional_bonus =	0;
 						$sb_rate =	0;
 		foreach ($period as $dt) {
-		$entry_month = $dt->format("m/Y");
-		$total = 0;	
-		   if($employee_type=="OFFICE STAFF"){
-				$query1 = $this->db->query('select os.additional_bonus,os.standard_bonus,oe.gross_wages from office_staff_entry oe inner join office_staff_salary os on os.id=oe.office_staff_salary_id  where oe.employee_id="'.$emp_id.'" and oe.month_year="'.$entry_month.'" ');						   
-				foreach($query1->result() as $officestaff)
-				{
-					$total = $officestaff->gross_wages;
-					$sb_rate = $officestaff->standard_bonus;
-					$ab_rate = $officestaff->additional_bonus;
-					$alltotal = $alltotal+$total; 
-//					echo '==lm=>'.$lastmonth.'==em=>'.$entry_month;
-//					if($lastmonth==$entry_month)
-//					{
-						$standard_bonus =	($alltotal*$sb_rate)/100;
-						$additional_bonus =	($alltotal*$ab_rate)/100;
-//					}
-					
-				}
-		   }
-		   elseif($employee_type=="BIDI PACKER"){
-				$query1 = $this->db->query('select pe.gross_wages,pw.bonus from packers_entry pe inner join packing_wages pw on pw.id=pe.packing_wages_id where pe.employee_id="'.$emp_id.'" and pe.month_year="'.$entry_month.'" ');			
-				foreach($query1->result() as $officestaff)
-				{
-					$total = $officestaff->gross_wages;
-					$sb_rate = $officestaff->bonus;
-				
-					$alltotal = $alltotal+$total; 
-					$standard_bonus =	($alltotal*$sb_rate)/100;
-					$additional_bonus =	0;
-				}
-			}
-		   elseif($employee_type=="BIDI MAKER"){
-				$query1 = $this->db->query('select be.*,bw.bonus1,bw.bonus2,bw.rate1,bw.rate2 from bidi_roller_entry be inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id where be.employee_id="'.$emp_id.'" and be.month_year="'.$entry_month.'" ');			
-				foreach($query1->result() as $bidimaker)
-				{
-					$wages1 = ($bidimaker->unit_1_days * $bidimaker->rate1) + ($bidimaker->unit_2_days * $bidimaker->rate2);
-					$wages2 = ($bidimaker->no_of_days == 0) ? 0 : (($wages1 / $bidimaker->no_of_days) * $bidimaker->leave_with_pay);
+			$entry_month = $dt->format("m/Y");
+			$total = 0;
+			$entry_data = isset($entry_lookup[$emp_id][$entry_month]) ? $entry_lookup[$emp_id][$entry_month] : null;
+
+			if ($entry_data) {
+				if ($employee_type == "OFFICE STAFF") {
+					$total = $entry_data->gross_wages;
+					$sb_rate = $entry_data->standard_bonus;
+					$ab_rate = $entry_data->additional_bonus;
+					$alltotal = $alltotal + $total;
+					$standard_bonus = ($alltotal * $sb_rate) / 100;
+					$additional_bonus = ($alltotal * $ab_rate) / 100;
+				} elseif ($employee_type == "BIDI PACKER") {
+					$total = $entry_data->gross_wages;
+					$sb_rate = $entry_data->bonus;
+					$alltotal = $alltotal + $total;
+					$standard_bonus = ($alltotal * $sb_rate) / 100;
+					$additional_bonus = 0;
+				} elseif ($employee_type == "BIDI MAKER") {
+					$wages1 = ($entry_data->unit_1_days * $entry_data->rate1) + ($entry_data->unit_2_days * $entry_data->rate2);
+					$wages2 = ($entry_data->no_of_days == 0) ? 0 : (($wages1 / $entry_data->no_of_days) * $entry_data->leave_with_pay);
 					$total = $wages1 + $wages2;
-					
-					$alltotal = $alltotal + $total; 
-					$m_bonus = ($bidimaker->unit_1_days * $bidimaker->bonus1) + ($bidimaker->unit_2_days * $bidimaker->bonus2);
+
+					$alltotal = $alltotal + $total;
+					$m_bonus = ($entry_data->unit_1_days * $entry_data->bonus1) + ($entry_data->unit_2_days * $entry_data->bonus2);
 					$standard_bonus = $standard_bonus + $m_bonus;
 					$additional_bonus = 0;
 				}
 			}
-//							$gmonth_total =	$gmonth_total+$total;
-		
-						$row .= '####'.$total;
-//						$row1 .= '####//'.$gmonth_total;
-
+			$row .= '####' . $total;
 		}
 
 	

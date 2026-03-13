@@ -801,6 +801,11 @@ else{
                            </a>
                         </li>
 				 <?php		 }  ?>	 						
+                        <li class=" ">
+                           <a href="<?php echo base_url('payroll/uan_ip_mapping'); ?>" title="Projects Basic">
+								<span><em class="icon-plus"></em> UAN to IP Mapping</span>
+                           </a>
+                        </li>
 <!--                        <li class=" ">
                            <a href="<?php echo base_url('payroll/excelformat'); ?>" title="Projects Basic">
 								<span><em class="icon-plus"></em> Excel Format</span>

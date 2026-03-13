@@ -754,6 +754,100 @@ class Payroll extends CI_Controller {
 			redirect('payroll/error');
 		}
 	}
+
+	public function uan_ip_mapping()
+	{
+		$result['access'] = $this->Usermanagementmodel->get_access();
+		$this->load->view('header', $result);
+		$this->load->view('uan_ip_mapping');
+	}
+
+	public function preview_uan_ip_mapping()
+	{
+		log_message('debug', 'UAN-IP Mapping: Preview started');
+		$this->load->library('excel');
+		$this->load->model('Employeemodel');
+		
+		if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != 0) {
+			log_message('error', 'UAN-IP Mapping: File upload error or no file. Error code: ' . ($_FILES["file"]["error"] ?? 'None'));
+			echo json_encode(array('error' => 'No file uploaded or upload error'));
+			return;
+		}
+
+		$file_directory = "uploads/";
+		if (!is_dir($file_directory)) {
+			mkdir($file_directory, 0777, true);
+		}
+		$new_file_name = $_FILES["file"]["name"];
+		log_message('debug', 'UAN-IP Mapping: File name: ' . $new_file_name);
+		
+		if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
+		{   
+			$file_path = $file_directory . $new_file_name;
+			log_message('debug', 'UAN-IP Mapping: File moved to ' . $file_path);
+
+			try {
+				$file_type	= PHPExcel_IOFactory::identify($file_path);
+				
+				if ($file_type == 'Excel2007' && !class_exists('ZipArchive')) {
+					log_message('error', 'UAN-IP Mapping: ZipArchive class not found for Excel2007 file.');
+					echo json_encode(array('error' => 'PHP ZipArchive extension is not enabled. This is required for .xlsx files. Please enable it in Laragon or save your file as "Excel 97-2003 Workbook (.xls)" and try again.'));
+					unlink($file_path);
+					return;
+				}
+
+				$objReader	= PHPExcel_IOFactory::createReader($file_type);
+				$objPHPExcel = $objReader->load($file_path);
+				
+				$highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
+				log_message('debug', 'UAN-IP Mapping: Total rows to process: ' . $highestRow);
+				
+				$preview_data = array();
+				for ($row = 2; $row <= $highestRow; $row++) {
+					$uan = $objPHPExcel->setActiveSheetIndex(0)->getCell('A'.$row)->getValue();
+					$ip = $objPHPExcel->setActiveSheetIndex(0)->getCell('B'.$row)->getValue();
+					
+					if(!empty($uan)){
+						$emp_name = $this->Employeemodel->get_employee_by_uan($uan);
+						$preview_data[] = array(
+							'uan' => (string)$uan,
+							'name' => $emp_name,
+							'ip' => (string)$ip
+						);
+					}
+				}
+				unlink($file_path);
+				log_message('debug', 'UAN-IP Mapping: Preview data count: ' . count($preview_data));
+				echo json_encode($preview_data);
+			} catch (Exception $e) {
+				log_message('error', 'UAN-IP Mapping: Error processing Excel: ' . $e->getMessage());
+				echo json_encode(array('error' => 'Error processing Excel: ' . $e->getMessage()));
+			}
+		} else {
+			log_message('error', 'UAN-IP Mapping: Failed to move uploaded file');
+			echo json_encode(array('error' => 'Failed to move uploaded file'));
+		}
+	}
+
+	public function update_uan_ip_mapping()
+	{
+		log_message('debug', 'UAN-IP Mapping: Update started');
+		$this->load->model('Employeemodel');
+		$data = json_decode($this->input->post('data'), true);
+		if (empty($data)) {
+			log_message('warning', 'UAN-IP Mapping: No data received for update');
+			echo "No data to update";
+			return;
+		}
+		$count = 0;
+		foreach($data as $row){
+			if(!empty($row['uan']) && $this->Employeemodel->update_ip_by_uan($row['uan'], $row['ip'])){
+				$count++;
+			}
+		}
+		log_message('debug', 'UAN-IP Mapping: Update successful. Count: ' . $count);
+		echo $count . " Records Updated Successfully";
+	}
 	
 	
 	

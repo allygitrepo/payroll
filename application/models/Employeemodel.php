@@ -766,5 +766,25 @@ function family_detail_save(){
 		$email = $adharno."@".$website;
 		return $email;
     }
+
+	function get_employee_by_uan($uan){
+		$this->db->select('name_as_aadhaar');
+		$this->db->from('employee_master');
+		$this->db->where('UAN', $uan);
+		$this->db->where('status', '1');
+		$this->db->where('substr(`member_id_org`,1,15)', $_SESSION['company_id']);
+		$query = $this->db->get();
+		if ($query->num_rows() > 0) {
+			return $query->row()->name_as_aadhaar;
+		}
+		return "N/A";
+	}
+
+	function update_ip_by_uan($uan, $ip){
+		$this->db->set('ip_number', $ip);
+		$this->db->where('UAN', $uan);
+		$this->db->where('substr(`member_id_org`,1,15)', $_SESSION['company_id']);
+		return $this->db->update('employee_master');
+	}
 }	
 ?>

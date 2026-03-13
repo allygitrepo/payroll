@@ -26,25 +26,72 @@ $(document).ready(function() {
   else{
   var mm = mnth+1;	  
   }
-  if(mm<10)0000000
+  if(mm<10)
   {
 	mm = '0'+mm;
   }
 	
 	$('#month_year1').val(mm+'/'+yyyy2);
 	$('#month_year2').val(mm+'/'+yyyy1);
+
+    // Function to load contractors
+    function show_contractor() {
+        $.ajax({
+            type: 'ajax',
+            url: baseurl + "contractorcontroller/view_only_contractor",
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                var html = '<option value="all">Select All</option>';
+                if (data && Array.isArray(data)) {
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<option value="' + data[i].contractor_id + '" >' + data[i].contractor_name + ' - ' + data[i].pf_code + '</option>';
+                    }
+                }
+                $('#contractor1').html(html);
+                if ($.fn.select2) {
+                    $('#contractor1').select2({
+                        theme: "bootstrap",
+                        placeholder: "Select Contractors",
+                        allowClear: true,
+                        width: '100%'
+                    });
+                }
+            }
+        });
+    }
+
+    // Toggle contractor dropdown visibility
+    $('#typeEmp').change(function() {
+        if ($(this).val() === 'BIDI MAKER') {
+            $('#contractor_div').show();
+            if ($('#contractor1 option').length === 0) {
+                show_contractor();
+            }
+        } else {
+            $('#contractor_div').hide();
+            $('#contractor1').val(null).trigger('change');
+        }
+    });
 		
     $(document).on("submit","#bonussheetform",function(e){
 			e.preventDefault();
 			var month_year1 = $('#month_year1').val();
 			var month_year2 = $('#month_year2').val();
 			var employee_type = $('#typeEmp').val();
+            var contractor = $('#contractor1').val();
+
 			$.ajax({
 			
                 type : "POST",
 				url  : baseurl+"bonussheet/show_bonussheet",
                 dataType : "JSON",
-                data : {month_year1:month_year1,month_year2:month_year2,employee_type:employee_type},
+                data : {
+                    month_year1: month_year1,
+                    month_year2: month_year2,
+                    employee_type: employee_type,
+                    contractor: contractor
+                },
                 success: function(data){
 				var html = '';
 				html += '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
@@ -150,20 +197,20 @@ $(document).ready(function() {
 			
         ]
     });
-					
-				
-			
-				
-				}
-				
-					
-				
-				
-				
-				
+
+                    if (data.length > 2) {
+                        var recordCount = data.length - 2; // Subtracting header (index 0) and metadata (last index)
+                        $().toastmessage('showSuccessToast', recordCount + " records fetched successfully.");
+                    } else if (data.length == 2) {
+                        // Only header and footer exist, no employee records
+                        $().toastmessage('showWarningToast', "No records found for the selected criteria.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $().toastmessage('showErrorToast', "Error fetching records: " + error);
+                }
             });
             return false;
-			
         });
 
 
