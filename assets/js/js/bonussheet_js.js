@@ -56,6 +56,22 @@ $(document).ready(function() {
                         allowClear: true,
                         width: '100%'
                     });
+
+                    // Mutual exclusivity: "Select All" vs. specific contractors
+                    $('#contractor1').on('select2:select', function (e) {
+                        var data = e.params.data;
+                        if (data.id === 'all') {
+                            // If "Select All" is picked, clear all other selections
+                            $(this).val(['all']).trigger('change');
+                        } else {
+                            // If a specific contractor is picked, remove "Select All" from the selection
+                            var values = $(this).val();
+                            if (values && values.includes('all')) {
+                                var newValues = values.filter(function(v) { return v !== 'all'; });
+                                $(this).val(newValues).trigger('change');
+                            }
+                        }
+                    });
                 }
             }
         });
