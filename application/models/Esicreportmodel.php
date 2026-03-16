@@ -47,14 +47,20 @@ class Esicreportmodel extends CI_Model{
 		
 		// Fetch all employees for this company
 		$company_id = $_SESSION['company_id'];
-		$employees_query = $this->db->query("SELECT em.member_id, em.ip_number, em.name_as_aadhaar, em.emp_id, em.employee_type FROM employee_master em WHERE substr(`member_id_org`,1,15) = ? ORDER BY em.member_id ASC", array($company_id));
+		// 1. Fetch all employees who have a salary entry in this month OR a resignation record in this month
+		$employees_query = $this->db->query("
+			SELECT DISTINCT em.emp_id, em.name_as_aadhaar, em.ip_number, em.employee_type, em.member_id 
+			FROM employee_master em
+			LEFT JOIN office_staff_entry ose ON ose.employee_id = em.emp_id AND ose.month_year = ?
+			LEFT JOIN packers_entry pe ON pe.employee_id = em.emp_id AND pe.month_year = ?
+			LEFT JOIN bidi_roller_entry bre ON bre.employee_id = em.emp_id AND bre.month_year = ?
+			LEFT JOIN resignation_master rm ON rm.member_id = em.member_id AND DATE_FORMAT(rm.leaving_date, '%m/%Y') = ?
+			WHERE substr(em.member_id_org,1,15) = ?
+			AND (ose.employee_id IS NOT NULL OR pe.employee_id IS NOT NULL OR bre.employee_id IS NOT NULL OR rm.member_id IS NOT NULL)
+		", array($month_year, $month_year, $month_year, $month_year, $company_id));
 		
-		if ($employees_query->num_rows() == 0) {
-			return $result;
-		}
-
 		$employees = $employees_query->result();
-		log_message('debug', 'ESIC Report - Total employees found: ' . count($employees));
+		log_message('debug', 'ESIC Report - Total relevant employees found: ' . count($employees));
 		
 		// Batch fetch data from all 3 entry tables (Limited to this company)
 		$office_entries = array();
@@ -118,49 +124,43 @@ class Esicreportmodel extends CI_Model{
 				$no_days_working = $entry->no_of_days;
 			}
 			
-			// Get resignation reason code if it exists
-			$res_code = isset($resignation_codes[$employee->member_id]) ? (string)$resignation_codes[$employee->member_id] : null;
+			// Logic: Always show if they were found in our filtered query
+			$gross_wages = $entry ? $entry->gross_wages : 0;
+			
+			// Default reason code 0 (active) or 11 (no work record)
+			$reason_code = ($entry && $no_days_working > 0) ? "0" : "11";
 
-			// Logic: Show if there's a salary entry OR if it's a special resignation code (0, 2, 3, 5) or mapped characters (C, S, D, 0)
-			$is_special_resignation = in_array($res_code, array('0', '2', '3', '5', 'C', 'S', 'D'));
-
-			if($entry || $is_special_resignation){
-				$gross_wages = $entry ? $entry->gross_wages : 0;
-				
-				// Default logic for reason code
-				$reason_code = ($no_days_working == 0) ? "11" : "0";
-
-				// Special handling for resignation reason codes 0, 2, 3, 5 and their mappings
-				if ($is_special_resignation) {
-					// Apply Mapping (supporting both numeric codes and characters)
-					if ($res_code == '2' || $res_code == 'C') {
-						$reason_code = "2";
-					} elseif ($res_code == '3' || $res_code == 'S') {
-						$reason_code = "3";
-					} elseif ($res_code == '5' || $res_code == 'D') {
-						$reason_code = "5";
-					} else {
-						$reason_code = "0"; // For reason_code 0 or other special cases, show 0 per instructions
-					}
+			// Override with resignation code if appropriate
+			if (isset($resignation_codes[$employee->member_id])) {
+				$res_code = (string)$resignation_codes[$employee->member_id];
+				if ($res_code == '2' || $res_code == 'C') {
+					$reason_code = "2";
+				} elseif ($res_code == '3' || $res_code == 'S') {
+					$reason_code = "3";
+				} elseif ($res_code == '5' || $res_code == 'D') {
+					$reason_code = "5";
+				} elseif ($res_code == '0') {
+					$reason_code = "0";
+				} else {
+					$reason_code = $res_code;
 				}
-
-				// Apply Display Formatting Rules
-				$display_days = $no_days_working;
-				$display_wages = $gross_wages;
-				$display_lmld = $lmld;
-
-				// Rule: If Reason Code = 0, hide Days, Wages, and Last Working Day.
-				// If Reason Code != 0 (like 11, 2, 3, 5), show actual values.
-				if ($reason_code == "0") {
-					$display_days = "";
-					$display_wages = "";
-					$display_lmld = "";
-				}
-				
-				// Format: IP Number####IP Name####No of Days####Total Wages####Reason Code####Last Working Day####Month Year
-				$row_str = $ip_number.'####'.$name_as_aadhaar.'####'.$display_days.'####'.$display_wages.'####'.$reason_code.'####'.$display_lmld.'####'.$month_year;
-				array_push($result, $row_str);
 			}
+
+			// Apply Final UI Display Rules
+			$display_days = $no_days_working;
+			$display_wages = $gross_wages;
+			$display_lmld = $lmld;
+
+			// Strict Display Rule: If Reason Code = 0, hide Days, Wages, and Last Working Day.
+			if ($reason_code == "0") {
+				$display_days = "";
+				$display_wages = "";
+				$display_lmld = "";
+			}
+			
+			// Format: IP Number####IP Name####No of Days####Total Wages####Reason Code####Last Working Day####Month Year
+			$row_str = $ip_number.'####'.$name_as_aadhaar.'####'.$display_days.'####'.$display_wages.'####'.$reason_code.'####'.$display_lmld.'####'.$month_year;
+			array_push($result, $row_str);
 		}
 		
 		log_message('debug', 'ESIC Report - Total records returned: ' . count($result));
