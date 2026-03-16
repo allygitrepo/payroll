@@ -522,7 +522,14 @@ class Payroll extends CI_Controller {
 				   	$result['access'] = $this->Usermanagementmodel->get_access();			
 		$this->load->view('header',$result);	
 
-		$this->load->view('esicchallanyearly');
+	   	$check = $this->Usermanagementmodel->check_access('5','r_4');			
+				
+		if($check>0){
+	$this->load->view('esicchallanyearly');
+		}
+		else{
+			redirect('payroll/error');
+		}
 	}
 	public function pf_challan()
 	{
