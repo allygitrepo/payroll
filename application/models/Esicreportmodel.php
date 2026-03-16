@@ -81,7 +81,18 @@ class Esicreportmodel extends CI_Model{
 		foreach($q3->result() as $row) {
 			$bidi_entries[$row->employee_id] = $row;
 		}
-		
+
+		// Batch fetch resignation reason codes for the selected month only
+		$resignation_codes = array();
+		// Filter by month_year to ensure only relevant resignations are shown for this month
+		$res_query = $this->db->query("SELECT member_id, reason FROM resignation_master WHERE DATE_FORMAT(leaving_date, '%m/%Y') = ?", array($month_year));
+		if ($res_query) {
+			foreach($res_query->result() as $res_row) {
+				// Use the 'reason' field which is known to exist in resignation_master
+				$resignation_codes[$res_row->member_id] = $res_row->reason;
+			}
+		}
+
 		foreach($employees as $employee)
 		{
 		   $emp_id = $employee->emp_id;			
@@ -107,12 +118,47 @@ class Esicreportmodel extends CI_Model{
 				$no_days_working = $entry->no_of_days;
 			}
 			
-			if($entry){
-				$gross_wages = $entry->gross_wages;			
-				// Reason code: 11 if no_days_working = 0, else 0
-				$reason_code = ($no_days_working == 0) ? "11" : "0";  
+			// Get resignation reason code if it exists
+			$res_code = isset($resignation_codes[$employee->member_id]) ? (string)$resignation_codes[$employee->member_id] : null;
+
+			// Logic: Show if there's a salary entry OR if it's a special resignation code (0, 2, 3, 5) or mapped characters (C, S, D, 0)
+			$is_special_resignation = in_array($res_code, array('0', '2', '3', '5', 'C', 'S', 'D'));
+
+			if($entry || $is_special_resignation){
+				$gross_wages = $entry ? $entry->gross_wages : 0;
+				
+				// Default logic for reason code
+				$reason_code = ($no_days_working == 0) ? "11" : "0";
+
+				// Special handling for resignation reason codes 0, 2, 3, 5 and their mappings
+				if ($is_special_resignation) {
+					// Apply Mapping (supporting both numeric codes and characters)
+					if ($res_code == '2' || $res_code == 'C') {
+						$reason_code = "2";
+					} elseif ($res_code == '3' || $res_code == 'S') {
+						$reason_code = "3";
+					} elseif ($res_code == '5' || $res_code == 'D') {
+						$reason_code = "5";
+					} else {
+						$reason_code = "0"; // For reason_code 0 or other special cases, show 0 per instructions
+					}
+				}
+
+				// Apply Display Formatting Rules
+				$display_days = $no_days_working;
+				$display_wages = $gross_wages;
+				$display_lmld = $lmld;
+
+				// Rule: If Reason Code = 0, hide Days, Wages, and Last Working Day.
+				// If Reason Code != 0 (like 11, 2, 3, 5), show actual values.
+				if ($reason_code == "0") {
+					$display_days = "";
+					$display_wages = "";
+					$display_lmld = "";
+				}
+				
 				// Format: IP Number####IP Name####No of Days####Total Wages####Reason Code####Last Working Day####Month Year
-				$row_str = $ip_number.'####'.$name_as_aadhaar.'####'.$no_days_working.'####'.$gross_wages.'####'.$reason_code.'####'.$lmld.'####'.$month_year;
+				$row_str = $ip_number.'####'.$name_as_aadhaar.'####'.$display_days.'####'.$display_wages.'####'.$reason_code.'####'.$display_lmld.'####'.$month_year;
 				array_push($result, $row_str);
 			}
 		}
