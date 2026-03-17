@@ -105,34 +105,48 @@ class Esic_challan_model extends CI_Model {
         $ee_rate = $setup ? $setup->employee_share : 0.75;
         $er_rate = $setup ? $setup->employer_share : 3.25;
 
-        // 2. Sum gross wages from all three entry tables
+        // 2. Calculate EE Share per employee across all three entry tables
+        // Threshold: If (Gross Wages / Days) <= 176, EE Share = 0.
+        // Otherwise: EE Share = CEIL(Gross Wages * 0.75%)
+        
+        $total_ee_share = 0;
+        $total_gross_wages = 0;
+
         $tables = [
-            'office_staff_entry' => 'gross_wages',
-            'packers_entry'      => 'gross_wages',
-            'bidi_roller_entry'  => 'gross_wages'
+            'office_staff_entry' => ['gross' => 'gross_wages', 'days' => 'no_of_days_worked'],
+            'packers_entry'      => ['gross' => 'gross_wages', 'days' => 'no_of_worked_days'],
+            'bidi_roller_entry'  => ['gross' => 'gross_wages', 'days' => 'no_of_days']
         ];
         
-        $total_wages = 0;
-        foreach ($tables as $table => $wage_col) {
-            $this->db->select_sum("$table.$wage_col", 'total');
+        foreach ($tables as $table => $cols) {
+            $gross_col = $cols['gross'];
+            $days_col = $cols['days'];
+
+            $this->db->select("SUM(
+                CASE 
+                    WHEN ($days_col > 0 AND ($gross_col / $days_col) > 176) THEN CEIL($gross_col * ($ee_rate / 100))
+                    ELSE 0 
+                END
+            ) as total_ee, SUM($gross_col) as total_gross");
             $this->db->from($table);
             $this->db->join('employee_master em', "em.emp_id = $table.employee_id");
             $this->db->where("$table.month_year", $month_year);
             $this->db->where("TRIM(SUBSTR(em.member_id_org, 1, 15)) =", trim($company_id));
             $res = $this->db->get()->row();
             
-            $current_sum = $res ? (float)$res->total : 0;
-            $total_wages += $current_sum;
+            if ($res) {
+                $total_ee_share += (float)$res->total_ee;
+                $total_gross_wages += (float)$res->total_gross;
+            }
         }
         
-        // 3. Calculate shares
-        $ee_share = round(($total_wages * $ee_rate) / 100);
-        $er_share = round(($total_wages * $er_rate) / 100);
+        // 3. Calculate Employer Share based on total monthly gross wages (standard rule)
+        $er_share = round(($total_gross_wages * $er_rate) / 100);
         
         return array(
-            'employee_share' => $ee_share,
+            'employee_share' => $total_ee_share,
             'employer_share' => $er_share,
-            'total_amount'   => $ee_share + $er_share
+            'total_amount'   => $total_ee_share + $er_share
         );
     }
 }

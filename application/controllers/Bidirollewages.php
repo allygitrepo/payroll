@@ -31,12 +31,16 @@ class Bidirollewages extends CI_Controller{
 	}
 	
 	function show_bidi_roller_entry(){
+		// Log search request data
+		log_message('debug', 'Bidi Roller Search - Request Data: ' . json_encode($this->input->post()));
 
 	    $data=$this->Bidirollewagesmodel->bidi_roller_entry_show();      
 		echo json_encode($data);	
 	}
 	
-		function bidiroller_entry_save(){
+	function bidiroller_entry_save(){
+		// Log incoming request data
+		log_message('debug', 'Bidi Roller Entry - Request Data: ' . json_encode($this->input->post()));
 	
 		$id	=$this->input->post('id');
 		if($id=="save"){
@@ -48,6 +52,9 @@ class Bidirollewages extends CI_Controller{
 			$this->Bidirollewagesmodel->bidiroller_entry_delete();									
 	  $data=$this->Bidirollewagesmodel->save_bidiroller_entry();			
 			}
+
+		// Log result status
+		log_message('debug', 'Bidi Roller Entry - Save Result: ' . ($data ? 'SUCCESS' : 'FAILED'));
 
         echo json_encode($data);	
 	}

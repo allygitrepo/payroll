@@ -34,6 +34,7 @@ $(document).ready(function() {
 
 //		show_bidi_roller_entry();	//call function show all address
 		function show_bidi_roller_entry(){
+		    $("#table_data1").html("");
 			        $("#wait").css("display", "block");
 
 			
@@ -41,12 +42,16 @@ $(document).ready(function() {
 		var month_year = $('#month_year').val();
 		var contractor = $('#contractor1').val();
 		
+		console.log('making req for :', {month_year:month_year,contractor:contractor});
 		$.ajax({
 		        type  : 'POST',
 				url  : baseurl+"Bidirollewages/show_bidi_roller_entry",
-		        data : {month_year:month_year,contractor:contractor},
+		        data : {month_year:month_year, contractor:contractor},
 		        dataType : 'json',
+				global: false,
 		        success : function(data){
+				console.log('res :', data);
+				console.log('data', data);
 
 				var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%"><thead><tr><th  style="display:none;"  >Employee id</th><th style="white-space:nowrap;" >Employee Name.</th><!--<th>UAN</th>-->'+
 				'<th >No. of Unit worked</th>'+  			
@@ -73,6 +78,7 @@ $(document).ready(function() {
 					var data_6 = 0;
 					var data_7 = 0;
 					var data_8 = 0;
+					var data_pt = 0;
 					var data_9 = 0;
 					var data_10 = 0;
 
@@ -161,49 +167,45 @@ $(document).ready(function() {
 				'<th id="total_data_10">'+data_10+'</th>'+  			
 				'</tr></tfoot>';
 	                html += '</table>';
-		            $('#table_data1').html(html);
-					
-					
-					
- /* 
 	   var msg = "Bidi Roller Entry List";
-    $('#example1').dataTable({
-       'scrollX': true,
-       'bDestroy': true,
-        'paging':   true,  // Table pagination
-        'ordering': true,  // Column ordering
-        'info':     true,  // Bottom left status text
- //       'responsive': true, // https://datatables.net/extensions/responsive/examples/
-        // Text translation options
-        // Note the required keywords between underscores (e.g _MENU_)
-        oLanguage: {
-            sSearch:      'Search all columns:',
-            sLengthMenu:  '_MENU_ records per page',
-            info:         'Showing page _PAGE_ of _PAGES_',
-            zeroRecords:  'Nothing found - sorry',
-            infoEmpty:    'No records available',
-            infoFiltered: '(filtered from _MAX_ total records)'
-        },
-        // Datatable Buttons setup
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [
-            {extend: 'copy',  className: 'btn-sm', title: msg },
-            {extend: 'csv',   className: 'btn-sm', title: msg },
-            {extend: 'excel', className: 'btn-sm', title: msg },
-            {extend: 'pdf',   className: 'btn-sm', title: msg },
-            {extend: 'print', className: 'btn-sm', title: msg }
-        ],
-
-    });
-	*/				        $("#wait").css("display", "none");
-
-		        }
+    						$('#example1').DataTable({
+							'scrollX': true,
+							'bDestroy': true,
+							'paging':   true,  // Table pagination
+							'ordering': true,  // Column ordering
+							'info':     true,  // Bottom left status text
+							oLanguage: {
+								sSearch:      'Search all columns:',
+								sLengthMenu:  '_MENU_ records per page',
+								info:         'Showing page _PAGE_ of _PAGES_',
+								zeroRecords:  'Nothing found - sorry',
+								infoEmpty:    'No records available',
+								infoFiltered: '(filtered from _MAX_ total records)'
+							},
+							dom: '<"html5buttons"B>lTfgitp',
+							buttons: [
+								{extend: 'copy',  className: 'btn-sm', title: msg },
+								{extend: 'csv',   className: 'btn-sm', title: msg },
+								{extend: 'excel', className: 'btn-sm', title: msg },
+								{extend: 'pdf',   className: 'btn-sm', title: msg },
+								{extend: 'print', className: 'btn-sm', title: msg }
+							]
+						});
+						$("#wait").hide();
+		        },
+				error: function(xhr, status, error) {
+					console.log('AJAX Error Status:', status);
+					console.log('AJAX Error:', error);
+					console.log('AJAX Response Text:', xhr.responseText);
+					$("#wait").hide();
+				}
 
 		    });
   
 		}
 
 	$(document).on('click','#btn_insert',function(){
+		console.log('search button clicked');
 		show_bidi_roller_entry();
         });
 	
@@ -404,12 +406,15 @@ $(document).ready(function() {
 
   	$(document).on('click','#table_insert',function(){
 		
-			var r1 = $('table#example1').find('tbody').find('tr');
+			var table = $('#example1').DataTable();
+			var r1 = table.rows().nodes();
 			var r = r1.length;
 			var msg = 0;
 			var i = 0;
 			var month_year=$('#month_year').val();
 			var save_update =	$('#save_update').val();
+			
+			console.log('save button clicked', {month_year:month_year, save_update:save_update});
 			
 			for (var i = 0; i < r; i++) {
 
@@ -438,10 +443,12 @@ $(document).ready(function() {
 			var status1 = $('#status'+emp_id).html();
 			var member_id = $('#member_id_'+emp_id).html();
 			var total_no_of_days = $('#total_no_of_days_'+emp_id).html();
-
 			var pf_rate = $('#pf_rate'+emp_id).html();
+			var pt = $('#pt'+emp_id).html();
+			var pt_id = $('#pt_id'+emp_id).html();
 			
-			
+			console.log('making req for save :', {member_id:member_id,br_id:br_id,month_year:month_year,ac10:ac10,pf_rate:pf_rate,worked_days:worked_days,leave_with_pay:leave_with_pay,wages:wages,bonus:bonus,total:total,pf:pf,net_wages:net_wages,save_update:save_update,emp_id:emp_id,member_name:member_name,uan:uan,unit_days1:unit_days1,unit_days2:unit_days2,ac1male:ac1male
+				,ncp_days:ncp_days,status1:status1,total_no_of_days:total_no_of_days,pt:pt,pt_id:pt_id});
 			$.ajax({
 				
                 type : "POST",		
@@ -450,6 +457,7 @@ $(document).ready(function() {
 				data : {member_id:member_id,br_id:br_id,month_year:month_year,ac10:ac10,pf_rate:pf_rate,worked_days:worked_days,leave_with_pay:leave_with_pay,wages:wages,bonus:bonus,total:total,pf:pf,net_wages:net_wages,save_update:save_update,emp_id:emp_id,member_name:member_name,uan:uan,unit_days1:unit_days1,unit_days2:unit_days2,ac1male:ac1male
 				,ncp_days:ncp_days,status1:status1,total_no_of_days:total_no_of_days,pt:pt,pt_id:pt_id},
 				success: function(data){
+								console.log('res save:', data);
 								if(data == true){
 									msg = 1;
 					}
@@ -476,7 +484,8 @@ $(document).ready(function() {
 	
 	
 	function get_grand_total(){
-			var r1 = $('table#example1').find('tbody').find('tr');
+			var table = $('#example1').DataTable();
+			var r1 = table.rows().nodes();
 			var r = r1.length;
 			var msg = 0;
 			var i = 0;
@@ -490,21 +499,25 @@ $(document).ready(function() {
 			var total_data_6 = 0;
 			var total_data_7 = 0;
 			var total_data_8 = 0;
+			var total_data_pt = 0;
 			var total_data_9 = 0;
+			var total_data_10 = 0;
 			
 			
 			for (var i = 0; i < r; i++) {
 			var emp_id = $(r1[i]).find('td:eq(0)').html();
 			
-			var data_1 = $('#unit1_'+emp_id).val();
-			var data_2 = $('#unit2_'+emp_id).val();
-			var data_3 = $('#worked_days'+emp_id).val();
-			var data_4 = $('#leave_with_pay'+emp_id).val();
-			var data_5 = $('#wages'+emp_id).html();
-			var data_6 = $('#bonus'+emp_id).html();
-			var data_7 = $('#total'+emp_id).html();
-			var data_8 = $('#pf'+emp_id).html();
-			var data_9 = $('#net_wages'+emp_id).html();
+			var data_1 = $('#unit1_'+emp_id).val() || 0;
+			var data_2 = $('#unit2_'+emp_id).val() || 0;
+			var data_3 = $('#worked_days'+emp_id).val() || 0;
+			var data_4 = $('#leave_with_pay'+emp_id).val() || 0;
+			var data_5 = $('#wages'+emp_id).html() || 0;
+			var data_6 = $('#bonus'+emp_id).html() || 0;
+			var data_7 = $('#total'+emp_id).html() || 0;
+			var data_8 = $('#pf'+emp_id).html() || 0;
+			var data_pt = $('#pt'+emp_id).html() || 0;
+			var data_9 = $('#esic'+emp_id).html() || 0;
+			var data_10 = $('#net_wages'+emp_id).html() || 0;
 			
 			
 			total_data_1 = parseInt(total_data_1) + parseInt(data_1);
@@ -515,7 +528,9 @@ $(document).ready(function() {
 			total_data_6 = parseInt(total_data_6) + parseInt(data_6);
 			total_data_7 = parseInt(total_data_7) + parseInt(data_7);
 			total_data_8 = parseInt(total_data_8) + parseInt(data_8);
+			total_data_pt = parseInt(total_data_pt) + parseInt(data_pt);
 			total_data_9 = parseInt(total_data_9) + parseInt(data_9);
+			total_data_10 = parseInt(total_data_10) + parseInt(data_10);
 			}
 		
 			$('#total_data_1').html(total_data_1);
@@ -526,7 +541,9 @@ $(document).ready(function() {
 			$('#total_data_6').html(total_data_6);
 			$('#total_data_7').html(total_data_7);
 			$('#total_data_8').html(total_data_8);
+			$('#total_data_pt').html(total_data_pt);
 			$('#total_data_9').html(total_data_9);
+			$('#total_data_10').html(total_data_10);
 			
 			
 		}

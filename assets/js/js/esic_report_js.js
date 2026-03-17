@@ -12,12 +12,15 @@ $(document).ready(function() {
 	function show_esic_report(){
 		var month_year = $('#month_year').val();
 		console.log('Loading ESIC report for month:', month_year);
+		$("#table_data1").html("");
+		$("#wait").show();
 		
 		$.ajax({
 			type  : 'POST',
 			url  : baseurl+"esicreport/esicreport_show",
 			data : {month_year:month_year},
 			dataType : 'json',
+			global: false,
 			success : function(data){
 				var html = '<table id="example1" class="table table-striped table-bordered table-hover" style="font-size:12px;" cellspacing="0" width="100%">'+
 				'<thead>'+
@@ -93,7 +96,11 @@ $(document).ready(function() {
 						{extend: 'excel', className: 'btn-sm', filename:msg, title:null}
 					]
 				});
+				$("#wait").hide();
 				
+			},
+			error: function() {
+				$("#wait").hide();
 			}
 
 		});

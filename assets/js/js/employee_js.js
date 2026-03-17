@@ -2578,7 +2578,7 @@ show_employee();
 			
 								console.log(data1.length);
 			
-			for(j=5; j<data1.length-3; j++){
+			for(j=5; j<31; j++){
 			if(j != 11){
 			html += '<td >'+data1[j]+'</td>';	
 				

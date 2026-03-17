@@ -639,7 +639,7 @@ columns:[0,1,2,3,4,6,7,9,10,11,12,13,15,17,18,19,20,21,22,23,24,25,26,28,29,30,3
 			html1 += '<td style="width:5%;">'+dob+'</td>';	
 			html1 += '<td style="width:5%;">'+doj+'</td>';	
 								
-			for(j=5; j<data1.length-1; j++){
+			for(j=5; j<31; j++){
 			if(j != 11){
 			html1 += '<td  style="white-space:nowrap;"  >'+data1[j]+'</td>';	
 				

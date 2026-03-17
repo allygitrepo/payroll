@@ -436,6 +436,7 @@ $rdate = 0;
 			$total = "";
 			$pf = "";
 			$pt = 0;
+			$pt_id = 0;
 			$esic = 0;
 			$net_wages = "";
 		
@@ -536,8 +537,11 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 					array_push($result,$row);					
 				}
 		}  
+		// Log search result count
+		log_message('debug', 'Bidi Roller Search - Result Count: ' . count($result));
+
 			return $result;	
-    }
+	}
 		function save_bidiroller_entry(){
 			
 			
@@ -610,6 +614,9 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
                 'month_year'  => $this->input->post('month_year'), 
                 'pt_id'  => $this->input->post('pt_id'), 
             );
+		// Log processed data before insertion
+		log_message('debug', 'Bidi Roller Entry - Processed Data: ' . json_encode($data));
+
 		$result=$this->db->insert('bidi_roller_entry',$data);
 	return $result;
 	}

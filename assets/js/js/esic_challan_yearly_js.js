@@ -5,11 +5,15 @@ $(document).ready(function() {
 	show_esicchallanyearly();			
 	function show_esicchallanyearly(){
 		var	month_year = $('#month_year').val();
+		$("#table_data1").html("");
+		$("#wait").show();
+		
 		    $.ajax({
 		        type  : 'post',
 				url  : baseurl+"esicchallanyearly/show_esicchallanyearly",
 		        data : {month_year:month_year},
 		        dataType : 'json',
+		        global: false,
 		        success : function(data){
 		            var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">'+
                     '<thead><tr><th>For The Month Of</th>'+	
@@ -101,6 +105,10 @@ $(document).ready(function() {
                             }
                         ]
                     });
+                    $("#wait").hide();
+		        },
+		        error: function() {
+		            $("#wait").hide();
 		        }
 
 		    });
