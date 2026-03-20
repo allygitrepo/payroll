@@ -207,8 +207,11 @@ else{
 		if($abry == 1){
 			$net_wages = $total;
 		}else{
-			if($ip_number != "" && $ip_number != "0" && $ip_number != "NOT AVAILABLE"){
-				$esic = round($wages * 0.75 / 100);
+			$divisor = $no_of_days + $leave_with_pay;
+			$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
+			
+			if($daily_wage > 176){
+				$esic = ceil($total * 0.0075);
 			}else{
 				$esic = 0;
 			}

@@ -57,6 +57,7 @@ function contractor_update(){
 	
 					$this->db->select('*');    
 					$this->db->from('contractor_master');
+					$this->db->where('contractor_master.status', 'Active');
 					$this->db->join('address_master', 'contractor_master.contractor_address = address_master.id');
 					$query = $this->db->get();
         return $query->result();

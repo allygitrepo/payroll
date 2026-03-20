@@ -202,10 +202,12 @@ $salary = "";
 					
 					$pt = $tax_rate1;	
 					
-					$employee_wage = $perdaysalary1 * $no_of_days_worked;
-					if($ip_number != "" && $ip_number != "0" && $ip_number != "NOT AVAILABLE"){
-						$esic = round($employee_wage * 0.75 / 100);
-					}else{
+					$divisor = $no_of_days_worked + $leave_with_pay;
+					$daily_wage = ($divisor > 0) ? ($totalmonthsalary / $divisor) : 0;
+					
+					if($daily_wage > 176){
+						$esic = ceil($totalmonthsalary * 0.0075);
+					} else {
 						$esic = 0;
 					}
 
