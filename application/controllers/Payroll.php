@@ -769,6 +769,29 @@ class Payroll extends CI_Controller {
 		$this->load->view('uan_ip_mapping');
 	}
 
+ 	public function download_uan_template()
+ 	{
+ 		$this->load->library('excel');
+ 		$objPHPExcel = new PHPExcel();
+ 		$objPHPExcel->setActiveSheetIndex(0);
+ 
+ 		// Set headers
+ 		$objPHPExcel->getActiveSheet()->setCellValue('A1', 'UAN');
+ 		$objPHPExcel->getActiveSheet()->setCellValue('B1', 'IP Number');
+ 
+ 		// Set column widths
+ 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+ 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+ 
+ 		$filename = 'UAN_IP_Mapping_Template.xlsx';
+ 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+ 		header('Content-Disposition: attachment;filename="' . $filename . '"');
+ 		header('Cache-Control: max-age=0');
+ 
+ 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+ 		$objWriter->save('php://output');
+ 	}
+
 	public function preview_uan_ip_mapping()
 	{
 		log_message('debug', 'UAN-IP Mapping: Preview started');

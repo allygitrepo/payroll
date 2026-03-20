@@ -31,7 +31,9 @@ $title = "Employee Import";
 							<div class="col-md-7"    >
 								<div class="form-group">
 			<label class="control-label">Employee File Import</label>														
-			<input type="file" class="form-control-primary" id="file" name="file" style="width:200px;" ><br><br>							
+			<input type="file" class="form-control-primary" id="file" name="file" style="width:200px;" ><br>
+                            <p style="color:red; font-weight:bold;">Note: UAN is mandatory to add. Columns marked with * in the Excel template are mandatory.</p>
+                            <br>
 		    <input type="hidden" id="file_attachother" value=""/>
 			<label class="control-label" style="color:red;" id="update_error"></label>														
 								</div>

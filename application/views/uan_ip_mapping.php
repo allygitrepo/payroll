@@ -21,9 +21,10 @@ $title = "UAN to IP Mapping";
                                     <input type="file" id="excel_file" class="form-control" accept=".xlsx, .xls">
                                 </div>
                             </div>
-                            <div class="col-md-2" style="margin-top: 25px;">
-                                <button type="button" class="btn btn-primary" id="btn_preview">Preview</button>
-                            </div>
+                             <div class="col-md-4" style="margin-top: 25px;">
+                                 <button type="button" class="btn btn-primary" id="btn_preview">Preview</button>
+                                 <a href="<?php echo base_url('payroll/download_uan_template'); ?>" class="btn btn-info">Download Template</a>
+                             </div>
                         </div>
                         
                         <div id="preview_section" style="display:none; margin-top:20px;">

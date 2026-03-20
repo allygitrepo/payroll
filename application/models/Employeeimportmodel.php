@@ -116,7 +116,6 @@ $contractor_id = "";
 	
 //		echo $a;
 //		echo $query;
-echo $query->num_rows();
 
    if ($query->num_rows() > 0){
 //	echo $query->num_rows()."updt";

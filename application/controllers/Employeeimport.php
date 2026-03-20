@@ -42,14 +42,14 @@ $highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
 
 $column = 'A';
 //$lastRow = $worksheet->getHighestRow();
-$row = 2;
+$row = 3;
 //echo $highestColumm;
 $count= $highestColumm;
 $count++;
 //echo $count;
 //$highestColumm = $highestColumm++;
 //echo $count;
-for ($row = 2; $row <= $highestRow; $row++) {
+for ($row = 3; $row <= $highestRow; $row++) {
 //    $cell = $worksheet->getCell($column.$row);
 	//	echo $nrColumns;
 	
@@ -109,10 +109,10 @@ readfile($file);
 //echo $highestRow;
 			$data2 = "";
 		
-		$column = 'A';
-		$row = 2;
-		$date = "";
-		for ($row = 2; $row <= $highestRow; $row++) {
+ 		$column = 'A';
+ 		$row = 3;
+ 		$date = "";
+ 		for ($row = 3; $row <= $highestRow; $row++) {
 		$result = array();
 			
 			for ($column = 'A'; $column !='U'; $column++) {
