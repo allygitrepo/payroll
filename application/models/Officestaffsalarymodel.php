@@ -6,7 +6,7 @@ class Officestaffsalarymodel extends CI_Model{
 					$this->db->select('office_staff_salary.*,employee_master.name_as_aadhaar');    
 					$this->db->from('office_staff_salary');
 					$this->db->join('employee_master', 'office_staff_salary.employee_id = employee_master.emp_id');
-					$this->db->where(substr(`employee_master.member_id_org`,1,15), $_SESSION['company_id']);
+					$this->db->where("substr(employee_master.member_id_org, 1, 15) =", $_SESSION['company_id']);
 					$query = $this->db->get();
 	        return $query->result();
     }

@@ -59,6 +59,9 @@ class Bonussheetmodel extends CI_Model{
 		   if($employee_type=="OFFICE STAFF"){
 			$row = $month_head.'Total####Bonus####Additional Bonus####Total Payment';
 		   }
+		   elseif($employee_type=="BIDI MAKER"){
+			$row = $month_head.'Total';			   
+		   }
 		   else{
 			$row = $month_head.'Total####Bonus####Total Payment';			   
 		   }
@@ -77,8 +80,8 @@ class Bonussheetmodel extends CI_Model{
 	$this->db->from('employee_master em');
 	$this->db->where('em.employee_type', $employee_type);
 	$this->db->where("substr(em.member_id_org, 1, 15) =", $_SESSION['company_id']);
-	$this->db->where("em.doj NOT BETWEEN '$date1' AND '$date3'", NULL, FALSE);
-	$this->db->where("em.member_id NOT IN (select member_id from resignation_master)", NULL, FALSE);
+	$this->db->where("em.doj <=", $date3);
+	$this->db->where("(em.member_id NOT IN (select member_id from resignation_master) OR em.member_id IN (select member_id from resignation_master where leaving_date >= '$date1'))", NULL, FALSE);
 
 	if (!empty($contractors)) {
 		if (is_array($contractors)) {
@@ -123,12 +126,35 @@ class Bonussheetmodel extends CI_Model{
 				$entry_lookup[$row_data->employee_id][$row_data->month_year] = $row_data;
 			}
 		} elseif ($employee_type == "BIDI MAKER") {
-			$this->db->select('be.*, bw.bonus1, bw.bonus2, bw.rate1, bw.rate2');
+			// Pre-fetch all bidiroller wages to ensure duration-based lookup accuracy
+			$wages_query = $this->db->get('bidiroller_wages');
+			$wages_master = $wages_query->result();
+
+			$this->db->select('be.*');
 			$this->db->from('bidi_roller_entry be');
-			$this->db->join('bidiroller_wages bw', 'bw.id = be.bidiroller_wages_id');
 			$this->db->where_in('be.employee_id', $all_emp_ids);
 			$entry_query = $this->db->get();
 			foreach ($entry_query->result() as $row_data) {
+				// Match wages by month duration
+				$dt_obj = DateTime::createFromFormat('d/m/Y', '01/'.$row_data->month_year);
+				$matched_wages = null;
+				if($dt_obj){
+					$entry_date = $dt_obj->format('Y-m-d');
+					foreach($wages_master as $wm){
+						if($entry_date >= $wm->from_date && $entry_date <= $wm->to_date){
+							$matched_wages = $wm;
+							break;
+						}
+					}
+				}
+				
+				if($matched_wages){
+					$row_data->hra_bonus1 = $matched_wages->hra_bonus1;
+					$row_data->hra_bonus2 = $matched_wages->hra_bonus2;
+				} else {
+					$row_data->hra_bonus1 = 0;
+					$row_data->hra_bonus2 = 0;
+				}
 				$entry_lookup[$row_data->employee_id][$row_data->month_year] = $row_data;
 			}
 		}
@@ -142,11 +168,11 @@ class Bonussheetmodel extends CI_Model{
 
 				$row = $name.'####'.$member_id.'####'.$uan;
 
-		$alltotal = 0;	
-						$total_payment =	0;
-						$standard_bonus =	0;
-						$additional_bonus =	0;
 						$sb_rate =	0;
+						$alltotal = 0;
+						$standard_bonus = 0;
+						$additional_bonus = 0;
+						$debug_info = array();
 		foreach ($period as $dt) {
 			$entry_month = $dt->format("m/Y");
 			$total = 0;
@@ -167,14 +193,15 @@ class Bonussheetmodel extends CI_Model{
 					$standard_bonus = ($alltotal * $sb_rate) / 100;
 					$additional_bonus = 0;
 				} elseif ($employee_type == "BIDI MAKER") {
-					$wages1 = ($entry_data->unit_1_days * $entry_data->rate1) + ($entry_data->unit_2_days * $entry_data->rate2);
-					$wages2 = ($entry_data->no_of_days == 0) ? 0 : (($wages1 / $entry_data->no_of_days) * $entry_data->leave_with_pay);
-					$total = $wages1 + $wages2;
+					// Formula: No of unit work1*hra_bonus1 + no of unit work2*hra_bonus2 
+					$total = ($entry_data->unit_1_days * $entry_data->hra_bonus1) + ($entry_data->unit_2_days * $entry_data->hra_bonus2);
 
 					$alltotal = $alltotal + $total;
-					$m_bonus = ($entry_data->unit_1_days * $entry_data->bonus1) + ($entry_data->unit_2_days * $entry_data->bonus2);
-					$standard_bonus = $standard_bonus + $m_bonus;
+					$standard_bonus = $alltotal;
 					$additional_bonus = 0;
+					
+					// Collect debug info
+					$debug_info[] = $entry_month . ':' . $entry_data->hra_bonus1 . ':' . $entry_data->hra_bonus2 . ':' . $entry_data->unit_1_days . ':' . $entry_data->unit_2_days . ':' . $total;
 				}
 			}
 			$row .= '####' . $total;
@@ -182,14 +209,20 @@ class Bonussheetmodel extends CI_Model{
 
 	
 		   if($employee_type=="OFFICE STAFF"){
-		$total_payment = round($standard_bonus)+round($additional_bonus);
-		$row .= '####'.$alltotal.'####'.round($standard_bonus).'####'.round($additional_bonus);
-		$row .= '####'.$total_payment;
+				$total_payment = round($standard_bonus)+round($additional_bonus);
+				$row .= '####'.$alltotal.'####'.round($standard_bonus).'####'.round($additional_bonus);
+				$row .= '####'.$total_payment;
+		   }
+		   elseif($employee_type=="BIDI MAKER"){
+				// For Bidi Maker, we only show Total (which is now sum of bonuses)
+				$row .= '####'.$alltotal;
+				// Append debug info at the very end with a special prefix
+				$row .= '####[DEBUG]'.implode('|', $debug_info);
 		   }
 		   else{
-		$total_payment = round($standard_bonus);
-		$row .= '####'.$alltotal.'####'.round($standard_bonus);
-		$row .= '####'.$total_payment;
+				$total_payment = round($standard_bonus);
+				$row .= '####'.$alltotal.'####'.round($standard_bonus);
+				$row .= '####'.$total_payment;
 		   }	
 		
 		

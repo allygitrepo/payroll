@@ -19,13 +19,7 @@ $(document).ready(function() {
   var yyyy1 = (new Date()).getFullYear();
   var yyyy2 = parseInt(yyyy1)-parseInt(1);
   var mnth = (new Date()).getMonth(); // getMonth() is zero-based
-  if(mnth==12)
-  {
-  var mm = 1;	  	  
-  }
-  else{
-  var mm = mnth+1;	  
-  }
+  var mm = mnth + 1;
   if(mm<10)
   {
 	mm = '0'+mm;
@@ -144,9 +138,24 @@ $(document).ready(function() {
 								html += '<td>'+data2[0]+'<br>Member ID :'+data2[1]+'<br>UAN :'+data2[2]+'</td>';																		
 								}
 								else if(k > 2){
-								html += '<td>'+data2[k]+'</td>';					
-								 total[k] = parseInt(total[k])+parseInt(data2[k]);						
-								 
+									if(typeof data2[k] === 'string' && data2[k].startsWith('[DEBUG]')){
+										// Parse and log debug info for Bidi Maker
+										var debugStr = data2[k].substring(7);
+										var monthsData = debugStr.split('|');
+										console.log("%c--- Debug Calculation for " + data2[0] + " ---", "color: blue; font-weight: bold;");
+										monthsData.forEach(function(m){
+											var pts = m.split(':');
+											console.log("Month: " + pts[0]);
+											console.log("  Bonus 1 (bidiroller_wages.hra_bonus1): " + pts[1]);
+											console.log("  Bonus 2 (bidiroller_wages.hra_bonus2): " + pts[2]);
+											console.log("  Unit 1 (bidi_roller_entry.unit_1_days): " + pts[3]);
+											console.log("  Unit 2 (bidi_roller_entry.unit_2_days): " + pts[4]);
+											console.log("  Formula: (" + pts[3] + " * " + pts[1] + ") + (" + pts[4] + " * " + pts[2] + ") = " + pts[5]);
+										});
+									} else {
+										html += '<td>'+data2[k]+'</td>';					
+										total[k] = parseInt(total[k]) + (parseInt(data2[k]) || 0);
+									}
 								}
 							}
 						html += '<td></td></tr>';
@@ -163,7 +172,8 @@ $(document).ready(function() {
 	                html += '</tbody>';
 			                html += '<tfoot><tr><th>Total</th>';
 							for(s=3; s<data2.length; s++){
-									html += '<th>'+total[s]+'</th>';
+								if(typeof data2[s] === 'string' && data2[s].startsWith('[DEBUG]')) continue;
+								html += '<th>'+total[s]+'</th>';
 							}
 							
 			                html += '<th></th>'+
