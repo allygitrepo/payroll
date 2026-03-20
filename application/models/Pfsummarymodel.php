@@ -96,8 +96,6 @@ class Pfsummarymodel extends CI_Model{
 				$no_of_days = $bidiroller->no_of_days;	
 				$leave_with_pay = $bidiroller->leave_with_pay;	
 				
-				$net_wages = $bidiroller->net_wages;		
-				$total_net_wages = $total_net_wages+$net_wages;
 				
 				$unit = $unit_1_days+$unit_2_days;		
 
@@ -166,7 +164,7 @@ class Pfsummarymodel extends CI_Model{
 					$total_eps_wages = $total_eps_wages+round($eps_wages);
 	
 					$a= ($wages * $employer_share)/100;
-					$epf_wages = $a-$eps_wages;
+					$epf_wages = round($pf)-round($eps_wages);
 					$total_epf_wages = $total_epf_wages+round($epf_wages);
 
  					// ESIC Calculation based on Daily Wage threshold
@@ -178,6 +176,7 @@ class Pfsummarymodel extends CI_Model{
  						$esic = 0;
  					}
  					$total_esic = $total_esic + $esic;
+ 					$total_net_wages = $total_net_wages + ($wages - round($pf) - $esic);
 
 
 					
@@ -217,17 +216,6 @@ class Pfsummarymodel extends CI_Model{
 
 		
 		}
-		$row = '####';	   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';
-		$row .= '####';	   
-		$row .= '####';	   
-		$row .= '####'.$month_year;	   
-	array_push($result,$row);
 		
 		$row = 'BIDI ROLLER TOTAL';	   
 		$row .= '####'.$bidi_total_employee;   
@@ -262,8 +250,6 @@ class Pfsummarymodel extends CI_Model{
 				$total_employee = $total_employee+1;
 				$office_id = $officestaff->office_staff_salary_id;			
 				
-				$net_wages = $officestaff->net_wages;		
-				$total_net_wages = $total_net_wages+$net_wages;
 				
 
 				$wages = $officestaff->gross_wages;	
@@ -318,7 +304,7 @@ class Pfsummarymodel extends CI_Model{
 					$total_eps_wages = $total_eps_wages+round($eps_wages);
 	
 					$a= ($total * $employer_share)/100;
- 					$epf_wages = $a-$eps_wages;
+ 					$epf_wages = round($pf)-round($eps_wages);
  					$total_epf_wages = $total_epf_wages+round($epf_wages);
  
  					// ESIC Calculation for Office Staff based on Daily Wage threshold
@@ -331,22 +317,11 @@ class Pfsummarymodel extends CI_Model{
  						$esic = 0;
  					}
  					$total_esic = $total_esic + $esic;
+ 					$total_net_wages = $total_net_wages + ($wages - round($pf) - $esic);
 
    
 
 			}
-			$row = '####';	   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   		$row .= '####';
- 		$row .= '####';	   
- 		$row .= '####';	   
- 		$row .= '####';	   
- 				$row .= '####'.$month_year;	   
-	array_push($result,$row);
-
 	$row = 'OFFICE STAFF TOTAL';	   
 		$row .= '####'.$total_employee;	   
 		$row .= '####';	   
@@ -399,8 +374,6 @@ class Pfsummarymodel extends CI_Model{
 		}
 		
 				
-				$net_wages = $packers->net_wages;		
-				$total_net_wages = $total_net_wages+$net_wages;
 				
 
 				$wages = ($unit_1*$rate1)+($unit_2*$rate2)+($unit_3*$rate3)+($unit_4*$rate4);
@@ -451,7 +424,7 @@ class Pfsummarymodel extends CI_Model{
 			$eps_wages = ($eps_total*$ac10)/100;
 					$total_eps_wages = $total_eps_wages+round($eps_wages);
 					$a= ($total * $employer_share)/100;
- 					$epf_wages = $a-$eps_wages;
+ 					$epf_wages = round($pf)-round($eps_wages);
  					$total_epf_wages = $total_epf_wages+round($epf_wages);
  
  					// ESIC Calculation for Packing Staff based on Daily Wage threshold
@@ -463,18 +436,8 @@ class Pfsummarymodel extends CI_Model{
  						$esic = 0;
  					}
  					$total_esic = $total_esic + $esic;
+ 					$total_net_wages = $total_net_wages + ($total - round($pf) - $esic);
 			}
-			$row = '####';	   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';
-		$row .= '####';	   
-		$row .= '####';	   
-		$row .= '####'.$month_year;	   
-	array_push($result,$row);
 
 	$row = 'PACKING STAFF TOTAL';	   
 		$row .= '####'.$total_employee;	   
@@ -489,29 +452,6 @@ class Pfsummarymodel extends CI_Model{
  		$row .= '####'.$month_year;	   
  	array_push($result,$row);
 	
-			$row = '####';	   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';
-		$row .= '####';	   
-		$row .= '####';	   
-		$row .= '####'.$month_year;
-	array_push($result,$row);
-
-			$row = '####';	   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';   
-		$row .= '####';
-		$row .= '####';	   
-		$row .= '####';	   
-		$row .= '####'.$month_year;
-	array_push($result,$row);
 
 	
 				return $result;	
