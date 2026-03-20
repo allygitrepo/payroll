@@ -106,60 +106,49 @@ class Bidirollewagesmodel extends CI_Model{
 
 		if($month_year=="")
 		{
-						$list = array();
-
 			$month_check = 0;
 			
 			$datestring='first day of last month';
 			$dt=date_create($datestring);
-			$lmfd =  $dt->format('Y-m-d'); 
+			$month_start =  $dt->format('Y-m-d'); 
 			
 			$datestring='last day of last month';
 			$dt=date_create($datestring);
-			$lmld =  $dt->format('Y-m-d'); 
+			$month_end =  $dt->format('Y-m-d'); 
 			
-			$date1 = explode("-",$lmfd);		
+			$date1 = explode("-",$month_start);		
 
 			$month = $date1[1];	   
 			$year = $date1[0];	   
 			$month_year = $month."/".$year;
 			
-		for($d=1; $d<=31; $d++)
-		{
-			$time=mktime(12, 0, 0, $month, $d, $year);          
-			if (date('m', $time)==$month)       
-				$list[]=date('Y-m-d', $time);
-		}
-		$n = count($list);
-		$month_day = $n;
-
-			
-
+			$list = array();
+			for($d=1; $d<=31; $d++)
+			{
+				$time=mktime(12, 0, 0, $month, $d, $year);          
+				if (date('m', $time)==$month)       
+					$list[]=date('Y-m-d', $time);
+			}
+			$month_days = count($list);
 		}
 		else{
-			
 			$month_check = 1;
 			
+			$date11 = explode("/",$month_year);	
+			$month = $date11[0];
+			$year = $date11[1];
 			
-		$list=array();
-		
-		$date11 = explode("/",$month_year);	
-		$month = $date11[0];
-		$year = $date11[1];
-		
-		for($d=1; $d<=31; $d++)
-		{
-			$time=mktime(12, 0, 0, $month, $d, $year);          
-			if (date('m', $time)==$month)       
-				$list[]=date('Y-m-d', $time);
-		}
-		$n = count($list);
-		$month_day = $n;
+			$list=array();
+			for($d=1; $d<=31; $d++)
+			{
+				$time=mktime(12, 0, 0, $month, $d, $year);          
+				if (date('m', $time)==$month)       
+					$list[]=date('Y-m-d', $time);
+			}
+			$month_days = count($list);
 
-		$lmfd = $list[0];		
-		$lmld = $list[$n-1];		
-
-			
+			$month_start = $list[0];		
+			$month_end = $list[$month_days-1];		
 		}
 //	select em.member_id,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN from employee_master em where em.employee_type="BIDI MAKER" and em.status="1" or (em.member_id IN (select rm.member_id from resignation_master rm where rm.leaving_date between "2018-06-01" and "2018-06-31") ) order by em.member_id ASC
 
@@ -179,6 +168,10 @@ class Bidirollewagesmodel extends CI_Model{
 		}
 		foreach($query->result() as $kyc)
 		{
+			$lmfd = $month_start;
+			$lmld = $month_end;
+			$n = $month_days;
+			
 		   $status = $kyc->status;
 		   $member_id = $kyc->member_id;
 		   $emp_id = $kyc->emp_id;

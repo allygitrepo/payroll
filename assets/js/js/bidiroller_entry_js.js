@@ -53,20 +53,37 @@ $(document).ready(function() {
 				console.log('res :', data);
 				console.log('data', data);
 
-				var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%"><thead><tr><th  style="display:none;"  >Employee id</th><th style="white-space:nowrap;" >Employee Name.</th><!--<th>UAN</th>-->'+
-				'<th >No. of Unit worked</th>'+  			
-				'<th >No. of Unit worked</th>'+  			
-				'<th >No. of Days worked</th>'+  			
- 				'<th>Leave With Pay</th>'+  			
-				'<th>Wages</th>'+  			
-				'<th>Bonus</th>'+  			
-				'<th>Total</th>'+  			
-				'<th>PF</th>'+  			
-				'<th>PT</th>'+  			
-				'<th>ESIC</th>'+  			
-				'<th>Net Wages</th>'+  			
-
-					'</tr></thead><tbody id="">';
+				var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%"><thead><tr>' +
+					'<th style="display:none;">Employee id</th>' + // 0: data1[0]
+					'<th style="display:none;">Name hidden</th>' + // 1: data1[1]
+					'<th style="display:none;">UAN hidden</th>' +  // 2: data1[2]
+					'<th style="white-space:nowrap;">Employee Name.</th>' + // 3: Visible name info
+					'<th>No. of Unit worked</th>' + // 4: Unit1
+					'<th>No. of Unit worked</th>' + // 5: Unit2
+					'<th style="display:none;">Rem Days</th>' + // 6: data1[4]
+					'<th>No. of Days worked</th>' + // 7: worked_days
+					'<th>Leave With Pay</th>' + // 8: leave_with_pay
+					'<th style="display:none;">BR ID</th>' + // 9: data1[5]
+					'<th style="display:none;">Rate1</th>' + // 10: data1[6]
+					'<th style="display:none;">Rate2</th>' + // 11: data1[7]
+					'<th style="display:none;">Bonus1</th>' + // 12: data1[8]
+					'<th style="display:none;">Bonus2</th>' + // 13: data1[9]
+					'<th style="display:none;">PF Rate</th>' + // 14: data1[10]
+					'<th style="display:none;">AC10</th>' + // 15: data1[11]
+					'<th>Wages</th>' + // 16: wages
+					'<th>Bonus</th>' + // 17: bonus
+					'<th>Total</th>' + // 18: total
+					'<th>PF</th>' + // 19: pf
+					'<th>PT</th>' + // 20: pt
+					'<th style="display:none;">PT ID</th>' + // 21: data1[30]
+					'<th>ESIC</th>' + // 22: esic
+					'<th>Net Wages</th>' + // 23: net_wages
+					'<th style="display:none;">AC1Male</th>' + // 24: data1[22]
+					'<th style="display:none;">NCP Days</th>' + // 25: data1[23]
+					'<th style="display:none;">Status</th>' + // 26: data1[24]
+					'<th style="display:none;">Member ID</th>' + // 27: data1[21]
+					'<th style="display:none;">Total Days</th>' + // 28: data1[27]
+					'</tr></thead><tbody>';
 		            var i;
 					
 					
@@ -93,35 +110,35 @@ $(document).ready(function() {
 //					$('#leave_without_pay').val(data1[4]);
 	//	            for(j=0;j<data1.length;j++){
 		                html += '<tr>'+
-								'<td  style="display:none;" >'+data1[0]+'</td>'+
-								'<td id="name'+data1[0]+'"style="display:none;"  style="white-space:nowrap;" >'+data1[1]+'</td>'+
-								'<td style="display:none;" id="uan'+data1[0]+'"  >'+data1[2]+'</td>'+
-				'<td style="whiteSpace:nowrap;width:20%;"  >'+data1[1]+'<br>'+data1[21]+'<br>'+data1[2]+'</td>'+
-				'<td><center><input type="text" name="'+data1[0]+'" id="unit1_'+data1[0]+'" class="unit_worked_days1 form-control" value="'+data1[17]+'" style="width:70%;" /></center></td>'+
-				'<td><center><input type="text" name="'+data1[0]+'" id="unit2_'+data1[0]+'" class="unit_worked_days2 form-control" value="'+data1[18]+'" style="width:70%;" /></center></td>'+
-				'<td id="remaining_days'+data1[0]+'" style="display:none;">'+data1[4]+'</td>'+
-				'<td><center><input type="text"  name="'+data1[0]+'"  id="worked_days'+data1[0]+'" class="worked_days form-control" disabled value="'+data1[19]+'" style="width:70%;" /></center></td>'+
-				'<td><center><input type="text"  name="'+data1[0]+'"  id="leave_with_pay'+data1[0]+'" class="leave_with_pay form-control" value="'+data1[20]+'" style="width:70%;" /></center></td>'+
-				'<td id="br_id'+data1[0]+'" style="display:none;">'+data1[5]+'</td>'+
-				'<td id="rate1'+data1[0]+'" style="display:none;">'+data1[6]+'</td>'+
-				'<td id="rate2'+data1[0]+'" style="display:none;">'+data1[7]+'</td>'+
-				'<td id="bonus1_'+data1[0]+'" style="display:none;">'+data1[8]+'</td>'+
-				'<td id="bonus2_'+data1[0]+'" style="display:none;">'+data1[9]+'</td>'+
-				'<td id="pf_rate'+data1[0]+'" style="display:none;">'+data1[10]+'</td>'+
-				'<td id="ac10'+data1[0]+'" style="display:none;">'+data1[11]+'</td>'+
-								'<td id="wages'+data1[0]+'">'+data1[12]+'</td>'+
-								'<td id="bonus'+data1[0]+'">'+data1[13]+'</td>'+
-								'<td id="total'+data1[0]+'">'+data1[14]+'</td>'+
-								'<td id="pf'+data1[0]+'">'+data1[15]+'</td>'+
-								'<td id="pt'+data1[0]+'">'+data1[29]+'</td>'+
-								'<td style="display:none;" id="pt_id'+data1[0]+'">'+data1[30]+'</td>'+
-								'<td id="esic'+data1[0]+'">'+data1[28]+'</td>'+
-								'<td id="net_wages'+data1[0]+'">'+data1[16]+'</td>'+
-								'<td  style="display:none;" id="ac1male'+data1[0]+'">'+data1[22]+'</td>'+
-								'<td  style="display:none;" id="ncp_days'+data1[0]+'">'+data1[23]+'</td>'+
-								'<td  style="display:none;" id="status'+data1[0]+'">'+data1[24]+'</td>'+
-								'<td  style="display:none;" id="member_id_'+data1[0]+'">'+data1[21]+'</td>'+
-								'<td  style="display:none;" id="total_no_of_days_'+data1[0]+'">'+data1[27]+'</td>'+
+								'<td style="display:none;">'+data1[0]+'</td>'+ // 0
+								'<td id="name'+data1[0]+'" style="display:none;">'+data1[1]+'</td>'+ // 1
+								'<td style="display:none;" id="uan'+data1[0]+'">'+data1[2]+'</td>'+ // 2
+								'<td style="whiteSpace:nowrap;width:20%;">'+data1[1]+'<br>'+data1[21]+'<br>'+data1[2]+'</td>'+ // 3
+								'<td><center><input type="text" name="'+data1[0]+'" id="unit1_'+data1[0]+'" class="unit_worked_days1 form-control" value="'+data1[17]+'" style="width:70%;" /></center></td>'+ // 4
+								'<td><center><input type="text" name="'+data1[0]+'" id="unit2_'+data1[0]+'" class="unit_worked_days2 form-control" value="'+data1[18]+'" style="width:70%;" /></center></td>'+ // 5
+								'<td id="remaining_days'+data1[0]+'" style="display:none;">'+data1[4]+'</td>'+ // 6
+								'<td><center><input type="text" name="'+data1[0]+'" id="worked_days'+data1[0]+'" class="worked_days form-control" disabled value="'+data1[19]+'" style="width:70%;" /></center></td>'+ // 7
+								'<td><center><input type="text" name="'+data1[0]+'" id="leave_with_pay'+data1[0]+'" class="leave_with_pay form-control" value="'+data1[20]+'" style="width:70%;" /></center></td>'+ // 8
+								'<td id="br_id'+data1[0]+'" style="display:none;">'+data1[5]+'</td>'+ // 9
+								'<td id="rate1'+data1[0]+'" style="display:none;">'+data1[6]+'</td>'+ // 10
+								'<td id="rate2'+data1[0]+'" style="display:none;">'+data1[7]+'</td>'+ // 11
+								'<td id="bonus1_'+data1[0]+'" style="display:none;">'+data1[8]+'</td>'+ // 12
+								'<td id="bonus2_'+data1[0]+'" style="display:none;">'+data1[9]+'</td>'+ // 13
+								'<td id="pf_rate'+data1[0]+'" style="display:none;">'+data1[10]+'</td>'+ // 14
+								'<td id="ac10'+data1[0]+'" style="display:none;">'+data1[11]+'</td>'+ // 15
+								'<td id="wages'+data1[0]+'">'+data1[12]+'</td>'+ // 16
+								'<td id="bonus'+data1[0]+'">'+data1[13]+'</td>'+ // 17
+								'<td id="total'+data1[0]+'">'+data1[14]+'</td>'+ // 18
+								'<td id="pf'+data1[0]+'">'+data1[15]+'</td>'+ // 19
+								'<td id="pt'+data1[0]+'">'+data1[29]+'</td>'+ // 20
+								'<td style="display:none;" id="pt_id'+data1[0]+'">'+data1[30]+'</td>'+ // 21
+								'<td id="esic'+data1[0]+'">'+data1[28]+'</td>'+ // 22
+								'<td id="net_wages'+data1[0]+'">'+data1[16]+'</td>'+ // 23
+								'<td style="display:none;" id="ac1male'+data1[0]+'">'+data1[22]+'</td>'+ // 24
+								'<td style="display:none;" id="ncp_days'+data1[0]+'">'+data1[23]+'</td>'+ // 25
+								'<td style="display:none;" id="status'+data1[0]+'">'+data1[24]+'</td>'+ // 26
+								'<td style="display:none;" id="member_id_'+data1[0]+'">'+data1[21]+'</td>'+ // 27
+								'<td style="display:none;" id="total_no_of_days_'+data1[0]+'">'+data1[27]+'</td>'+ // 28
 				                '</tr>';
 								
 						if(parseInt(data1[25])>0){
@@ -153,20 +170,38 @@ $(document).ready(function() {
 
 		            }
 					html += '</tbody><tfoot><tr>'+
-				'<th >Total </th>'+
-				'<th id="total_data_1">'+data_1+'</th>'+ 			
-				'<th id="total_data_2">'+data_2+'</th>'+		
-				'<th id="total_data_3">'+data_3+'</th>'+
-				'<th id="total_data_4">'+data_4+'</th>'+
-				'<th id="total_data_5">'+data_5+'</th>'+ 			
-				'<th id="total_data_6">'+data_6+'</th>'+ 			
-				'<th id="total_data_7">'+data_7+'</th>'+
-				'<th id="total_data_8">'+data_8+'</th>'+		
-				'<th id="total_data_pt">'+(data_pt || 0)+'</th>'+		
-				'<th id="total_data_9">'+data_9+'</th>'+		
-				'<th id="total_data_10">'+data_10+'</th>'+  			
-				'</tr></tfoot>';
+						'<th style="display:none;"></th>' + // 0: id
+						'<th style="display:none;"></th>' + // 1: name
+						'<th style="display:none;"></th>' + // 2: uan
+						'<th >Total</th>' + // 3: Visible name
+						'<th id="total_data_1">'+data_1+'</th>'+ // 4: Unit1
+						'<th id="total_data_2">'+data_2+'</th>'+ // 5: Unit2
+						'<th style="display:none;"></th>'+ // 6: remaining
+						'<th id="total_data_3">'+data_3+'</th>'+ // 7: worked
+						'<th id="total_data_4">'+data_4+'</th>'+ // 8: leave
+						'<th style="display:none;"></th>'+ // 9: br_id
+						'<th style="display:none;"></th>'+ // 10: rate1
+						'<th style="display:none;"></th>'+ // 11: rate2
+						'<th style="display:none;"></th>'+ // 12: bonus1
+						'<th style="display:none;"></th>'+ // 13: bonus2
+						'<th style="display:none;"></th>'+ // 14: pf_rate
+						'<th style="display:none;"></th>'+ // 15: ac10
+						'<th id="total_data_5">'+data_5+'</th>'+ // 16: wages
+						'<th id="total_data_6">'+data_6+'</th>'+ // 17: bonus
+						'<th id="total_data_7">'+data_7+'</th>'+ // 18: total
+						'<th id="total_data_8">'+data_8+'</th>'+ // 19: pf
+						'<th id="total_data_pt">'+(data_pt || 0)+'</th>'+ // 20: pt
+						'<th style="display:none;"></th>'+ // 21: pt_id
+						'<th id="total_data_9">'+data_9+'</th>'+ // 22: esic
+						'<th id="total_data_10">'+data_10+'</th>'+ // 23: net
+						'<th style="display:none;"></th>'+ // 24: ac1male
+						'<th style="display:none;"></th>'+ // 25: ncp
+						'<th style="display:none;"></th>'+ // 26: status
+						'<th style="display:none;"></th>'+ // 27: member_id
+						'<th style="display:none;"></th>'+ // 28: total_days
+						'</tr></tfoot>';
 	                html += '</table>';
+					$("#table_data1").html(html);
 	   var msg = "Bidi Roller Entry List";
     						$('#example1').DataTable({
 							'scrollX': true,
