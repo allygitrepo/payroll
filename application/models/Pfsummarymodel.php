@@ -86,7 +86,7 @@ class Pfsummarymodel extends CI_Model{
  			$total_epf_wages = 0;
  			$total_net_wages = 0;
  			$total_esic = 0;
- 			$query1 = $this->db->query('select be.leave_with_pay,em.gender,be.net_wages,be.no_of_days,be.unit_1_days,be.unit_2_days,be.bidiroller_wages_id,be.gross_wages,be.epf_wages,be.eps_wages from employee_master em inner join bidi_roller_entry be on be.employee_id=em.emp_id where em.employee_type="BIDI MAKER" and em.status="1" and  em.contractor="'.$contractor_id.'" and be.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
+ 			$query1 = $this->db->query('select be.leave_with_pay,em.gender,be.net_wages,be.no_of_days,be.unit_1_days,be.unit_2_days,be.bidiroller_wages_id,be.gross_wages,be.epf_wages,be.eps_wages from employee_master em inner join bidi_roller_entry be on be.employee_id=em.emp_id where em.employee_type="BIDI MAKER" and  em.contractor="'.$contractor_id.'" and be.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
 			foreach($query1->result() as $bidiroller)
 			{
 				$total_employee = $total_employee+1;

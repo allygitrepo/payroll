@@ -138,14 +138,14 @@ $title = "Bidi Roller Entry";
     $('#example1').dataTable({
        'scrollX': true,
        'bDestroy': true,
-        'paging':   true,  // Table pagination
+        'paging':   false,  // Table pagination
         'ordering': true,  // Column ordering
         'info':     true,  // Bottom left status text
  //       'responsive': true, // https://datatables.net/extensions/responsive/examples/
         // Text translation options
         // Note the required keywords between underscores (e.g _MENU_)
         oLanguage: {
-            sSearch:      'Search all columns:',
+            // sSearch:      'Search all columns:',
             sLengthMenu:  '_MENU_ records per page',
             info:         'Showing page _PAGE_ of _PAGES_',
             zeroRecords:  'Nothing found - sorry',
