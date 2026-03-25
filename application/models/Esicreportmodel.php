@@ -49,7 +49,7 @@ class Esicreportmodel extends CI_Model{
 		$company_id = $_SESSION['company_id'];
 		// 1. Fetch all employees who have a salary entry in this month OR a resignation record in this month
 		$employees_query = $this->db->query("
-			SELECT DISTINCT em.emp_id, em.name_as_aadhaar, em.ip_number, em.employee_type, em.member_id 
+			SELECT DISTINCT em.emp_id, em.name_as_aadhaar, em.ip_number, em.employee_type, em.member_id, em.UAN 
 			FROM employee_master em
 			LEFT JOIN office_staff_entry ose ON ose.employee_id = em.emp_id AND ose.month_year = ?
 			LEFT JOIN packers_entry pe ON pe.employee_id = em.emp_id AND pe.month_year = ?
@@ -88,14 +88,12 @@ class Esicreportmodel extends CI_Model{
 			$bidi_entries[$row->employee_id] = $row;
 		}
 
-		// Batch fetch resignation reason codes for the selected month only
-		$resignation_codes = array();
-		// Filter by month_year to ensure only relevant resignations are shown for this month
-		$res_query = $this->db->query("SELECT member_id, reason FROM resignation_master WHERE DATE_FORMAT(leaving_date, '%m/%Y') = ?", array($month_year));
+		// Batch fetch resignation records for the selected month only
+		$resignation_details = array();
+		$res_query = $this->db->query("SELECT member_id, reason, leaving_date FROM resignation_master WHERE DATE_FORMAT(leaving_date, '%m/%Y') = ?", array($month_year));
 		if ($res_query) {
 			foreach($res_query->result() as $res_row) {
-				// Use the 'reason' field which is known to exist in resignation_master
-				$resignation_codes[$res_row->member_id] = $res_row->reason;
+				$resignation_details[$res_row->member_id] = $res_row;
 			}
 		}
 
@@ -124,38 +122,41 @@ class Esicreportmodel extends CI_Model{
 				$no_days_working = $entry->no_of_days;
 			}
 			
-			// Logic: Always show if they were found in our filtered query
+			// Always show gross wages from the entry
 			$gross_wages = $entry ? $entry->gross_wages : 0;
 			
-			// Default reason code 0 (active) or 11 (no work record)
-			$reason_code = ($entry && $no_days_working > 0) ? "0" : "11";
-
-			// Override with resignation code if appropriate
-			if (isset($resignation_codes[$employee->member_id])) {
-				$res_code = (string)$resignation_codes[$employee->member_id];
-				if ($res_code == '2' || $res_code == 'C') {
-					$reason_code = "2";
-				} elseif ($res_code == '3' || $res_code == 'S') {
-					$reason_code = "3";
-				} elseif ($res_code == '5' || $res_code == 'D') {
-					$reason_code = "5";
-				} elseif ($res_code == '0') {
-					$reason_code = "0";
-				} else {
-					$reason_code = $res_code;
-				}
-			}
-
-			// Apply Final UI Display Rules
-			$display_days = $no_days_working;
+			// Instruction 2: Number of days must be a whole number. Fractions rounded up to next higher integer.
+			$display_days = ceil((float)$no_days_working);
 			$display_wages = $gross_wages;
-			$display_lmld = $lmld;
+			$display_lmld = ""; // Default to blank
 
-			// Strict Display Rule: If Reason Code = 0, hide Days, Wages, and Last Working Day.
-			if ($reason_code == "0") {
-				$display_days = "";
-				$display_wages = "";
+			// Requirement 1: If days > 0 and wages > 0, reason code and last working day should be blank.
+			if ($display_days > 0 && $display_wages > 0) {
+				$reason_code = "";
 				$display_lmld = "";
+			} else {
+				// Requirement 2: If either is 0, check into Resignation
+				if (isset($resignation_details[$employee->member_id])) {
+					$res_info = $resignation_details[$employee->member_id];
+					$res_code = (string)$res_info->reason;
+					
+					// Map 'C' -> 2, 'S' -> 3, 'D' -> 5
+					if ($res_code == 'C' || $res_code == '2') {
+						$reason_code = "2";
+					} elseif ($res_code == 'S' || $res_code == '3') {
+						$reason_code = "3";
+					} elseif ($res_code == 'D' || $res_code == '5') {
+						$reason_code = "5";
+					} else {
+						$reason_code = $res_code; // Fallback to original if not C, S, D
+					}
+					
+					$display_lmld = date("d/m/Y", strtotime($res_info->leaving_date));
+				} else {
+					// Requirement: If no resignation data found, fill 0 in both columns
+					$reason_code = "0";
+					$display_lmld = "0";
+				}
 			}
 			
 			// Format: IP Number####IP Name####No of Days####Total Wages####Reason Code####Last Working Day####Month Year
