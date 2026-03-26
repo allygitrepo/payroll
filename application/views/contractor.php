@@ -153,6 +153,19 @@
 <div class="panel-footer">
 <div id="wait" style="display:;width:100px;height:100px;position:absolute;top:180%;left:45%;padding:2px;"><img src="<?php echo base_url('assets/images/loader.gif'); ?>" width="100" height="100" /><br><center><h5>Loading...</h5></center></div>
 
+<div class="row" style="margin-bottom: 10px;">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Status Filter</label>
+            <select id="status_filter" class="form-control">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="All">All</option>
+            </select>
+        </div>
+    </div>
+</div>
+
                            <div class="table-responsive" id="table_data1">
 										                     
           <div class="table-responsive"  id="show_contractor_list">

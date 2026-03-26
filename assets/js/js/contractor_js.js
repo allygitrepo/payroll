@@ -86,14 +86,16 @@ $(document).on('submit','#contractor_form',function(e){
 		
 		//function show all product
 		function show_contractor(){
+			        var status_filter = $('#status_filter').val();
 			        $("#wait").css("display", "block");
 
 			
 		    $.ajax({
-		        type  : 'ajax',
+		        type  : 'POST',
 				url  : baseurl+"contractorcontroller/view_contractor",
 		        async : false,
 		        dataType : 'json',
+				data : {status: status_filter},
 		        success : function(data){
 				
 
@@ -322,7 +324,9 @@ $(document).on('blur','#name',function(){
 
  });
 
-
+	$(document).on('change','#status_filter',function(){
+		show_contractor();
+	});
 
 });
 	

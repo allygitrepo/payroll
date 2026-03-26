@@ -22,7 +22,8 @@ class Contractorcontroller extends CI_Controller {
 	}
 	
 		public function view_contractor(){
-		  $data=$this->Contractormodel->contractor_view();
+		  $status = $this->input->post('status');
+		  $data=$this->Contractormodel->contractor_view($status);
         echo json_encode($data);	
 	}
 		public function view_only_contractor(){
