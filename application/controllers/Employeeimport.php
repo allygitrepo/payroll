@@ -49,7 +49,7 @@ $count++;
 //echo $count;
 //$highestColumm = $highestColumm++;
 //echo $count;
-for ($row = 3; $row <= $highestRow; $row++) {
+for ($row = 2; $row <= $highestRow; $row++) {
 //    $cell = $worksheet->getCell($column.$row);
 	//	echo $nrColumns;
 	
@@ -110,9 +110,9 @@ readfile($file);
 			$data2 = "";
 		
  		$column = 'A';
- 		$row = 3;
+ 		$row = 2;
  		$date = "";
- 		for ($row = 3; $row <= $highestRow; $row++) {
+ 		for ($row = 2; $row <= $highestRow; $row++) {
 		$result = array();
 			
 			for ($column = 'A'; $column !='U'; $column++) {
