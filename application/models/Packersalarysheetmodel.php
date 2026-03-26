@@ -211,12 +211,12 @@ class Packersalarysheetmodel extends CI_Model{
 			$pt = $tax_rate;
 			
 			if($ip_number != "" && $ip_number != "0" && $ip_number != "NOT AVAILABLE"){
-				$esic = round($total * 0.75 / 100);
+				$esic = ceil($total * 0.75 / 100);
 			}else{
 				$esic = 0;
 			}
 			
-			$net_wages = ($total)-($pt+$pf+$esic);
+			$net_wages = round($total)-(round($pt)+round($pf)+$esic);
 
 		}
 //					$a= ($total * $ac1er)/100;
