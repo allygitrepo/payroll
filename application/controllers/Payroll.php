@@ -794,38 +794,44 @@ class Payroll extends CI_Controller {
 
 	public function preview_uan_ip_mapping()
 	{
-		log_message('debug', 'UAN-IP Mapping: Preview started');
-		$this->load->library('excel');
-		$this->load->model('Employeemodel');
-		
-		if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != 0) {
-			log_message('error', 'UAN-IP Mapping: File upload error or no file. Error code: ' . ($_FILES["file"]["error"] ?? 'None'));
-			echo json_encode(array('error' => 'No file uploaded or upload error'));
-			return;
-		}
+		header('Content-Type: application/json');
+		try {
+			if (!class_exists('ZipArchive')) {
+				echo json_encode(array(
+					"status" => false, 
+					"type" => "zip_error", 
+					"message" => "ZipArchive extension is not enabled on server"
+				));
+				return;
+			}
 
-		$file_directory = "uploads/";
-		if (!is_dir($file_directory)) {
-			mkdir($file_directory, 0777, true);
-		}
-		$new_file_name = $_FILES["file"]["name"];
-		log_message('debug', 'UAN-IP Mapping: File name: ' . $new_file_name);
-		
-		if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
-		{   
-			$file_path = $file_directory . $new_file_name;
-			log_message('debug', 'UAN-IP Mapping: File moved to ' . $file_path);
+			log_message('debug', 'UAN-IP Mapping: Preview started');
+			$this->load->library('excel');
+			$this->load->model('Employeemodel');
+			
+			if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != 0) {
+				log_message('error', 'UAN-IP Mapping: File upload error or no file. Error code: ' . ($_FILES["file"]["error"] ?? 'None'));
+				echo json_encode(array(
+					'status' => false,
+					'type' => 'upload_error',
+					'message' => 'No file uploaded or upload error'
+				));
+				return;
+			}
 
-			try {
+			$file_directory = "uploads/";
+			if (!is_dir($file_directory)) {
+				mkdir($file_directory, 0777, true);
+			}
+			$new_file_name = $_FILES["file"]["name"];
+			log_message('debug', 'UAN-IP Mapping: File name: ' . $new_file_name);
+			
+			if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
+			{   
+				$file_path = $file_directory . $new_file_name;
+				log_message('debug', 'UAN-IP Mapping: File moved to ' . $file_path);
+
 				$file_type	= PHPExcel_IOFactory::identify($file_path);
-				
-				if ($file_type == 'Excel2007' && !class_exists('ZipArchive')) {
-					log_message('error', 'UAN-IP Mapping: ZipArchive class not found for Excel2007 file.');
-					echo json_encode(array('error' => 'PHP ZipArchive extension is not enabled. This is required for .xlsx files. Please enable it in Laragon or save your file as "Excel 97-2003 Workbook (.xls)" and try again.'));
-					unlink($file_path);
-					return;
-				}
-
 				$objReader	= PHPExcel_IOFactory::createReader($file_type);
 				$objPHPExcel = $objReader->load($file_path);
 				
@@ -848,14 +854,27 @@ class Payroll extends CI_Controller {
 				}
 				unlink($file_path);
 				log_message('debug', 'UAN-IP Mapping: Preview data count: ' . count($preview_data));
-				echo json_encode($preview_data);
-			} catch (Exception $e) {
-				log_message('error', 'UAN-IP Mapping: Error processing Excel: ' . $e->getMessage());
-				echo json_encode(array('error' => 'Error processing Excel: ' . $e->getMessage()));
+				echo json_encode(array(
+					'status' => true,
+					'data' => $preview_data
+				));
+			} else {
+				log_message('error', 'UAN-IP Mapping: Failed to move uploaded file');
+				echo json_encode(array(
+					'status' => false,
+					'type' => 'upload_error',
+					'message' => 'Failed to move uploaded file'
+				));
 			}
-		} else {
-			log_message('error', 'UAN-IP Mapping: Failed to move uploaded file');
-			echo json_encode(array('error' => 'Failed to move uploaded file'));
+		} catch (Throwable $e) {
+			log_message('error', 'UAN-IP Mapping Exception: ' . $e->getMessage());
+			echo json_encode(array(
+				"status" => false,
+				"type" => "exception",
+				"message" => $e->getMessage(),
+				"file" => $e->getFile(),
+				"line" => $e->getLine()
+			));
 		}
 	}
 

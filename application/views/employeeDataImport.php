@@ -71,20 +71,43 @@ $title = "Employee Import";
 	 
 	 
     $(document).on("submit","#excelimport_form",function(e){
-			e.preventDefault();
-					$.ajax({
-					url:"<?php echo base_url(); ?>Employeeimport/import_employee_file",
-					method:"POST",
-					data:new FormData(this),
-					contentType:false,
-					cache:false,
-					processData:false,
-					success:function(data){
-//						$('#update_error').html('Employee Not Found : '+data);
-					$().toastmessage('showSuccessToast', "Employee Data Import Successfully");
-					}
-					})
+        e.preventDefault();
+        
+        var fileName = $('#file').get(0).files[0].name;
+        console.log("Employee Import started");
+        console.log("Processing file:", fileName);
+
+        $.ajax({
+            url:"<?php echo base_url(); ?>Employeeimport/import_employee_file",
+            method:"POST",
+            data:new FormData(this),
+            contentType:false,
+            cache:false,
+            processData:false,
+            success:function(response){
+                console.log("Employee Import Response:", response);
+                
+                if (response.status === false) {
+                    console.error("Error Type:", response.type);
+                    console.error("Message:", response.message);
+                    
+                    if (response.type === "zip_error") {
+                        alert("Server issue: Zip extension not enabled");
+                    } else {
+                        $().toastmessage('showErrorToast', response.message || "An error occurred during import");
+                    }
+                } else {
+                    $().toastmessage('showSuccessToast', "Employee Data Import Successfully");
+                    console.log("Import Details:", response.details);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX error:", error);
+                console.error("XHR response:", xhr.responseText);
+                $().toastmessage('showErrorToast', "Server error during import. Check console for details.");
+            }
         });
+    });
 
 });
  

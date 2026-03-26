@@ -92,69 +92,91 @@ readfile($file);
 	
 	
 	public function import_employee_file(){
-		
-		$file_info = pathinfo($_FILES["file"]["name"]);
-		$file_directory = "uploads/";
-		$new_file_name = $_FILES["file"]["name"];
-		
-		if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
-		{   
+		header('Content-Type: application/json');
+		try {
 			if (!class_exists('ZipArchive')) {
-				echo json_encode(array('status' => 'error', 'message' => 'PHP ZipArchive extension is not enabled on this server. Please enable it to import Excel files.'));
+				echo json_encode(array(
+					"status" => false,
+					"type" => "zip_error",
+					"message" => "ZipArchive extension is not enabled on server"
+				));
 				return;
 			}
-			$file_type	= PHPExcel_IOFactory::identify($file_directory . $new_file_name);
-			$objReader	= PHPExcel_IOFactory::createReader($file_type);
-			$objPHPExcel = $objReader->load($file_directory . $new_file_name);
-			$sheet_data	= $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-			ini_set('precision', 20);
-			
-		$highestColumm = $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
-		$highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
-	//	$highestRow = $sheet_data['totalRows'];
-//echo count($sheet_data);
-					$objReader->setReadDataOnly(false);
-//echo $highestRow;
-			$data2 = "";
-		
- 		$column = 'A';
- 		$row = 2;
- 		$date = "";
- 		for ($row = 2; $row <= $highestRow; $row++) {
-		$result = array();
-			
-			for ($column = 'A'; $column !='U'; $column++) {
-				if(($column=='H')||($column=='I')){
-				if($column=='H'){ $column_id = 7;  }	
-				if($column=='I'){ $column_id = 8;  }
 
-				$cell1 = $objPHPExcel->setActiveSheetIndex(0)->getCell($column.$row);	
-				
-				if((trim($cell1)!="")&&($cell1!="NOT AVAILABLE"))
-				{
-					$cell = date('Y-m-d',PHPExcel_Shared_Date::ExcelToPHP($objPHPExcel->setActiveSheetIndex(0)->getCellByColumnAndRow($column_id,$row)->getValue()));
-					
-				}
-				else{
-					$cell = "";
-				}
-				
-									
-								
-	}
-				else{
-				$cell = $objPHPExcel->setActiveSheetIndex(0)->getCell($column.$row);					
-				}
-				array_push($result,$cell);
+			if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != 0) {
+				echo json_encode(array(
+					'status' => false,
+					'type' => 'upload_error',
+					'message' => 'No file uploaded or upload error'
+				));
+				return;
 			}
-	    $data11 =$this->Employeeimportmodel->employee_import_file($result);
-		$data2 .= "----".$data11;	
- 			}
-		  unlink( $file_directory . $new_file_name);
-  echo json_encode($data2);	
-//	echo $data2;		
+
+			$file_info = pathinfo($_FILES["file"]["name"]);
+			$file_directory = "uploads/";
+			$new_file_name = $_FILES["file"]["name"];
+			
+			if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
+			{   
+				$file_path = $file_directory . $new_file_name;
+				$file_type	= PHPExcel_IOFactory::identify($file_path);
+				$objReader	= PHPExcel_IOFactory::createReader($file_type);
+				$objPHPExcel = $objReader->load($file_path);
+				
+				$highestColumm = $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
+				$highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
+				$objReader->setReadDataOnly(false);
+
+				$data2 = "";
+				$column = 'A';
+				$row = 2;
+				
+				for ($row = 2; $row <= $highestRow; $row++) {
+					$result = array();
+					for ($column = 'A'; $column !='U'; $column++) {
+						if(($column=='H')||($column=='I')){
+							$column_id = ($column=='H') ? 7 : 8;
+							$cell1 = $objPHPExcel->setActiveSheetIndex(0)->getCell($column.$row);	
+							
+							if((trim($cell1)!="")&&($cell1!="NOT AVAILABLE"))
+							{
+								$cell = date('Y-m-d',PHPExcel_Shared_Date::ExcelToPHP($objPHPExcel->setActiveSheetIndex(0)->getCellByColumnAndRow($column_id,$row)->getValue()));
+							}
+							else{
+								$cell = "";
+							}
+						}
+						else{
+							$cell = $objPHPExcel->setActiveSheetIndex(0)->getCell($column.$row);					
+						}
+						array_push($result,$cell);
+					}
+					$data11 =$this->Employeeimportmodel->employee_import_file($result);
+					$data2 .= "----".$data11;	
+				}
+				unlink($file_path);
+				echo json_encode(array(
+					'status' => true,
+					'message' => 'Import completed',
+					'details' => $data2
+				));
+			} else {
+				echo json_encode(array(
+					'status' => false,
+					'type' => 'upload_error',
+					'message' => 'Failed to move uploaded file'
+				));
+			}
+		} catch (Throwable $e) {
+			echo json_encode(array(
+				"status" => false,
+				"type" => "exception",
+				"message" => $e->getMessage(),
+				"file" => $e->getFile(),
+				"line" => $e->getLine()
+			));
 		}
-		}
+	}
 	
 	
 	

@@ -76,6 +76,10 @@ $(document).ready(function() {
             return;
         }
 
+        console.log("UAN Mapping started");
+        var fileName = file_data.name;
+        console.log("Uploading file:", fileName);
+
         var form_data = new FormData();
         form_data.append('file', file_data);
 
@@ -92,23 +96,33 @@ $(document).ready(function() {
             data: form_data,
             type: 'post',
             success: function(response) {
-                console.log("UAN-IP Mapping: AJAX success", response);
+                console.log("UAN-IP Mapping Response:", response);
                 $("#wait").hide();
                 $('#btn_preview').prop('disabled', false);
 
-                if (response.error) {
-                    console.error("UAN-IP Mapping: Response error", response.error);
-                    alert(response.error);
-                } else if (!response || response.length == 0) {
+                if (response.status === false) {
+                    console.error("Error Type:", response.type);
+                    console.error("Message:", response.message);
+                    
+                    if (response.type === "zip_error") {
+                        alert("Server issue: Zip extension not enabled");
+                    } else {
+                        alert(response.message || "An error occurred during processing");
+                    }
+                    return;
+                }
+
+                var data = response.data;
+                if (!data || data.length == 0) {
                     console.warn("UAN-IP Mapping: No data found in response");
                     alert("No valid data found in the Excel sheet. Please ensure Column A has UAN and Column B has IP.");
                     $('#preview_section').hide();
                 } else {
                     console.log("UAN-IP Mapping: Rendering preview table");
-                    previewData = response;
-                    $('#record_count').text(response.length);
+                    previewData = data;
+                    $('#record_count').text(data.length);
                     var html = '';
-                    $.each(response, function(i, item) {
+                    $.each(data, function(i, item) {
                         html += '<tr><td>' + item.uan + '</td><td>' + item.name + '</td><td>' + item.ip + '</td></tr>';
                     });
                     $('#preview_table tbody').html(html);
@@ -116,8 +130,8 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error("UAN-IP Mapping: AJAX error", status, error);
-                console.log("UAN-IP Mapping: XHR response", xhr.responseText);
+                console.error("AJAX error:", error);
+                console.error("XHR response:", xhr.responseText);
                 $("#wait").hide();
                 $('#btn_preview').prop('disabled', false);
                 alert("Error in file upload or processing. Check console for details.");
