@@ -138,7 +138,7 @@ $(document).ready(function () {
 						'<td style="display:none;" id="ncp_days' + data1[0] + '">' + data1[23] + '</td>' + // 25
 						'<td style="display:none;" id="status' + data1[0] + '">' + data1[24] + '</td>' + // 26
 						'<td style="display:none;" id="member_id_' + data1[0] + '">' + data1[21] + '</td>' + // 27
-						'<td style="display:none;" id="total_no_of_days_' + data1[0] + '">' + data1[27] + '</td>' + // 28
+						'<td style="display:none;" id="total_no_of_days_' + data1[0] + '">' + data1[28] + '</td>' + // 28
 						'</tr>';
 
 					if (parseInt(data1[25]) > 0) {
@@ -163,7 +163,7 @@ $(document).ready(function () {
 					data_7 = parseInt(data_7) + parseInt(data1[14]);
 					data_8 = parseInt(data_8) + parseInt(data1[15]);
 					data_pt = parseInt(data_pt || 0) + parseInt(data1[29]);
-					data_9 = parseInt(data_9) + parseInt(data1[28]);
+					data_9 = parseInt(data_9) + parseInt(data1[27]);
 					data_10 = parseInt(data_10) + parseInt(data1[16]);
 
 
@@ -282,7 +282,7 @@ $(document).ready(function () {
 		$('#total' + emp_id).html(parseInt(total));
 
 		var pf = (parseInt(wages) * parseInt(pf_rate)) / 100;
-		$('#pf' + emp_id).html(parseInt(pf));
+		$('#pf' + emp_id).html(Math.round(pf));
 
 		// Get PT and ESIC from backend
 		$.ajax({
@@ -301,7 +301,7 @@ $(document).ready(function () {
 				$('#pt_id' + emp_id).html(pt_id);
 				$('#esic' + emp_id).html(esic);
 
-				var net_wages = parseInt(total) - parseInt(pf) - parseInt(pt) - parseInt(esic);
+				var net_wages = parseInt(total) - Math.round(pf) - parseInt(pt) - parseInt(esic);
 				$('#net_wages' + emp_id).html(parseInt(net_wages));
 			}
 		});
@@ -348,7 +348,7 @@ $(document).ready(function () {
 		$('#total' + emp_id).html(parseInt(total));
 
 		var pf = (parseInt(wages) * parseInt(pf_rate)) / 100;
-		$('#pf' + emp_id).html(parseInt(pf));
+		$('#pf' + emp_id).html(Math.round(pf));
 
 		// Get PT and ESIC from backend
 		$.ajax({
@@ -367,7 +367,7 @@ $(document).ready(function () {
 				$('#pt_id' + emp_id).html(pt_id);
 				$('#esic' + emp_id).html(esic_amount);
 
-				var net_wages = parseInt(total) - parseInt(pf) - parseInt(pt_amount) - parseInt(esic_amount);
+				var net_wages = parseInt(total) - Math.round(pf) - parseInt(pt_amount) - parseInt(esic_amount);
 				$('#net_wages' + emp_id).html(parseInt(net_wages));
 			}
 		});
@@ -414,7 +414,7 @@ $(document).ready(function () {
 		$('#total' + emp_id).html(parseInt(total));
 
 		var pf = (parseInt(wages) * parseInt(pf_rate)) / 100;
-		$('#pf' + emp_id).html(parseInt(pf));
+		$('#pf' + emp_id).html(Math.round(pf));
 
 		// Get PT and ESIC from backend
 		$.ajax({
@@ -433,7 +433,7 @@ $(document).ready(function () {
 				$('#pt_id' + emp_id).html(pt_id);
 				$('#esic' + emp_id).html(esic_amount);
 
-				var net_wages = parseInt(total) - parseInt(pf) - parseInt(pt_amount) - parseInt(esic_amount);
+				var net_wages = parseInt(total) - Math.round(pf) - parseInt(pt_amount) - parseInt(esic_amount);
 				$('#net_wages' + emp_id).html(parseInt(net_wages));
 			}
 		});

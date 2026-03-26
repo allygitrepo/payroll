@@ -481,7 +481,7 @@ $query5 = $this->db->query('select be.*,bw.rate1,bw.rate2,pt.tax_rate from bidi_
 						$esic = 0;
 					}
 					
-					$net_wages = $total-$pf-$pt-$esic;	
+					$net_wages = $total-round($pf)-$pt-$esic;	
 		}
 	
 	}

@@ -5,13 +5,15 @@ $(document).ready(function() {
 
     function show_packer_entry() {
         var month_year = $('#month_year').val();
-console.log("month_year:",month_year);
+        $("#wait").css("display", "block");
+        console.log("month_year:", month_year);
         $.ajax({
             type: 'POST',
             url: baseurl + "pfsummary/pfsummary_show",
             data: { month_year: month_year },
             dataType: 'json',
             success: function(data) {
+                $("#wait").css("display", "none");
                 var html = '<table id="example1" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%"><thead><tr>' +
                     '<th style="white-space:nowrap;">Sr No.</th>' +
                     '<th style="white-space:nowrap;">Name</th>' +
@@ -204,6 +206,9 @@ console.log("month_year:",month_year);
                     }, ]
                 });
 
+            },
+            error: function() {
+                $("#wait").css("display", "none");
             }
 
         });
