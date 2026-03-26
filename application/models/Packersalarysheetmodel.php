@@ -206,12 +206,18 @@ class Packersalarysheetmodel extends CI_Model{
 
 		   $total = $wages + $weekly_leave + $addition;
 		   
-			$pf = ($total*10)/100;
+			$pf = ($total*$ac1eemf)/100;
 
 			$pt = $tax_rate;
 			
 			if($ip_number != "" && $ip_number != "0" && $ip_number != "NOT AVAILABLE"){
-				$esic = ceil($total * 0.75 / 100);
+				$divisor = $worked_days;
+				$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
+				if($daily_wage > 176){
+					$esic = ceil($total * 0.75 / 100);
+				}else{
+					$esic = 0;
+				}
 			}else{
 				$esic = 0;
 			}
