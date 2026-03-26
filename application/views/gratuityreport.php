@@ -140,8 +140,8 @@ include('label.php'); ?>
 
 <script>
 $(document).ready(function() {
-  $('.month_year1').datetimepicker({format:"YYYY", maxDate: new Date()});
-  $('.month_year2').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
+  $('.month_year1').datetimepicker({format:"YYYY"});
+  $('.month_year2').datetimepicker({format:"DD/MM/YYYY"});
 });
 </script> 
 

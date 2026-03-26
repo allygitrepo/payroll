@@ -117,7 +117,16 @@
 <script>
    $(document).ready(function() {
 		
-		$('.starttoenddate').datetimepicker({format:"DD/MM/YYYY", maxDate: new Date()});
+		$('#startdate').datetimepicker({format:"DD/MM/YYYY"});
+		$('#enddate').datetimepicker({format:"DD/MM/YYYY", useCurrent: false});
+		$("#startdate").on("dp.change", function (e) {
+			var minDate = e.date ? e.date.clone().add(1, 'days') : null;
+			$('#enddate').data("DateTimePicker").minDate(minDate);
+		});
+		$("#enddate").on("dp.change", function (e) {
+			var maxDate = e.date ? e.date.clone().subtract(1, 'days') : null;
+			$('#startdate').data("DateTimePicker").maxDate(maxDate);
+		});
 		 });
 </script> 
    <script>
