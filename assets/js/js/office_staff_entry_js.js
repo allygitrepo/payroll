@@ -190,7 +190,7 @@ $('#month_year').val(data1[7]);
 					var month_day = parseInt(totalDays);
 				   
 			//		var perdaysalary = (parseInt(totalsalary)+parseInt(addition))/parseInt(month_day);
-						var perdaysalary = Math.round(parseInt(totalsalary)/parseInt(month_day));
+						var perdaysalary = (parseInt(totalsalary)/parseInt(month_day));
 					
 			//		var total = (perdaysalary*worked_days)+parseInt(addition);
 			var cut_salary = 0;
@@ -201,7 +201,7 @@ $('#month_year').val(data1[7]);
 					}
 					else{
 */
-					 cut_salary = perdaysalary * (parseInt(leaveWithoutPay)	);
+					 cut_salary = Math.round(perdaysalary * (parseInt(leaveWithoutPay)	));
 //					}
 
 					var totalmonthsalary = parseInt(totalsalary)-parseInt(cut_salary)+parseInt(addition);
@@ -248,17 +248,17 @@ $('#month_year').val(data1[7]);
 				var month_day = parseInt(totalDays);
 		 
 		//		var perdaysalary = (parseInt(totalsalary)+parseInt(addition))/parseInt(month_day);
-					var perdaysalary = Math.round(parseInt(totalsalary)/parseInt(month_day));
+					var perdaysalary = (parseInt(totalsalary)/parseInt(month_day));
 				
 		//		var total = (perdaysalary*worked_days)+parseInt(addition);
 		var cut_salary = 0;
 				if(worked_days!=0)
 				{
 			
-				 cut_salary = perdaysalary * leaveWithoutPay;
+				 cut_salary = Math.round(perdaysalary * leaveWithoutPay);
 				}
 				else{
-				 cut_salary = perdaysalary * (parseInt(leaveWithoutPay));
+				 cut_salary = Math.round(perdaysalary * (parseInt(leaveWithoutPay)));
 				}
 				
 				var totalmonthsalary = parseInt(totalsalary)-parseInt(cut_salary)+parseInt(addition);

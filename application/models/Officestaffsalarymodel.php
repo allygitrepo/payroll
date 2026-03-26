@@ -347,7 +347,7 @@ $query5 = $this->db->query('select oe.no_of_days_worked,oe.addition_if_any,os.sa
 				
 				$leave_without_pay1 = ($leave_without_pay)-($no_of_days_worked); 
 //				$total_days = $month_day-
-				$perdaysalary1 = round(($basic_salary)/($leave_without_pay));
+				$perdaysalary1 = ($basic_salary)/($leave_without_pay);
 		
 				$cut_salary = $perdaysalary1 * $leave_without_pay1;
 
@@ -657,7 +657,7 @@ $query5 = $this->db->query('select oe.no_of_days_worked,oe.addition_if_any,os.sa
 				
 				$leave_without_pay1 = ($leave_without_pay)-($no_of_days_worked); 
 //				$total_days = $month_day-
-				$perdaysalary1 = round(($basic_salary)/($leave_without_pay));
+				$perdaysalary1 = ($basic_salary)/($leave_without_pay);
 		
 				$cut_salary = $perdaysalary1 * $leave_without_pay1;
 

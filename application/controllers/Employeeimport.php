@@ -4,7 +4,7 @@ class Employeeimport extends CI_Controller{
 	
     function __construct(){
         parent::__construct();
-        error_reporting(0);
+        // error_reporting(0);
 		$this->load->library('excel');
 		$this->load->helper('form');
 		$this->load->helper("file");	
@@ -29,6 +29,10 @@ $result = array();
 
 if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
 {   
+    if (!class_exists('ZipArchive')) {
+        echo "Error: PHP ZipArchive extension is not enabled on this server. Please enable it to process Excel files.";
+        return;
+    }
     $file_type	= PHPExcel_IOFactory::identify($file_directory . $new_file_name);
     $objReader	= PHPExcel_IOFactory::createReader($file_type);
     $objPHPExcel = $objReader->load($file_directory . $new_file_name);
@@ -95,6 +99,10 @@ readfile($file);
 		
 		if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
 		{   
+			if (!class_exists('ZipArchive')) {
+				echo json_encode(array('status' => 'error', 'message' => 'PHP ZipArchive extension is not enabled on this server. Please enable it to import Excel files.'));
+				return;
+			}
 			$file_type	= PHPExcel_IOFactory::identify($file_directory . $new_file_name);
 			$objReader	= PHPExcel_IOFactory::createReader($file_type);
 			$objPHPExcel = $objReader->load($file_directory . $new_file_name);
@@ -277,6 +285,10 @@ readfile($file);
 		
 		if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
 		{   
+			if (!class_exists('ZipArchive')) {
+				echo json_encode(array('status' => 'error', 'message' => 'PHP ZipArchive extension is not enabled on this server. Please enable it to import Excel files.'));
+				return;
+			}
 			$file_type	= PHPExcel_IOFactory::identify($file_directory . $new_file_name);
 			$objReader	= PHPExcel_IOFactory::createReader($file_type);
 			$objPHPExcel = $objReader->load($file_directory . $new_file_name);
@@ -310,7 +322,7 @@ readfile($file);
 		public function excel_download(){
 	
 $file_directory = "assets/download/";
-$new_file_name = base_url()."assets/download/ActiveMember_NEW.xlsx";
+$new_file_name = FCPATH . "assets/download/ActiveMember_NEW.xlsx";
 																	
 		$this->load->helper('download');
 

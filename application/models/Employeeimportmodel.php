@@ -80,8 +80,11 @@ $contractor_id = "";
 					$this->db->from('company_master');
 					$this->db->where('estb_id',$_SESSION['company_id']);
 					$query = $this->db->get();
-	
-        $website = $query->row()->website;
+					
+					$website = "";
+					if ($query->num_rows() > 0) {
+						$website = $query->row()->website;
+					}
 		if(($aadhaar_no!="")&&($aadhaar_no!="NOT AVAILABLE")){
 		$email = $aadhaar_no."@".$website;			
 		}
