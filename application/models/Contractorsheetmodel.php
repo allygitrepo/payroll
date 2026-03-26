@@ -215,7 +215,7 @@ else{
 			}else{
 				$esic = 0;
 			}
-			$net_wages = $total-($pf+$esic);
+			$net_wages = round($total)-(round($pf)+$esic);
 		}
 			
 
