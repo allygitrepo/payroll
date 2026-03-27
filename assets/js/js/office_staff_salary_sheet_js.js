@@ -21,6 +21,7 @@ $(document).ready(function() {
 	
 		function show_packer_entry(){
 					var month_year = $('#month_year').val();
+					$("#wait").css("display", "block");
 
 		    $.ajax({
 		        type  : 'POST',
@@ -185,6 +186,7 @@ doc.content[2].table.widths = [ '2%', '15%', '5%', '5%', '5%', '5%', '6%', '5%',
        fontSize: 8
    }	
     });
+					$("#wait").css("display", "none");
 									
 		        }
 

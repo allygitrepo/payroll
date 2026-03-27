@@ -4,7 +4,7 @@ $(document).ready(function() {
 		
 	
 		function show_office_staff(){
-	//		        $("#wait").css("display", "block");
+			        $("#wait").css("display", "block");
 
 		    $.ajax({
 		        type  : 'ajax',
@@ -125,41 +125,10 @@ $('#month_year').val(data1[7]);
 
 					$('#table_data1').html(html);
 					
+					}	
 					
 					
-  /*
-	   var msg = "Office Staff Entry List";
-    $('#example1').dataTable({
-		 'scrollX': true,
-       'bDestroy': true,
-        'paging':   true,  // Table pagination
-        'ordering': true,  // Column ordering
-        'info':     true,  // Bottom left status text
- //       'responsive': true, // https://datatables.net/extensions/responsive/examples/
-        // Text translation options
-        // Note the required keywords between underscores (e.g _MENU_)
-        oLanguage: {
-            sSearch:      'Search all columns:',
-            sLengthMenu:  '_MENU_ records per page',
-            info:         'Showing page _PAGE_ of _PAGES_',
-            zeroRecords:  'Nothing found - sorry',
-            infoEmpty:    'No records available',
-            infoFiltered: '(filtered from _MAX_ total records)'
-        },
-        // Datatable Buttons setup
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [
-            {extend: 'copy',  className: 'btn-sm', title: msg,footer:true },
-            {extend: 'csv',   className: 'btn-sm', title: msg,footer:true },
-            {extend: 'excel', className: 'btn-sm', title: msg,footer:true },
-            {extend: 'pdf',   className: 'btn-sm', title: msg,footer:true },
-            {extend: 'print', className: 'btn-sm', title: msg,footer:true }
-        ]
-    });
-		*/			}	
-					
-					
-		//	        $("#wait").css("display", "none");
+			        $("#wait").css("display", "none");
 		
 					
 		        }
@@ -335,7 +304,7 @@ $('#month_year').val(data1[7]);
 		
 
   	$(document).on('click','#btn_insert',function(){
-					   //     $("#wait").css("display", "block");
+			        $("#wait").css("display", "block");
 
 		var month_year = $('#month_year').val();
 		console.log("Request: show_office_staff_month", {month_year: month_year});
@@ -460,41 +429,8 @@ $('#month_year').val(data1[7]);
 	                html += '</table>';
 
 		            $('#table_data1').html(html);
-					
-					
-					
-  
-	/*   var msg = "Office Staff Entry List";
-    $('#example1').dataTable({
-       'scrollX': true,
-       'bDestroy': true,
-        'paging':   true,  // Table pagination
-        'ordering': true,  // Column ordering
-        'info':     true,  // Bottom left status text
- //       'responsive': true, // https://datatables.net/extensions/responsive/examples/
-        // Text translation options
-        // Note the required keywords between underscores (e.g _MENU_)
-        oLanguage: {
-            sSearch:      'Search all columns:',
-            sLengthMenu:  '_MENU_ records per page',
-            info:         'Showing page _PAGE_ of _PAGES_',
-            zeroRecords:  'Nothing found - sorry',
-            infoEmpty:    'No records available',
-            infoFiltered: '(filtered from _MAX_ total records)'
-        },
-        // Datatable Buttons setup
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [
-            {extend: 'copy',  className: 'btn-sm', title: msg },
-            {extend: 'csv',   className: 'btn-sm', title: msg },
-            {extend: 'excel', className: 'btn-sm', title: msg },
-            {extend: 'pdf',   className: 'btn-sm', title: msg },
-            {extend: 'print', className: 'btn-sm', title: msg }
-        ]
-    });
-		*/			
 		        }
-						//		        $("#wait").css("display", "none");
+			        $("#wait").css("display", "none");
 	
 				}
 
