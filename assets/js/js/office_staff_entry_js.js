@@ -9,7 +9,6 @@ $(document).ready(function() {
 		    $.ajax({
 		        type  : 'ajax',
 				url  : baseurl+"officestaffsalary/show_office_staff",
-		        async : false,
 		        dataType : 'json',
 		        success : function(data){
 					console.log("Request: show_office_staff");

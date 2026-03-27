@@ -147,6 +147,15 @@ else{
    <link rel="stylesheet" href="<?php echo base_url().'assets/vendor/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css';?>">
    
    <style>
+   #wait {
+       display: none;
+       position: fixed;
+       top: 50%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       z-index: 10001;
+       text-align: center;
+   }
    .sub_panel_heading {width:100%; height:auto; float:left; border:1px solid #cfdbe2; border-top-width:3px; padding:25px 25px 10px 25px; margin-top:15px; border-radius:4px;}
    .button_change {margin-top:26px;}
    .add_btn {float:right;}

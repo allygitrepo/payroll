@@ -54,7 +54,7 @@ $title = "Office Salary Sheet";
 				
  			</div>	
 <div class="panel-footer">
-<div id="wait" style="display:none;width:100px;height:100px;position:absolute;top:;left:45%;padding:2px;"><img src="<?php echo base_url('assets/images/loader.gif'); ?>" width="100" height="100" /><br><center><h5>Loading...</h5></center></div>
+										<div id="wait"><img src="<?php echo base_url('assets/images/loader.gif'); ?>" width="100" height="100" /><br><center><h5>Loading...</h5></center></div>
 										                     
           <div class="table-responsive" id="table_data1">
 						  

@@ -200,7 +200,7 @@ $salary = "";
 			
 					$cut_salary = $perdaysalary1 * $leave_without_pay1;
 	
-					$totalmonthsalary = (($basic_salary)+($addition_if_any))-round($cut_salary);
+					$totalmonthsalary = round((($basic_salary)+($addition_if_any))-round($cut_salary));
 					
 					$pf = (($totalmonthsalary)*10)/100;
 					
@@ -234,7 +234,7 @@ $salary = "";
 					$row .= '####'.$leave_with_pay;	   
 					$row .= '####'.$leave_without_pay1;	   
 					$row .= '####'.round($addition_if_any);	   
-					$row .= '####'.$totalmonthsalary;	   
+					$row .= '####'.round($totalmonthsalary);	   
 					$row .= '####'.round($pt);	   
 					$row .= '####'.round($pf);	   
 					$row .= '####'.round($net_wages);	   
@@ -245,7 +245,7 @@ $salary = "";
 					$row .= '####'.$post_office;
 					$row .= '####'.$district;
 					$row .= '####'.$pincode;	
-					$row .= '####'.$esic;
+					$row .= '####'.round($esic);
 					
 					array_push($result,$row);
 		   

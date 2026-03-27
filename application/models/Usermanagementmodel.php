@@ -172,6 +172,7 @@ $msg = 0;
        }
 	
  function get_access(){
+		$this->db->reconnect();
 //	$result		
 			if(isset($_SESSION['userid'])){
 						$this->db->where('user_id',$_SESSION['userid']);
