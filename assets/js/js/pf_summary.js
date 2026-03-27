@@ -48,7 +48,7 @@ $(document).ready(function() {
                      var data1 = data[i].split("####");
  
  
-                     $('#month_year').val(data1[11]);
+
                     var sr = i + 1;
 
                     if (data1[0] == "OFFICE STAFF TOTAL") {
