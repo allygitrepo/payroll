@@ -12,61 +12,23 @@ class Monthabsentlistmodel extends CI_Model{
 					$contractor_name = "";			
 					$pf_code = "";			
 
-		$query = $this->db->query('select em.member_id,em.UAN,em.dob,em.name_as_aadhaar,em.employee_type,em.contractor,em.emp_id from employee_master em where em.status="1"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"   order by em.member_id ASC');			
-		foreach($query->result() as $employee)
-		{
-		   $emp_id = $employee->emp_id;	
-		   
-		   $dob = $employee->dob;			
-		   $member_id = $employee->member_id;			
-		   $name_as_aadhaar = $employee->name_as_aadhaar;			
-		   $uan = $employee->UAN;			
-		   $employee_type = $employee->employee_type;			
-		   $contractor = $employee->contractor;			
-		   
-		   if($employee_type=="OFFICE STAFF"){
-					$query1 = $this->db->query('select count(gross_wages) as entrycount from office_staff_entry where employee_id="'.$emp_id.'" and   no_of_days_worked="0" and  month_year IN ("'.$month1.'","'.$month2.'","'.$month3.'")    ');						   
+		$query = $this->db->query('
+			SELECT em.name_as_aadhaar, em.member_id, em.UAN, em.dob, em.employee_type, cm.contractor_name
+			FROM employee_master em 
+			LEFT JOIN contractor_master cm ON cm.contractor_id = em.contractor
+			WHERE em.status = "1" 
+			AND substr(em.member_id_org, 1, 15) = "'.$_SESSION['company_id'].'" 
+			AND (
+				em.emp_id IN (SELECT employee_id FROM office_staff_entry WHERE no_of_days_worked = "0" AND month_year IN ("'.$month1.'","'.$month2.'","'.$month3.'"))
+				OR em.emp_id IN (SELECT employee_id FROM packers_entry WHERE no_of_worked_days = "0" AND month_year IN ("'.$month1.'","'.$month2.'","'.$month3.'"))
+				OR em.emp_id IN (SELECT employee_id FROM bidi_roller_entry WHERE no_of_days = "0" AND month_year IN ("'.$month1.'","'.$month2.'","'.$month3.'"))
+			)
+			ORDER BY em.member_id ASC
+		');
 
-//				$query1 = $this->db->query('select count(gross_wages) as entrycount from office_staff_entry where employee_id="'.$emp_id.'" and  month_year="'.$month1.'"   and  no_of_days_worked="0" ');						   
-					}
-		   elseif($employee_type=="BIDI PACKER"){
-				$query1 = $this->db->query('select count(gross_wages) as entrycount  from packers_entry where employee_id="'.$emp_id.'"  and no_of_worked_days="0"   and  month_year IN ("'.$month1.'","'.$month2.'","'.$month3.'") ');
-
-//				$query1 = $this->db->query('select count(gross_wages) as entrycount  from packers_entry where employee_id="'.$emp_id.'" and month_year="'.$month1.'"  and no_of_worked_days="0" ');
-
-				
-				}
-		   elseif($employee_type=="BIDI MAKER"){
-				$query1 = $this->db->query('select count(gross_wages) as entrycount  from bidi_roller_entry where employee_id="'.$emp_id.'"   and no_of_days="0"   and  month_year IN ("'.$month1.'","'.$month2.'","'.$month3.'")');
-
-//				$query1 = $this->db->query('select count(gross_wages) as entrycount  from bidi_roller_entry where employee_id="'.$emp_id.'" and month_year="'.$month1.'"  and no_of_days="0" ');
-
-				$query2 = $this->db->query('select pf_code,contractor_name  from contractor_master where contractor_id="'.$contractor.'" ');
-
-				foreach($query2->result() as $bidi)
-					{
-					$contractor_name = $bidi->contractor_name;			
-					$pf_code = $bidi->pf_code;			
-					}	
-			}
-			else{
-			}		
-					if(isset($query1)){
-							foreach($query1->result() as $entrystaff)
-					{
-						
-						
-						$entrycount = $entrystaff->entrycount;		
-						if($entrycount>0){
-								$row = $name_as_aadhaar.'####'.$member_id.'####'.$uan.'####'.$dob."####".$employee_type."####".$contractor_name;
-								array_push($result,$row);
-						}
-		
-					}
-			
-				}
-				
-			
+		foreach($query->result() as $employee) {
+			$row = $employee->name_as_aadhaar."####".$employee->member_id."####".$employee->UAN."####".$employee->dob."####".$employee->employee_type."####".$employee->contractor_name;
+			array_push($result, $row);
 		}
 		
 		return $result;	

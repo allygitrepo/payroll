@@ -1,53 +1,27 @@
 <?php
 class Reportmodel extends CI_Model{
 	
- 	    function yearsold_list_show(){
-//		$date = date(Y-m-d);
-$this->db->from('employee_master');
-$this->db->where('substr(`member_id_org`,1,15)',$_SESSION['company_id']);
-$this->db->where('status','1');
-$this->db->order_by("dob", "asc");
-        $getdata=$this->db->get();
-		
-        $getdata->result();
-	$result1 = array();	
-	foreach($getdata->result() as $get_emp)
-   {
-       $dob = $get_emp->dob;
-       $member_id = $get_emp->member_id;
-       $employee_type = $get_emp->employee_type;
-	   if($employee_type=="BIDI MAKER"){
-		   
-       $contractor_id = $get_emp->contractor;
-		   $getkyc= $this->db->query('SELECT contractor_name FROM contractor_master where contractor_id="'.$contractor_id.'"  ');
-		if($getkyc->num_rows()>0){
-		$contractor_name =	$getkyc->row()->contractor_name;			
-		}
-	   else{
-		   	$contractor_name =	"";			
-	   }
-		
-			
-	   }
-	   else{
-		   	$contractor_name =	"";
-			
-	   }
-		$date = date("Y/m/d");
+  	    function yearsold_list_show(){
+			$query = $this->db->query('
+				SELECT 
+					TIMESTAMPDIFF(YEAR, em.dob, CURDATE()) as age,
+					em.name_as_aadhaar, em.member_id, em.UAN, em.dob, em.employee_type, 
+					cm.contractor_name
+				FROM employee_master em 
+				LEFT JOIN contractor_master cm ON cm.contractor_id = em.contractor
+				WHERE em.status = "1" 
+				AND substr(em.member_id_org, 1, 15) = "'.$_SESSION['company_id'].'" 
+				HAVING age >= 57
+				ORDER BY em.dob ASC
+			');
 
-		$from = new DateTime($dob);
-		$to   = new DateTime($date);
-		$age = $from->diff($to)->y;
-	$pfcode = "";
-		if($age>=57)
-		{
-		$row = $age."####".$get_emp->name_as_aadhaar."####".$member_id."####".$get_emp->UAN."####".$dob."####".$get_emp->employee_type."####".$contractor_name."####";
-		array_push($result1,$row);
+			$result1 = array();	
+			foreach($query->result() as $get_emp) {
+				$row = $get_emp->age."####".$get_emp->name_as_aadhaar."####".$get_emp->member_id."####".$get_emp->UAN."####".$get_emp->dob."####".$get_emp->employee_type."####".($get_emp->contractor_name ? $get_emp->contractor_name : "")."####";
+				array_push($result1, $row);
+			}
+			return $result1;
 		}
-   }
-		return $result1;
-		
-    }
 
 	    function gratuitycalculation_default(){
 		$result1 = array();

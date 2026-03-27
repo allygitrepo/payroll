@@ -114,7 +114,7 @@ class Pfsummarymodel extends CI_Model{
 			$contractor_data["employee"]++;
 			$u = $bidiroller->unit_1_days + $bidiroller->unit_2_days;
 			$contractor_data["unit"] += $u;
-			$b = ($bidiroller->unit_1_days * ($bidiroller->bonus1 ?? 0)) + ($bidiroller->unit_2_days * ($bidiroller->bonus2 ?? 0));
+			$b = ($bidiroller->unit_1_days * (isset($bidiroller->bonus1) ? $bidiroller->bonus1 : 0)) + ($bidiroller->unit_2_days * (isset($bidiroller->bonus2) ? $bidiroller->bonus2 : 0));
 			$contractor_data["bonus"] += $b;
 			$w = $bidiroller->gross_wages;
 			$contractor_data["wages"] += $w;

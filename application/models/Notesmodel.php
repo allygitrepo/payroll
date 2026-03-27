@@ -175,51 +175,28 @@ $from_date = $this->input->post('note_date');
 		    function show_last_month_dashboard(){
 			$result = array();
 
-							$datestring='first day of last month';
-							$dt=date_create($datestring);
-							$lmfd =  $dt->format('Y-m-d'); 
-							
-							$datestring='last day of last month';
-							$dt=date_create($datestring);
-							$lmld =  $dt->format('Y-m-d'); 
-							
-							$date1 = explode("-",$lmfd);		
-				
-							$month = $date1[1];	   
-							$year = $date1[0];	   
+							$month = date('m', strtotime('first day of last month'));
+							$year = date('Y', strtotime('first day of last month'));
 							$month_year = $month."/".$year;
 
 	
-				$query1 = $this->db->query('select sum(gross_wages) as total,count(net_wages) as emp from office_staff_entry where month_year="'.$month_year.'" ');						   
-				$query2 = $this->db->query('select sum(gross_wages) as total,count(net_wages) as emp from packers_entry where  month_year="'.$month_year.'" ');			
-$br_emp = 0;
-$total_amount = 0;
-		$query3 = $this->db->query('select be.gross_wages,bw.bonus1,bw.bonus2,be.unit_1_days,be.unit_2_days from bidi_roller_entry be inner join bidiroller_wages bw on bw.id=be.bidiroller_wages_id where  be.month_year="'.$month_year.'" ');			
-//		$query2 = $this->db->query('select bonus1,bonus2 from bidiroller_wages where "'.$lmfd.'" between from_date and to_date ORDER BY from_date,to_date  DESC LIMIT 1  ');
-		foreach($query3->result() as $bidiroller)
-		{
-		   $wages = $bidiroller->gross_wages;
-		   $bonus1 = $bidiroller->bonus1;
-		   $bonus2 = $bidiroller->bonus2;		   
-		   $unit_1_days = $bidiroller->unit_1_days;		   
-		   $unit_2_days = $bidiroller->unit_2_days;		
-			   
-			$bonus = ($unit_1_days*$bonus1)+($unit_2_days*$bonus2);
-			$total = $wages+$bonus;
-			$total_amount = $total_amount + $total;
-			$br_emp = $br_emp+1;
-		   
-		}
+				$query1 = $this->db->query('SELECT SUM(gross_wages) as total, COUNT(*) as emp FROM office_staff_entry WHERE month_year="'.$month_year.'"');						   
+				$query2 = $this->db->query('SELECT SUM(gross_wages) as total, COUNT(*) as emp FROM packers_entry WHERE month_year="'.$month_year.'"');			
+				$query3 = $this->db->query('
+					SELECT COUNT(*) as emp, SUM(be.gross_wages + (be.unit_1_days * bw.bonus1) + (be.unit_2_days * bw.bonus2)) as total 
+					FROM bidi_roller_entry be 
+					INNER JOIN bidiroller_wages bw ON bw.id = be.bidiroller_wages_id 
+					WHERE be.month_year = "'.$month_year.'"
+				');			
 
-		$br_netwages = $total_amount;
+				$os_netwages = isset($query1->row()->total) ? $query1->row()->total : 0;
+				$os_emp = isset($query1->row()->emp) ? $query1->row()->emp : 0;
+				
+				$ps_netwages = isset($query2->row()->total) ? $query2->row()->total : 0;
+				$ps_emp = isset($query2->row()->emp) ? $query2->row()->emp : 0;
 
-				$os_netwages = $query1->row()->total;
-				if($os_netwages==""){ $os_netwages=0; }
-				$ps_netwages = $query2->row()->total;
-				if($ps_netwages==""){ $ps_netwages=0; }
-
-				$os_emp = $query1->row()->emp;
-				$ps_emp = $query2->row()->emp;
+				$br_netwages = isset($query3->row()->total) ? $query3->row()->total : 0;
+				$br_emp = isset($query3->row()->emp) ? $query3->row()->emp : 0;
 				
 				
 				
@@ -238,18 +215,8 @@ $total_amount = 0;
 				
 			$result = array();
 
-							$datestring='first day of last month';
-							$dt=date_create($datestring);
-							$lmfd =  $dt->format('Y-m-d'); 
-							
-							$datestring='last day of last month';
-							$dt=date_create($datestring);
-							$lmld =  $dt->format('Y-m-d'); 
-							
-							$date1 = explode("-",$lmfd);		
-				
-							$month = $date1[1];	   
-							$year = $date1[0];	   
+							$month = date('m', strtotime('first day of last month'));
+							$year = date('Y', strtotime('first day of last month'));
 							$month_year = $month."/".$year;
 
 		$challan_date ="";
