@@ -210,7 +210,7 @@ $salary = "";
 					$esic = calculate_esic($totalmonthsalary, $divisor, $esic_wages_threshold, $esic_rate_percent);
 
 					if($totalmonthsalary!=0){
-									$net_wages = $totalmonthsalary-(($pf)+($pt)+($esic));	
+									$net_wages = round($totalmonthsalary) - (round($pf) + round($pt) + round($esic));	
 					}
 					else{
 									$net_wages = 0;	
