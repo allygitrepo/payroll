@@ -58,404 +58,140 @@ class Pfsummarymodel extends CI_Model{
 
 		$result = array();
 		$row = "";
-			$bidi_total_employee = 0;
-			$bidi_total_unit = 0;
-			$bidi_total_unit12 = 0;
-			$bidi_total_wages = 0;
-			$bidi_total_bonus = 0;
-			$bidi_total_total = 0;
-			$bidi_total_pf = 0;
-			$bidi_total_eps_wages = 0;
-			$bidi_total_epf_wages = 0;
- 			$bidi_total_net_wages = 0;
- 			$bidi_total_esic = 0;
- 
- 		$query = $this->db->query('select cm.contractor_id,cm.contractor_name from contractor_master cm  where cm.status = "Active" order by cm.contractor_name ASC');			
-		foreach($query->result() as $contractor)
-		{
-		   $contractor_id = $contractor->contractor_id;			
-		   $contractor_name = $contractor->contractor_name;			
-			$total_employee = 0;
-			$total_unit = 0;
-			$total_unit12 = 0;
-			$total_wages = 0;
-			$total_bonus = 0;
-			$total_total = 0;
-			$total_pf = 0;
- 			$total_eps_wages = 0;
- 			$total_epf_wages = 0;
- 			$total_net_wages = 0;
- 			$total_esic = 0;
- 			$query1 = $this->db->query('select be.leave_with_pay,em.gender,be.net_wages,be.no_of_days,be.unit_1_days,be.unit_2_days,be.bidiroller_wages_id,be.gross_wages,be.epf_wages,be.eps_wages from employee_master em inner join bidi_roller_entry be on be.employee_id=em.emp_id where em.employee_type="BIDI MAKER" and  em.contractor="'.$contractor_id.'" and be.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
-			foreach($query1->result() as $bidiroller)
-			{
-				$total_employee = $total_employee+1;
-				$bidi_id = $bidiroller->bidiroller_wages_id;			
-				$unit_1_days = $bidiroller->unit_1_days;			
-				$unit_2_days = $bidiroller->unit_2_days;	
-				$no_of_days = $bidiroller->no_of_days;	
-				$leave_with_pay = $bidiroller->leave_with_pay;	
-				
-				
-				$unit = $unit_1_days+$unit_2_days;		
+		$bidi_total_employee = 0;
+		$bidi_total_unit12 = 0;
+		$bidi_total_wages = 0;
+		$bidi_total_bonus = 0;
+		$bidi_total_total = 0;
+		$bidi_total_pf = 0;
+		$bidi_total_eps_wages = 0;
+		$bidi_total_epf_wages = 0;
+		$bidi_total_net_wages = 0;
+		$bidi_total_esic = 0;
 
-
-
-
-				
-				$gender = $bidiroller->gender;		
-				
-						$query2 = $this->db->query('select bonus1,bonus2,rate1,rate2 from bidiroller_wages where id="'.$bidi_id.'" ');
-						foreach($query2->result() as $bidiroller1)
-						{
-						$bonus1 = $bidiroller1->bonus1;
-						$bonus2 = $bidiroller1->bonus2;		   				
-						$rate1 = $bidiroller1->rate1;
-						$rate2 = $bidiroller1->rate2;		   				
-						}
-						
-						
-//										$wages1 = ($unit_days1*$rate1)+($unit_days2*$rate2);
-//				$wages2 = round(($wages1/$no_of_days)*$leave_with_pay);
-//				$wages = $wages1+$wages2;
-				
-
-		if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
-		$ac10 = $query5->row()->ac10;		   			
-		$ac1eemf = $query5->row()->ac1eemale;		   			
-		$salarylimit = $query5->row()->salarylimit;		   			
-		$employer_share = $query5->row()->employer_share;		   			
-		$esic_wages_threshold = $query5->row()->esic_wages;
-		$esic_rate_percent = $query5->row()->employee_share;
+		// Optimization 1: Cache Challan Setup once outside all loops
+		$query_setup = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date DESC LIMIT 1 ');
+		$setup = $query_setup->row();
+		
+		if(!$setup) {
+			return array(); 
 		}
-		else{
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
-		$ac10 = $query5->row()->ac10;		   			
-		$ac1eemf = $query5->row()->ac1eefemale;		   						
-		$salarylimit = $query5->row()->salarylimit;		   			
-		$employer_share = $query5->row()->employer_share;		   			
-		$esic_wages_threshold = $query5->row()->esic_wages;
-		$esic_rate_percent = $query5->row()->employee_share;
-		}	
-	
-				if(isset($bonus1)){
-				    	$bonus = ($unit_1_days*$bonus1)+($unit_2_days*$bonus2);
-				}else{
-				    $bonus = 0;
+
+		$ac10_val = $setup->ac10;		   			
+		$salarylimit_val = $setup->salarylimit;		   			
+		$employer_share_val = $setup->employer_share;		   			
+		$esic_wages_threshold_val = $setup->esic_wages;
+		$esic_rate_percent_val = $setup->employee_share;
+		$ac1eemf_male = $setup->ac1eemale;
+		$ac1eemf_female = $setup->ac1eefemale;
+
+		// Optimization 2: Single JOIN query for all Bidi Rollers
+		$bidi_sql = 'SELECT cm.contractor_id, cm.contractor_name, be.leave_with_pay, em.gender, be.net_wages, be.no_of_days, be.unit_1_days, be.unit_2_days, be.bidiroller_wages_id, be.gross_wages, be.epf_wages, be.eps_wages, bw.bonus1, bw.bonus2, bw.rate1, bw.rate2 
+					 FROM contractor_master cm 
+					 JOIN employee_master em ON em.contractor = cm.contractor_id 
+					 JOIN bidi_roller_entry be ON be.employee_id = em.emp_id 
+					 LEFT JOIN bidiroller_wages bw ON bw.id = be.bidiroller_wages_id 
+					 WHERE em.employee_type = "BIDI MAKER" 
+					 AND cm.status = "Active" 
+					 AND be.month_year = "'.$month_year.'" 
+					 AND substr(em.member_id_org,1,15) = "'.$_SESSION['company_id'].'" 
+					 ORDER BY cm.contractor_name ASC, em.member_id ASC';
+		
+		$query_bidi = $this->db->query($bidi_sql);
+		$current_contractor_id = null;
+		$contractor_data = null;
+
+		foreach($query_bidi->result() as $bidiroller) {
+			if($current_contractor_id !== $bidiroller->contractor_id) {
+				if($contractor_data !== null) {
+					$row = $contractor_data["name"]."####".$contractor_data["employee"]."####".$contractor_data["unit"]."####".$contractor_data["wages"]."####".$contractor_data["bonus"]."####".$contractor_data["total"]."####".$contractor_data["pf"]."####".$contractor_data["esic"]."####".$contractor_data["epf_wages"]."####".$contractor_data["eps_wages"]."####".$contractor_data["net_wages"]."####".$month_year;
+					array_push($result, $row);
 				}
-				
-					$total_bonus = $total_bonus+$bonus;
-
-					$wages = $bidiroller->gross_wages;					
-					$total_wages = $total_wages+$wages; 
-
-					
-					$total = $wages+$bonus;
-					$total_total = $total_total+$total;
-
-					$pf = (($wages)*($ac1eemf))/100;
-					$total_pf = $total_pf+round($pf);	
-
-					if($wages > $salarylimit){
-						$eps_total = $salarylimit;
-					}
-					else{
-						$eps_total = $wages;
-					}
-					
-					$eps_wages = ($eps_total*$ac10)/100;
-					$total_eps_wages = $total_eps_wages+round($eps_wages);
-	
-					$a= ($wages * $employer_share)/100;
-					$epf_wages = round($pf)-round($eps_wages);
-					$total_epf_wages = $total_epf_wages+round($epf_wages);
-
- 					// ESIC Calculation based on Daily Wage threshold
- 					$divisor = $no_of_days + $leave_with_pay;
- 					$esic = calculate_esic($total, $divisor, $esic_wages_threshold, $esic_rate_percent);
- 					$total_esic = $total_esic + $esic;
- 					$total_net_wages = $total_net_wages + ($wages - round($pf) - $esic);
-
-
-					
-				
-				$total_unit = $total_unit + $unit;
-				
-//				$total_unit12 = $total_unit12+$total_unit;
-		   
-
-			}
-			
-		$row = $contractor_name;	   
-		$row .= '####'.$total_employee;	   
-		$row .= '####'.$total_unit;	   
-		$row .= '####'.$total_wages;	   
-		$row .= '####'.$total_bonus;	   
-		$row .= '####'.$total_total;	   		$row .= '####'.$total_pf;	   
- 		$row .= '####'.$total_esic;	   
- 		$row .= '####'.$total_epf_wages;	   
- 		$row .= '####'.$total_eps_wages;	   
- 		$row .= '####'.$total_net_wages;	   
- 		$row .= '####'.$month_year;	   
- 		
- 		
- 	array_push($result,$row);
- 	
- 				$bidi_total_employee 	=$bidi_total_employee + 	$total_employee;	
- 			$bidi_total_unit12 		=$bidi_total_unit12 +		$total_unit;	
- 			$bidi_total_wages 		=$bidi_total_wages 	+	$total_wages;	
- 			$bidi_total_bonus 		=$bidi_total_bonus 	+	$total_bonus;	
- 			$bidi_total_total 		=$bidi_total_total 	+	$total_total;	
- 			$bidi_total_pf 			=$bidi_total_pf 	+		$total_pf;	   
- 			$bidi_total_esic 			=$bidi_total_esic 	+		$total_esic;	   
- 			$bidi_total_eps_wages 	=$bidi_total_eps_wages +	$total_epf_wages;
- 			$bidi_total_epf_wages 	=$bidi_total_epf_wages +	$total_eps_wages;
- 			$bidi_total_net_wages	=$bidi_total_net_wages+	$total_net_wages;	   
-
-		
-		}
-		
-		$row = 'BIDI ROLLER TOTAL';	   
-		$row .= '####'.$bidi_total_employee;   
-		$row .= '####'.$bidi_total_unit12;   
-		$row .= '####'.$bidi_total_wages;   
-		$row .= '####'.$bidi_total_bonus;   
-		$row .= '####'.$bidi_total_total;   		$row .= '####'.$bidi_total_pf;
- 		$row .= '####'.$bidi_total_esic;
- 		$row .= '####'.$bidi_total_eps_wages;	   
- 		$row .= '####'.$bidi_total_epf_wages;	   
- 		$row .= '####'.$bidi_total_net_wages;
- 		$row .= '####'.$month_year;
-		
-	array_push($result,$row);
-	
-	
-	
-
-			$total_employee = 0;
-			$total_wages = 0;
-			$total_bonus = 0;
-			$total_total = 0;
-			$total_pf = 0;
-			$total_eps_wages = 0;
- 			$total_epf_wages = 0;
- 			$total_net_wages = 0;
- 			$total_esic = 0;
- 		
- 			$query2 = $this->db->query('select em.gender,oe.no_of_days_worked,oe.net_wages,oe.office_staff_salary_id,oe.gross_wages,oe.epf_wages,oe.eps_wages from employee_master em inner join office_staff_entry oe on oe.employee_id=em.emp_id where em.employee_type="OFFICE STAFF"  and oe.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
-			foreach($query2->result() as $officestaff)
-			{
-				$total_employee = $total_employee+1;
-				$office_id = $officestaff->office_staff_salary_id;			
-				
-				
-
-				$wages = $officestaff->gross_wages;	
-				$total_wages = $total_wages+$wages;
-
-
-					
-				
-
-			
-				
-				$gender = $officestaff->gender;		
-				
-						$query2 = $this->db->query('select additional_bonus from office_staff_salary where id="'.$office_id.'" ');
-						foreach($query2->result() as $officestaffsalary)
-						{
-						$bonus = $officestaffsalary->additional_bonus;
-						}
-
-				
-				
-					$total_bonus = $total_bonus+$bonus;
-
-					$total = $wages;
-					$total_total = $total_total+$total;
-
-					$pf = (($wages)*(10))/100;
-					$total_pf = $total_pf+round($pf);	
-					
-		if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
-		$ac10 = $query5->row()->ac10;		   			
-		$ac1eemf = $query5->row()->ac1eemale;		   			
-		$salarylimit = $query5->row()->salarylimit;		   			
-		$employer_share = $query5->row()->employer_share;		   			
-		$esic_wages_threshold = $query5->row()->esic_wages;
-		$esic_rate_percent = $query5->row()->employee_share;
-		}
-		else{
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
-		$ac10 = $query5->row()->ac10;		   			
-		$ac1eemf = $query5->row()->ac1eefemale;		   						
-		$salarylimit = $query5->row()->salarylimit;		   			
-		$employer_share = $query5->row()->employer_share;		   			
-		$esic_wages_threshold = $query5->row()->esic_wages;
-		$esic_rate_percent = $query5->row()->employee_share;
-		}	
-			if($total > $salarylimit){
-						$eps_total = $salarylimit;
-					}
-					else{
-						$eps_total = $total;
-					}
-					
-		$eps_wages = ($eps_total*$ac10)/100;
-					$total_eps_wages = $total_eps_wages+round($eps_wages);
-	
-					$a= ($total * $employer_share)/100;
- 					$epf_wages = round($pf)-round($eps_wages);
- 					$total_epf_wages = $total_epf_wages+round($epf_wages);
- 
- 					// ESIC Calculation for Office Staff based on Daily Wage threshold
- 					$week_holiday_count = 0; // Assuming this variable might be defined elsewhere or needs to be initialized
- 					$divisor = $officestaff->no_of_days_worked + $week_holiday_count;
- 					$esic = calculate_esic($wages, $divisor, $esic_wages_threshold, $esic_rate_percent);
- 					$total_esic = $total_esic + $esic;
- 					$total_net_wages = $total_net_wages + ($wages - round($pf) - $esic);
-
-   
-
-			}
-	$row = 'OFFICE STAFF TOTAL';	   
-		$row .= '####'.$total_employee;	   
-		$row .= '####';	   
-		$row .= '####'.$total_wages;	   
-		$row .= '####0';	   
-		$row .= '####'.$total_total;	   
-		$row .= '####'.$total_pf;	   
-		$row .= '####'.$total_esic;	   
-		$row .= '####'.$total_epf_wages;	   
-		$row .= '####'.$total_eps_wages;	   
-		$row .= '####'.$total_net_wages;	   
-		$row .= '####'.$month_year;	   
-	array_push($result,$row);
-	
-	
-		
-			$total_employee = 0;
-			$total_wages = 0;
-			$total_bonus = 0;
-			$total_total = 0;
-			$total_pf = 0;
-			$total_eps_wages = 0;
- 			$total_epf_wages = 0;
- 			$total_net_wages = 0;
- 			$total_esic = 0;
- 
- 		$total_unit = 0;
- 	
- 			$query2 = $this->db->query('select pe.no_of_worked_days,pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,em.gender,pe.net_wages,pe.packing_wages_id,pe.gross_wages,pe.epf_wages,pe.eps_wages from employee_master em inner join packers_entry pe on pe.employee_id=em.emp_id where em.employee_type="BIDI PACKER"  and pe.month_year="'.$month_year.'"   and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  order by em.member_id ASC');			
-			foreach($query2->result() as $packers)
-			{
-				$total_employee = $total_employee+1;
-				$packer_id = $packers->packing_wages_id;			
-				
-				$unit_1 = $packers->unit_1;		
-				$unit_2 = $packers->unit_2;		
-				$unit_3 = $packers->unit_3;		
-				$unit_4 = $packers->unit_4;		
-				$total_unit = $total_unit+($unit_1+$unit_2+$unit_3+$unit_4);
-				
-				
-	 $query3 = $this->db->query('select id,rate1,rate2,rate3,rate4,bonus from packing_wages where id="'.$packer_id.'"  ');
-		foreach($query3->result() as $packers1)
-		{
-		   $bonus = $packers1->bonus;
-		   $rate1 = $packers1->rate1;
-		   $rate2 = $packers1->rate2;
-		   $rate3 = $packers1->rate3;
-		   $rate4 = $packers1->rate4;		   
-		}
-		
-				
-				
-
-				$wages = ($unit_1*$rate1)+($unit_2*$rate2)+($unit_3*$rate3)+($unit_4*$rate4);
-				$total_wages = $total_wages+$wages;
-
-				
-				$total = $packers->gross_wages;	
-				$total_total = $total_total+$total;
-
-	
-				
-				
-				
-				$gender = $packers->gender;		
-				
-
-				
-				
-					$total_bonus = $total_bonus+$bonus;
-
-/*					$total = $wages;
-					$total_total = $total_total+$total;
-*/
-					$pf = (($total)*(10))/100;
-					$total_pf = $total_pf+round($pf);	
-					
-					if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
-		$ac10 = $query5->row()->ac10;		   			
-		$ac1eemf = $query5->row()->ac1eemale;		   			
-		$salarylimit = $query5->row()->salarylimit;		   			
-		$employer_share = $query5->row()->employer_share;		   			
-		$esic_wages_threshold = $query5->row()->esic_wages;
-		$esic_rate_percent = $query5->row()->employee_share;
-		}
-		else{
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
-		$ac10 = $query5->row()->ac10;		   			
-		$ac1eemf = $query5->row()->ac1eefemale;		   						
-		$salarylimit = $query5->row()->salarylimit;		   			
-		$employer_share = $query5->row()->employer_share;		   			
-		$esic_wages_threshold = $query5->row()->esic_wages;
-		$esic_rate_percent = $query5->row()->employee_share;
-		}	
-			if($total > $salarylimit){
-						$eps_total = $salarylimit;
-					}
-					else{
-						$eps_total = $total;
-					}
-					
-			$eps_wages = ($eps_total*$ac10)/100;
-					$total_eps_wages = $total_eps_wages+round($eps_wages);
-					$a= ($total * $employer_share)/100;
- 					$epf_wages = round($pf)-round($eps_wages);
- 					$total_epf_wages = $total_epf_wages+round($epf_wages);
- 
- 					// ESIC Calculation for Packing Staff based on Daily Wage threshold
- 					$divisor = $packers->no_of_worked_days;
- 					$esic = calculate_esic($total, $divisor, $esic_wages_threshold, $esic_rate_percent);
- 					$total_esic = $total_esic + $esic;
- 					$total_net_wages = $total_net_wages + ($total - round($pf) - $esic);
+				$current_contractor_id = $bidiroller->contractor_id;
+				$contractor_data = array("name" => $bidiroller->contractor_name, "employee" => 0, "unit" => 0, "wages" => 0, "bonus" => 0, "total" => 0, "pf" => 0, "eps_wages" => 0, "epf_wages" => 0, "net_wages" => 0, "esic" => 0);
 			}
 
-	$row = 'PACKING STAFF TOTAL';	   
-		$row .= '####'.$total_employee;	   
-		$row .= '####'.$total_unit;	   
-		$row .= '####'.$total_wages;	   
-		$row .= '####0';	   
-		$row .= '####'.$total_total;	   		$row .= '####'.$total_pf;	   
- 		$row .= '####'.$total_esic;	   
- 		$row .= '####'.$total_epf_wages;	   
- 		$row .= '####'.$total_eps_wages;	   
- 		$row .= '####'.$total_net_wages;	   
- 		$row .= '####'.$month_year;	   
- 	array_push($result,$row);
-	
+			$contractor_data["employee"]++;
+			$u = $bidiroller->unit_1_days + $bidiroller->unit_2_days;
+			$contractor_data["unit"] += $u;
+			$b = ($bidiroller->unit_1_days * ($bidiroller->bonus1 ?? 0)) + ($bidiroller->unit_2_days * ($bidiroller->bonus2 ?? 0));
+			$contractor_data["bonus"] += $b;
+			$w = $bidiroller->gross_wages;
+			$contractor_data["wages"] += $w;
+			$t = $w + $b;
+			$contractor_data["total"] += $t;
 
-	
-				return $result;	
+			$ac = ($bidiroller->gender == "MALE") ? $ac1eemf_male : $ac1eemf_female;
+			$pf_val = round(($w * $ac) / 100);
+			$contractor_data["pf"] += $pf_val;
+			$eps_b = min($w, $salarylimit_val);
+			$eps_w = round(($eps_b * $ac10_val) / 100);
+			$contractor_data["eps_wages"] += $eps_w;
+			$contractor_data["epf_wages"] += ($pf_val - $eps_w);
+
+			$div = $bidiroller->no_of_days + $bidiroller->leave_with_pay;
+			$esic_val = calculate_esic($t, $div, $esic_wages_threshold_val, $esic_rate_percent_val);
+			$contractor_data["esic"] += $esic_val;
+			$contractor_data["net_wages"] += ($w - $pf_val - $esic_val);
+		}
+		if($contractor_data !== null) {
+			$row = $contractor_data["name"]."####".$contractor_data["employee"]."####".$contractor_data["unit"]."####".$contractor_data["wages"]."####".$contractor_data["bonus"]."####".$contractor_data["total"]."####".$contractor_data["pf"]."####".$contractor_data["esic"]."####".$contractor_data["epf_wages"]."####".$contractor_data["eps_wages"]."####".$contractor_data["net_wages"]."####".$month_year;
+			array_push($result, $row);
+		}
+
+		// Calc Bidi Subtotals
+		foreach($result as $r) {
+			$d = explode("####", $r);
+			$bidi_total_employee += $d[1]; $bidi_total_unit12 += $d[2]; $bidi_total_wages += $d[3]; $bidi_total_bonus += $d[4]; $bidi_total_total += $d[5]; $bidi_total_pf += $d[6]; $bidi_total_esic += $d[7]; $bidi_total_epf_wages += $d[8]; $bidi_total_eps_wages += $d[9]; $bidi_total_net_wages += $d[10];
+		}
+		array_push($result, "BIDI ROLLER TOTAL####$bidi_total_employee####$bidi_total_unit12####$bidi_total_wages####$bidi_total_bonus####$bidi_total_total####$bidi_total_pf####$bidi_total_esic####$bidi_total_eps_wages####$bidi_total_epf_wages####$bidi_total_net_wages####$month_year");
+
+		// Optimization 3: Office Staff JOIN query
+		$off_total = array("employee" => 0, "wages" => 0, "total" => 0, "pf" => 0, "esic" => 0, "epf_wages" => 0, "eps_wages" => 0, "net_wages" => 0);
+		$off_sql = 'SELECT em.gender, oe.no_of_days_worked, oe.gross_wages, os.additional_bonus 
+					FROM employee_master em 
+					JOIN office_staff_entry oe ON oe.employee_id = em.emp_id 
+					LEFT JOIN office_staff_salary os ON os.id = oe.office_staff_salary_id 
+					WHERE em.employee_type = "OFFICE STAFF" AND oe.month_year = "'.$month_year.'" AND substr(em.member_id_org,1,15) = "'.$_SESSION['company_id'].'"';
+		$query_off = $this->db->query($off_sql);
+		foreach($query_off->result() as $off) {
+			$off_total["employee"]++;
+			$w = $off->gross_wages; $off_total["wages"] += $w; $off_total["total"] += $w;
+			$ac = ($off->gender == "MALE") ? $ac1eemf_male : $ac1eemf_female;
+			$pf_val = round(($w * $ac) / 100); $off_total["pf"] += $pf_val;
+			$eps_b = min($w, $salarylimit_val); $eps_w = round(($eps_b * $ac10_val) / 100); $off_total["eps_wages"] += $eps_w;
+			$off_total["epf_wages"] += ($pf_val - $eps_w);
+			$esic_val = calculate_esic($w, $off->no_of_days_worked, $esic_wages_threshold_val, $esic_rate_percent_val);
+			$off_total["esic"] += $esic_val;
+			$off_total["net_wages"] += ($w - $pf_val - $esic_val);
+		}
+		array_push($result, "OFFICE STAFF TOTAL####".$off_total["employee"]."####0####".$off_total["wages"]."####0####".$off_total["total"]."####".$off_total["pf"]."####".$off_total["esic"]."####".$off_total["epf_wages"]."####".$off_total["eps_wages"]."####".$off_total["net_wages"]."####".$month_year);
+
+		// Optimization 4: Packers JOIN query
+		$pac_total = array("employee" => 0, "unit" => 0, "wages" => 0, "total" => 0, "pf" => 0, "esic" => 0, "epf_wages" => 0, "eps_wages" => 0, "net_wages" => 0);
+		$pac_sql = 'SELECT pe.no_of_worked_days, pe.unit_1, pe.unit_2, pe.unit_3, pe.unit_4, em.gender, pe.gross_wages, pw.rate1, pw.rate2, pw.rate3, pw.rate4 
+					FROM employee_master em 
+					JOIN packers_entry pe ON pe.employee_id = em.emp_id 
+					LEFT JOIN packing_wages pw ON pw.id = pe.packing_wages_id 
+					WHERE em.employee_type = "BIDI PACKER" AND pe.month_year = "'.$month_year.'" AND substr(em.member_id_org,1,15) = "'.$_SESSION['company_id'].'"';
+		$query_pac = $this->db->query($pac_sql);
+		foreach($query_pac->result() as $pac) {
+			$pac_total["employee"]++;
+			$u = $pac->unit_1 + $pac->unit_2 + $pac->unit_3 + $pac->unit_4; $pac_total["unit"] += $u;
+			$w = $pac->gross_wages; $pac_total["wages"] += $w; $pac_total["total"] += $w;
+			$ac = ($pac->gender == "MALE") ? $ac1eemf_male : $ac1eemf_female;
+			$pf_val = round(($w * $ac) / 100); $pac_total["pf"] += $pf_val;
+			$eps_b = min($w, $salarylimit_val); $eps_w = round(($eps_b * $ac10_val) / 100); $pac_total["eps_wages"] += $eps_w;
+			$pac_total["epf_wages"] += ($pf_val - $eps_w);
+			$esic_val = calculate_esic($w, $pac->no_of_worked_days, $esic_wages_threshold_val, $esic_rate_percent_val);
+			$pac_total["esic"] += $esic_val;
+			$pac_total["net_wages"] += ($w - $pf_val - $esic_val);
+		}
+		array_push($result, "PACKING STAFF TOTAL####".$pac_total["employee"]."####".$pac_total["unit"]."####".$pac_total["wages"]."####0####".$pac_total["total"]."####".$pac_total["pf"]."####".$pac_total["esic"]."####".$pac_total["epf_wages"]."####".$pac_total["eps_wages"]."####".$pac_total["net_wages"]."####".$month_year);
+
+		return $result;
 
     }
-
-			
 
 }
 ?>
