@@ -204,105 +204,78 @@ $('#month_year').val(data1[7]);
 		}
  	$(document).on('focusout','.unit',function(){
 		var emp_id = $(this).attr('name');
-
-		var addition = $('#addition'+emp_id).val();
-
-		var unit1 = $('#unit1'+emp_id).val();
-		var unit2 = $('#unit2'+emp_id).val();
-		var unit3 = $('#unit3'+emp_id).val();
-		var unit4 = $('#unit4'+emp_id).val();
-		
-		var rate1 = $('#rate1'+emp_id).html();
-		var rate2 = $('#rate2'+emp_id).html();
-		var rate3 = $('#rate3'+emp_id).html();
-		var rate4 = $('#rate4'+emp_id).html();
-		
-				
-		var wages1 = (unit1 * rate1);
-		var wages2 = (unit2 * rate2);
-		var wages3 = (unit3 * rate3);
-		var wages4 = (unit4 * rate4);
-
-		var wages = parseInt(wages1)+parseInt(wages2)+parseInt(wages3)+parseInt(wages4);
-		$('#wages'+emp_id).html(wages);
-	
-		var weekly = parseInt(wages)/6;
-		$('#weekly_leave'+emp_id).html(parseInt(weekly));
-		
-		var total = parseInt(wages)+parseInt(weekly)+parseInt(addition);
-		$('#total'+emp_id).html(parseInt(total));
-		
-		
-		var pf = (parseInt(total)*10)/100;
-		$('#pf'+emp_id).html(Math.round(pf));
-
-		// Dynamic ESIC calculation
-		var daysofwork = $('#daysofwork'+emp_id).val();
-		var divisor = parseInt(daysofwork);
-		var daily_wage = (divisor > 0) ? (parseFloat(total) / divisor) : 0;
-		var esic = 0;
-		var esic_wages_threshold = parseFloat($('#esic_wages'+emp_id).html()) || 176;
-		var esic_rate_percent = parseFloat($('#employee_share'+emp_id).html()) || 0.75;
-
-		if(daily_wage > esic_wages_threshold){
-			esic = Math.ceil(parseFloat(total) * (esic_rate_percent / 100));
-		}
-		$('#esic'+emp_id).html(esic);
-
-		var pt = $('#pt'+emp_id).html();
-		var net_wages = parseInt(total)-(parseInt(pt)+Math.round(pf)+parseInt(esic));
-		$('#net_wages'+emp_id).html(parseInt(net_wages));
-
-get_grand_total();
-
+		recalculate_packer_row(emp_id);
 	});	
-
-		
 
  	$(document).on('focusout','.daysofwork',function(){
-			get_grand_total();
-
+		var id = $(this).attr('id');
+		var emp_id = id.replace('daysofwork', '');
+		recalculate_packer_row(emp_id);
 	});	
 
-  	$(document).on('focusout','.unit',function(){
-		var emp_id = $(this).attr('name');
-		var salary = $('#total'+emp_id).html();
-		var pf = $('#pf'+emp_id).html();
 		
-		if(salary==0){
-				$('#net_wages'+emp_id).html('0');
-				$('#pt'+emp_id).html('0');
-				$('#esic'+emp_id).html('0');
+
+  	function recalculate_packer_row(emp_id){
+		var addition = $('#addition'+emp_id).val() || 0;
+		var unit1 = $('#unit1'+emp_id).val() || 0;
+		var unit2 = $('#unit2'+emp_id).val() || 0;
+		var unit3 = $('#unit3'+emp_id).val() || 0;
+		var unit4 = $('#unit4'+emp_id).val() || 0;
+		
+		var rate1 = $('#rate1'+emp_id).html() || 0;
+		var rate2 = $('#rate2'+emp_id).html() || 0;
+		var rate3 = $('#rate3'+emp_id).html() || 0;
+		var rate4 = $('#rate4'+emp_id).html() || 0;
+				
+		var wages = (unit1 * rate1) + (unit2 * rate2) + (unit3 * rate3) + (unit4 * rate4);
+		$('#wages'+emp_id).html(Math.round(wages));
+	
+		var weekly = wages / 6;
+		$('#weekly_leave'+emp_id).html(Math.round(weekly));
+		
+		var total = wages + weekly + parseFloat(addition);
+		$('#total'+emp_id).html(Math.round(total));
+		
+		var pf = Math.round((total * 10) / 100);
+		$('#pf'+emp_id).html(pf);
+
+		var daysofwork = $('#daysofwork'+emp_id).val() || 0;
+		
+		if(total == 0){
+			$('#net_wages'+emp_id).html('0');
+			$('#pt'+emp_id).html('0');
+			$('#esic'+emp_id).html('0');
+			get_grand_total();
+			return;
 		}
-				$.ajax({
-                type : "POST",
-				url  : baseurl+"Packingwages/get_ptax",
-                dataType : "JSON",
-                data : { salary:salary, worked_days:divisor, month_year:$('#month_year').val() },
-                success: function(data){
-					
-						var data1 = data.split("####");
-						
-						
-			var pt = data1[0];
-		$('#pt'+emp_id).html(parseInt(pt));
-		$('#pt_id'+emp_id).html(parseInt(data1[1]));
-		
-		// Dynamic ESIC calculation from AJAX response
-		var esic = data1[2];
-		var esic_wages_threshold = data1[3];
-		var esic_rate_percent = data1[4];
-		
-		$('#esic_wages'+emp_id).html(esic_wages_threshold);
-		$('#employee_share'+emp_id).html(esic_rate_percent);
-		$('#esic'+emp_id).html(esic);
-		
-			var net_wages = parseInt(salary)-(parseInt(pt)+parseInt(pf)+parseInt(esic));
-		$('#net_wages'+emp_id).html(parseInt(net_wages));
-		
-                }
-            });
-	});
+
+		$.ajax({
+			type : "POST",
+			url  : baseurl+"Packingwages/get_ptax",
+			dataType : "JSON",
+			global: false,
+			data : { salary: Math.round(total), worked_days: daysofwork, month_year: $('#month_year').val() },
+			success: function(data){
+				var data1 = data.split("####");
+				var pt = data1[0];
+				var pt_id = data1[1];
+				var esic = data1[2];
+				var esic_wages_threshold = data1[3];
+				var esic_rate_percent = data1[4];
+				
+				$('#pt'+emp_id).html(parseInt(pt));
+				$('#pt_id'+emp_id).html(parseInt(pt_id));
+				$('#esic_wages'+emp_id).html(esic_wages_threshold);
+				$('#employee_share'+emp_id).html(esic_rate_percent);
+				$('#esic'+emp_id).html(esic);
+				
+				var net_wages = Math.round(total) - (parseInt(pt) + parseInt(pf) + parseInt(esic));
+				$('#net_wages'+emp_id).html(parseInt(net_wages));
+				
+				get_grand_total();
+			}
+		});
+	}
 	
 	  	$(document).on('click','#search_month',function(){
 		show_packer_entry();	//call function show all packingwages		

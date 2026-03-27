@@ -188,7 +188,7 @@ $('#month_year').val(data1[7]);
 					var net_wages = totalmonthsalary-(parseInt(pf)+parseInt(pt));
 					$('#net_wages'+emp_id).html(net_wages);
 			*/
-					get_pf(totalmonthsalary,emp_id,pf);
+					get_pf(totalmonthsalary,emp_id,pf, worked_days, leave_with_pay);
 
 
 
@@ -246,7 +246,7 @@ $('#month_year').val(data1[7]);
 				var net_wages = totalmonthsalary-(parseInt(pf)+parseInt(pt));
 				$('#net_wages'+emp_id).html(net_wages);
 		*/		
-				get_pf(totalmonthsalary,emp_id,pf);
+				get_pf(totalmonthsalary,emp_id,pf, worked_days, leave_with_pay);
 				
 				
 				
@@ -536,7 +536,7 @@ $('#month_year').val(data1[7]);
 		
 	});
 				
-  	function get_pf(totalmonthsalary,emp_id,pf){
+  	function get_pf(totalmonthsalary,emp_id,pf, worked_days, leave_with_pay){
 
 		var salary11 = totalmonthsalary;
 		var emp_id11 = emp_id;
@@ -552,6 +552,7 @@ $('#month_year').val(data1[7]);
                 type : "POST",
 				url  : baseurl+"Packingwages/get_ptax",
                 dataType : "JSON",
+				global: false,
                 data : { salary:salary11, worked_days:worked_days, leave_with_pay:leave_with_pay, month_year:$('#month_year').val() },
                 success: function(data){
 					console.log("Response:", data);
