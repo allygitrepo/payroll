@@ -141,6 +141,7 @@ $contractor_id = "";
     	if(($pmrpy !="")&&($pmrpy!="NOT AVAILABLE")){    $this->db->set('pmrpy',$pmrpy); 	}
     	if(($pmid !="")&&($pmid!="NOT AVAILABLE")){    $this->db->set('member_id_org','WBDGP0034083000'.$pmid); 	}
     	if(($ip_number !="")&&($ip_number!="NOT AVAILABLE")){    $this->db->set('ip_number',$ip_number); 	}
+		$this->db->set('status', '1');
 
 		if($a==1){
 				$this->db->where('aadhaar_no',$aadhaar_no);			
