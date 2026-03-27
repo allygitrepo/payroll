@@ -104,6 +104,8 @@ $('#month_year').val(data1[7]);
 				'<td style="display:none;" id="ncp_days'+data1[0]+'" >'+data1[26]+'</td>'+
 				'<td style="display:none;" id="ac1eemale'+data1[0]+'" >'+data1[25]+'</td>'+
 				'<td style="display:none;" id="total_no_of_days_'+data1[0]+'" >'+data1[29]+'</td>'+
+				'<td style="display:none;" id="esic_wages'+data1[0]+'" >'+data1[32]+'</td>'+
+				'<td style="display:none;" id="employee_share'+data1[0]+'" >'+data1[33]+'</td>'+
 		                        '</tr>';
 						if(data1[27] != ""){
 							$('#save_update').val('update');
@@ -239,8 +241,11 @@ $('#month_year').val(data1[7]);
 		var divisor = parseInt(daysofwork);
 		var daily_wage = (divisor > 0) ? (parseFloat(total) / divisor) : 0;
 		var esic = 0;
-		if(daily_wage > 176){
-			esic = Math.ceil(parseFloat(total) * 0.0075);
+		var esic_wages_threshold = parseFloat($('#esic_wages'+emp_id).html()) || 176;
+		var esic_rate_percent = parseFloat($('#employee_share'+emp_id).html()) || 0.75;
+
+		if(daily_wage > esic_wages_threshold){
+			esic = Math.ceil(parseFloat(total) * (esic_rate_percent / 100));
 		}
 		$('#esic'+emp_id).html(esic);
 
@@ -273,7 +278,7 @@ get_grand_total();
                 type : "POST",
 				url  : baseurl+"Packingwages/get_ptax",
                 dataType : "JSON",
-                data : { salary:salary },
+                data : { salary:salary, worked_days:divisor, month_year:$('#month_year').val() },
                 success: function(data){
 					
 						var data1 = data.split("####");
@@ -283,14 +288,13 @@ get_grand_total();
 		$('#pt'+emp_id).html(parseInt(pt));
 		$('#pt_id'+emp_id).html(parseInt(data1[1]));
 		
-		// ESIC logic matching 176 threshold
-		var daysofwork = $('#daysofwork'+emp_id).val();
-		var divisor = parseInt(daysofwork);
-		var daily_wage = (divisor > 0) ? (parseFloat(salary) / divisor) : 0;
-		var esic = 0;
-		if(daily_wage > 176){
-			esic = Math.ceil(parseFloat(salary) * 0.0075);
-		}
+		// Dynamic ESIC calculation from AJAX response
+		var esic = data1[2];
+		var esic_wages_threshold = data1[3];
+		var esic_rate_percent = data1[4];
+		
+		$('#esic_wages'+emp_id).html(esic_wages_threshold);
+		$('#employee_share'+emp_id).html(esic_rate_percent);
 		$('#esic'+emp_id).html(esic);
 		
 			var net_wages = parseInt(salary)-(parseInt(pt)+parseInt(pf)+parseInt(esic));

@@ -155,20 +155,24 @@ else{
 		$remaining_days =$n-($week_holiday_count+$hcount);
 		
 		if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,ac1er,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,ac1er,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac1eemf = $query5->row()->ac1eemale;		   			
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1er = $query5->row()->ac1er;		   			
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}
 		else{
-		$query5 = $this->db->query('select employer_share,ac1eefemale,ac10,ac1er,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eefemale,ac10,ac1er,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac1eemf = $query5->row()->ac1eefemale;		   						
 		$ac10 = $query5->row()->ac10;		   						
 		$ac1er = $query5->row()->ac1er;		   		
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}	
 		   
 		$query2 = $this->db->query('select id,rate1,rate2,bonus1,bonus2 from bidiroller_wages where "'.$lmfd.'" between from_date and to_date ORDER BY from_date,to_date  DESC LIMIT 1  ');
@@ -208,13 +212,7 @@ else{
 			$net_wages = $total;
 		}else{
 			$divisor = $no_of_days + $leave_with_pay;
-			$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
-			
-			if($daily_wage > 176){
-				$esic = ceil($total * 0.0075);
-			}else{
-				$esic = 0;
-			}
+			$esic = calculate_esic($total, $divisor, $esic_wages_threshold, $esic_rate_percent);
 			$net_wages = round($total)-(round($pf)+$esic);
 		}
 			

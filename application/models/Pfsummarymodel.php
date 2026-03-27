@@ -121,18 +121,22 @@ class Pfsummarymodel extends CI_Model{
 				
 
 		if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1eemf = $query5->row()->ac1eemale;		   			
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}
 		else{
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1eemf = $query5->row()->ac1eefemale;		   						
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}	
 	
 				if(isset($bonus1)){
@@ -169,12 +173,7 @@ class Pfsummarymodel extends CI_Model{
 
  					// ESIC Calculation based on Daily Wage threshold
  					$divisor = $no_of_days + $leave_with_pay;
- 					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
- 					if($daily_wage > 176){
- 						$esic = ceil($total * 0.0075);
- 					} else {
- 						$esic = 0;
- 					}
+ 					$esic = calculate_esic($total, $divisor, $esic_wages_threshold, $esic_rate_percent);
  					$total_esic = $total_esic + $esic;
  					$total_net_wages = $total_net_wages + ($wages - round($pf) - $esic);
 
@@ -280,18 +279,22 @@ class Pfsummarymodel extends CI_Model{
 					$total_pf = $total_pf+round($pf);	
 					
 		if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1eemf = $query5->row()->ac1eemale;		   			
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}
 		else{
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1eemf = $query5->row()->ac1eefemale;		   						
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}	
 			if($total > $salarylimit){
 						$eps_total = $salarylimit;
@@ -310,12 +313,7 @@ class Pfsummarymodel extends CI_Model{
  					// ESIC Calculation for Office Staff based on Daily Wage threshold
  					$week_holiday_count = 0; // Assuming this variable might be defined elsewhere or needs to be initialized
  					$divisor = $officestaff->no_of_days_worked + $week_holiday_count;
- 					$daily_wage = ($divisor > 0) ? ($wages / $divisor) : 0;
- 					if($daily_wage > 176){
- 						$esic = ceil($wages * 0.0075);
- 					} else {
- 						$esic = 0;
- 					}
+ 					$esic = calculate_esic($wages, $divisor, $esic_wages_threshold, $esic_rate_percent);
  					$total_esic = $total_esic + $esic;
  					$total_net_wages = $total_net_wages + ($wages - round($pf) - $esic);
 
@@ -401,18 +399,22 @@ class Pfsummarymodel extends CI_Model{
 					$total_pf = $total_pf+round($pf);	
 					
 					if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1eemf = $query5->row()->ac1eemale;		   			
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}
 		else{
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac1eefemale,ac10,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1eemf = $query5->row()->ac1eefemale;		   						
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}	
 			if($total > $salarylimit){
 						$eps_total = $salarylimit;
@@ -429,12 +431,7 @@ class Pfsummarymodel extends CI_Model{
  
  					// ESIC Calculation for Packing Staff based on Daily Wage threshold
  					$divisor = $packers->no_of_worked_days;
- 					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
- 					if($daily_wage > 176){
- 						$esic = ceil($total * 0.0075);
- 					} else {
- 						$esic = 0;
- 					}
+ 					$esic = calculate_esic($total, $divisor, $esic_wages_threshold, $esic_rate_percent);
  					$total_esic = $total_esic + $esic;
  					$total_net_wages = $total_net_wages + ($total - round($pf) - $esic);
 			}

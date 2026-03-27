@@ -473,13 +473,7 @@ $query5 = $this->db->query('select be.*,bw.rate1,bw.rate2,pt.tax_rate from bidi_
 					
 					// Calculate ESIC based on Weekly Leave + Worked Days
 					$divisor = $no_of_days + $leave_with_pay;
-					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
-					
-					if($daily_wage > 176){
-						$esic = ceil($total * 0.0075);
-					} else {
-						$esic = 0;
-					}
+					$esic = calculate_esic($total, $divisor, $esic_wages, $employee_share);
 					
 					$net_wages = $total-round($pf)-$pt-$esic;	
 		}
@@ -525,6 +519,8 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 	$row .= '####'.$total_no_of_days;
 	$row .= '####'.round((float)$pt);
 	$row .= '####'.$pt_id;
+	$row .= '####'.$esic_wages;
+	$row .= '####'.$employee_share;
 	
 		if($rdate==0){
 					array_push($result,$row);					

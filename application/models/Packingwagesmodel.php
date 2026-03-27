@@ -464,13 +464,7 @@ $query5 = $this->db->query('select pe.unit_1,pe.unit_2,pe.unit_3,pe.unit_4,pe.ad
 					
 					// Calculate ESIC based on Worked Days (Packers don't have explicit leave_with_pay field in model)
 					$divisor = $worked_days;
-					$daily_wage = ($divisor > 0) ? ($total / $divisor) : 0;
-					
-					if($daily_wage > 176){
-						$esic = ceil($total * 0.0075);
-					} else {
-						$esic = 0;
-					}
+					$esic = calculate_esic($total, $divisor, $esic_wages, $employee_share);
 					
 					$net_wages = ($total)-($pt+$pf+$esic);
 					   
@@ -495,6 +489,8 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 	$row .= '####'.$total_no_of_days;
 	$row .= '####'.$tax_id;
 	$row .= '####'.round($esic);
+	$row .= '####'.$esic_wages;
+	$row .= '####'.$employee_share;
 
 	
 		if($rdate==0){
@@ -513,19 +509,33 @@ $challan_date = $this->db->query('select count(wage_month) as countdate from cha
 		 $tax_rate = $query4->row()->tax_rate;		   
 		 $tax_id = $query4->row()->id;		   
 		 
-		 // Get ESIC calculation based on 176 threshold
+		 // Get ESIC calculation based on dynamic setup from challan_setup
 		 $esic = 0;
 		 $worked_days = $this->input->post('worked_days');
 		 $leave_with_pay = $this->input->post('leave_with_pay');
+		 $month_year = $this->input->post('month_year');
 		 
-		 $divisor = (int)$worked_days + (int)$leave_with_pay;
-		 $daily_wage = ($divisor > 0) ? ((float)$salary / $divisor) : 0;
+		 // Default values
+		 $esic_wages_threshold = 176;
+		 $esic_rate_percent = 0.75;
 		 
-		 if($daily_wage > 176){
-			 $esic = ceil((float)$salary * 0.0075);
+		 if($month_year){
+			 $date11 = explode("/",$month_year);	
+			 $month = $date11[0];
+			 $year = $date11[1];
+			 $lmfd = $year.'-'.$month.'-01';
+			 
+			 $query_cs = $this->db->query('select esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+			 if($query_cs->num_rows() > 0){
+				 $esic_wages_threshold = $query_cs->row()->esic_wages;
+				 $esic_rate_percent = $query_cs->row()->employee_share;
+			 }
 		 }
 		 
-		return $tax_rate.'####'.$tax_id.'####'.$esic;	
+		 $divisor = (int)$worked_days + (int)$leave_with_pay;
+		 $esic = calculate_esic($salary, $divisor, $esic_wages_threshold, $esic_rate_percent);
+		 
+		return $tax_rate.'####'.$tax_id.'####'.$esic.'####'.$esic_wages_threshold.'####'.$esic_rate_percent;	
 
    }
 

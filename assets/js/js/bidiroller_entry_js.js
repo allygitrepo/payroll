@@ -289,7 +289,7 @@ $(document).ready(function () {
 			type: "POST",
 			url: baseurl + "Packingwages/get_ptax",
 			dataType: "JSON",
-			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay },
+			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay, month_year: $('#month_year').val() },
 			async: false,
 			success: function (data) {
 				var data1 = data.split("####");
@@ -355,7 +355,7 @@ $(document).ready(function () {
 			type: "POST",
 			url: baseurl + "Packingwages/get_ptax",
 			dataType: "JSON",
-			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay },
+			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay, month_year: $('#month_year').val() },
 			async: false,
 			success: function (data) {
 				var data1 = data.split("####");
@@ -421,7 +421,7 @@ $(document).ready(function () {
 			type: "POST",
 			url: baseurl + "Packingwages/get_ptax",
 			dataType: "JSON",
-			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay },
+			data: { salary: total, worked_days: worked_days, leave_with_pay: leave_with_pay, month_year: $('#month_year').val() },
 			async: false,
 			success: function (data) {
 				var data1 = data.split("####");

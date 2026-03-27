@@ -162,20 +162,24 @@ $salary = "";
 		 
 		 
 		if($gender=="MALE"){
-		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,ac1er,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eemale,ac10,ac1er,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac1eemf = $query5->row()->ac1eemale;		   			
 		$ac10 = $query5->row()->ac10;		   			
 		$ac1er = $query5->row()->ac1er;		   			
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}
 		else{
-		$query5 = $this->db->query('select employer_share,ac1eefemale,ac10,ac1er,salarylimit from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
+		$query5 = $this->db->query('select employer_share,ac1eefemale,ac10,ac1er,salarylimit,esic_wages,employee_share from challan_setup where "'.$lmfd .'" between `from_date` and `to_date` ORDER BY from_date,to_date  DESC LIMIT 1 ');
 		$ac1eemf = $query5->row()->ac1eefemale;		   						
 		$ac10 = $query5->row()->ac10;		   						
 		$ac1er = $query5->row()->ac1er;		   						
 		$salarylimit = $query5->row()->salarylimit;		   			
 		$employer_share = $query5->row()->employer_share;		   			
+		$esic_wages_threshold = $query5->row()->esic_wages;
+		$esic_rate_percent = $query5->row()->employee_share;
 		}
 		
 
@@ -203,13 +207,7 @@ $salary = "";
 					$pt = $tax_rate1;	
 					
 					$divisor = $no_of_days_worked + $leave_with_pay;
-					$daily_wage = ($divisor > 0) ? ($totalmonthsalary / $divisor) : 0;
-					
-					if($daily_wage > 176){
-						$esic = ceil($totalmonthsalary * 0.0075);
-					} else {
-						$esic = 0;
-					}
+					$esic = calculate_esic($totalmonthsalary, $divisor, $esic_wages_threshold, $esic_rate_percent);
 
 					if($totalmonthsalary!=0){
 									$net_wages = $totalmonthsalary-(($pf)+($pt)+($esic));	

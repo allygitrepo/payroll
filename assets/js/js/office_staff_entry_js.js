@@ -81,6 +81,8 @@ $('#month_year').val(data1[7]);
 								'<td  style="display:none;"  id="ncp_days'+data1[0]+'" >'+data1[21]+'</td>'+
 								'<td  style="display:none;"  id="leave_without_pay_'+data1[0]+'" >'+data1[4]+'</td>'+
 								'<td  style="display:none;"  id="ac1eemale'+data1[0]+'" >'+data1[22]+'</td>'+
+								'<td  style="display:none;"  id="esic_wages'+data1[0]+'" >'+data1[26]+'</td>'+
+								'<td  style="display:none;"  id="employee_share'+data1[0]+'" >'+data1[27]+'</td>'+
 								
 		                        '</tr>';
 						if(parseInt(data1[23])>0){
@@ -413,6 +415,8 @@ $('#month_year').val(data1[7]);
 								'<td  style="display:none;"  id="ncp_days'+data1[0]+'" >'+data1[21]+'</td>'+
 								'<td  style="display:none;"  id="leave_without_pay_'+data1[0]+'" >'+data1[4]+'</td>'+
 								'<td  style="display:none;"  id="ac1eemale'+data1[0]+'" >'+data1[22]+'</td>'+
+								'<td  style="display:none;"  id="esic_wages'+data1[0]+'" >'+data1[26]+'</td>'+
+								'<td  style="display:none;"  id="employee_share'+data1[0]+'" >'+data1[27]+'</td>'+
 												
 
 								
@@ -608,12 +612,12 @@ $('#month_year').val(data1[7]);
 				$('#esic'+emp_id11).html('0');
 		}
 			
-		console.log("Request: get_ptax", { salary:salary11 });
+		console.log("Request: get_ptax", { salary:salary11, worked_days:worked_days, leave_with_pay:leave_with_pay, month_year:$('#month_year').val() });
 				$.ajax({
                 type : "POST",
 				url  : baseurl+"Packingwages/get_ptax",
                 dataType : "JSON",
-                data : { salary:salary11 },
+                data : { salary:salary11, worked_days:worked_days, leave_with_pay:leave_with_pay, month_year:$('#month_year').val() },
                 success: function(data){
 					console.log("Response:", data);
 				var data1 = data.split("####");
@@ -624,16 +628,13 @@ $('#month_year').val(data1[7]);
 		$('#pt'+emp_id11).html(parseInt(pt));
 		$('#pt_id'+emp_id11).html(parseInt(data1[1]));
 		
-		// Calculate ESIC based on Weekly Leave + Worked Days
-		var worked_days = $('#'+emp_id11).val();
-		var leave_with_pay = $('#leave_with_pay'+emp_id11).html();
-		var divisor = parseInt(worked_days) + parseInt(leave_with_pay);
-		var daily_wage = (divisor > 0) ? (parseFloat(salary11) / divisor) : 0;
-		var esic = 0;
-		if(daily_wage > 176){
-			esic = Math.ceil(parseFloat(salary11) * 0.0075);
-		}
+		// Dynamic ESIC calculation from AJAX response
+		var esic = data1[2];
+		var esic_wages_threshold = data1[3];
+		var esic_rate_percent = data1[4];
 		
+		$('#esic_wages'+emp_id11).html(esic_wages_threshold);
+		$('#employee_share'+emp_id11).html(esic_rate_percent);
 		$('#esic'+emp_id11).html(esic);
 		
 			var net_wages = parseInt(salary11)-(parseInt(pt)+parseInt(pf11)+parseInt(esic));

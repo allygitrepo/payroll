@@ -360,13 +360,7 @@ if($totalmonthsalary!=0){
 					
 					// Calculate ESIC based on Weekly Leave + Worked Days
 					$divisor = $no_of_days_worked + $leave_with_pay;
-					$daily_wage = ($divisor > 0) ? ($totalmonthsalary / $divisor) : 0;
-					
-					if($daily_wage > 176){
-						$esic = ceil($totalmonthsalary * 0.0075);
-					} else {
-						$esic = 0;
-					}
+					$esic = calculate_esic($totalmonthsalary, $divisor, $esic_wages, $employee_share);
 					
 					$net_wages = $totalmonthsalary-(round($pf)+($pt)+($esic));
 }
@@ -385,7 +379,7 @@ $count_challan_date = $challan_date->row()->countdate;
 			$esic = 0;
 			$net_wages = 0;
 		}
-		$row = $emp_id.'####'.$name.'####'.$uan.'####'.$leave_with_pay.'####'.$leave_without_pay.'####'.$salary.'####'.$tax_rate.'####'.$month.'/'.$year.'####'.$salary_id.'####'.$tax_id.'####'.$ac1eemf.'####'.$ac10.'####'.$no_of_days_worked.'####'.$leave_without_pay1.'####'.$addition_if_any.'####'.round($basic_salary).'####'.$totalmonthsalary.'####'.round($pf).'####'.round($pt).'####'.round($net_wages).'####'.$member_id.'####'.$ncp_days1.'####'.$ac1eemale.'####'.$entry_count.'####'.$count_challan_date.'####'.round($esic); 
+		$row = $emp_id.'####'.$name.'####'.$uan.'####'.$leave_with_pay.'####'.$leave_without_pay.'####'.$salary.'####'.$tax_rate.'####'.$month.'/'.$year.'####'.$salary_id.'####'.$tax_id.'####'.$ac1eemf.'####'.$ac10.'####'.$no_of_days_worked.'####'.$leave_without_pay1.'####'.$addition_if_any.'####'.round($basic_salary).'####'.$totalmonthsalary.'####'.round($pf).'####'.round($pt).'####'.round($net_wages).'####'.$member_id.'####'.$ncp_days1.'####'.$ac1eemale.'####'.$entry_count.'####'.$count_challan_date.'####'.round($esic).'####'.$esic_wages.'####'.$employee_share; 
 				if($rdate==0){
 					array_push($result,$row);					
 				}
@@ -679,13 +673,7 @@ $query5 = $this->db->query('select oe.no_of_days_worked,oe.addition_if_any,os.sa
 
 							// Calculate ESIC based on Weekly Leave + Worked Days
 							$divisor = $no_of_days_worked + $leave_with_pay;
-							$daily_wage = ($divisor > 0) ? ($totalmonthsalary / $divisor) : 0;
-							
-							if($daily_wage > 176){
-								$esic = ceil($totalmonthsalary * 0.0075);
-							} else {
-								$esic = 0;
-							}
+							$esic = calculate_esic($totalmonthsalary, $divisor, $esic_wages, $employee_share);
 
 							$net_wages = $totalmonthsalary-(round($pf)+($pt)+($esic));
 											
@@ -708,7 +696,7 @@ $count_challan_date = $challan_date->row()->countdate;
 			$net_wages = 0;
 		}
 
-	$row = $emp_id.'####'.$name.'####'.$uan.'####'.$leave_with_pay.'####'.$leave_without_pay.'####'.$salary.'####'.$tax_rate.'####'.$month.'/'.$year.'####'.$salary_id.'####'.$tax_id.'####'.$ac1eemf.'####'.$ac10.'####'.$no_of_days_worked.'####'.$leave_without_pay1.'####'.$addition_if_any.'####'.round($basic_salary).'####'.$totalmonthsalary.'####'.round($pf).'####'.round($pt).'####'.round($net_wages).'####'.$member_id.'####'.$ncp_days1.'####'.$ac1eemale.'####'.$entry_count.'####'.$count_challan_date.'####'.round($esic);
+	$row = $emp_id.'####'.$name.'####'.$uan.'####'.$leave_with_pay.'####'.$leave_without_pay.'####'.$salary.'####'.$tax_rate.'####'.$month.'/'.$year.'####'.$salary_id.'####'.$tax_id.'####'.$ac1eemf.'####'.$ac10.'####'.$no_of_days_worked.'####'.$leave_without_pay1.'####'.$addition_if_any.'####'.round($basic_salary).'####'.$totalmonthsalary.'####'.round($pf).'####'.round($pt).'####'.round($net_wages).'####'.$member_id.'####'.$ncp_days1.'####'.$ac1eemale.'####'.$entry_count.'####'.$count_challan_date.'####'.round($esic).'####'.$esic_wages.'####'.$employee_share;
 				if($rdate==0){
 					array_push($result,$row);			
 			}
