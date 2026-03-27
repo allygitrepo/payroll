@@ -11,64 +11,26 @@ class Employeemodel extends CI_Model{
         return $getdata->result();
     }
 	
- 	    function employee_export_show(){
-//		$this->db->select('*');    
-				$getdata= $this->db->query('SELECT * FROM `employee_master` where status="1" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'" order by member_id desc ');
-			$row1 =	$getdata->result();
-				
-				
+  	    function employee_export_show(){
+			$query = $this->db->query('
+				SELECT em.*, 
+					k_bank.doc_num as acc_no, k_bank.doc_name as name_bank, k_bank.ifsc,
+					k_pan.doc_num as pan, k_pan.doc_name as name_pan
+				FROM employee_master em
+				LEFT JOIN kyc_master k_bank ON k_bank.emp_id = em.emp_id AND k_bank.doc_type = "BANK"
+				LEFT JOIN kyc_master k_pan ON k_pan.emp_id = em.emp_id AND k_pan.doc_type = "PAN"
+				WHERE em.status = "1" 
+				AND substr(em.member_id_org, 1, 15) = "'.$_SESSION['company_id'].'" 
+				ORDER BY em.member_id DESC
+			');
+
 			$result = array();	
-			
-   foreach($getdata->result() as $rows1)
-   {
-       $emp_id = $rows1->emp_id;
-				$getkyc= $this->db->query('SELECT * FROM kyc_master where emp_id="'.$emp_id.'" and doc_type = ("PAN" or "BANK") ');
-				$kyc =	$getkyc->result();
-				
-	$acc_no = ""; 			
-	$ifsc = ""; 			
-	$name_banck = ""; 			
-	$pan = ""; 			
-	$name_pan = "";
-	
-   foreach($getkyc->result() as $kyc)
-   {
-       $doc_type = $kyc->doc_type;
-	   if($doc_type == "BANK"){
-       $acc_no = $kyc->doc_num;
-       $name_banck = $kyc->doc_name;
-       $ifsc = $kyc->ifsc;		   
-		   }
-	   if($doc_type == "PAN"){
-       $pan = $kyc->doc_num;
-       $name_pan = $kyc->doc_name;
-		   }
-   
-   }		
-//   $uae = "";
-	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY.'####'.$rows1->ip_number;
-
-				array_push($result,$row);
-   }	
-
-			
-//			$n = count($getdata);
-//			for($i=0;$i<$n;$i++)
-//			{
-	//	$id = $getdata[$i]['emp_id'];
-		
-//		        $this->db->where('emp_id',$id);
-//        $getdata=$this->db->get('kyc_master');
-//        $getkyc->result();
-		
-//			}
-			
-       return $result;
- 			
-							
-					
-//					=$this->db->get('employee_master');
-    }
+			foreach($query->result() as $rows1) {
+				$row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.($rows1->acc_no ? $rows1->acc_no : '').'####'.($rows1->ifsc ? $rows1->ifsc : '').'####'.($rows1->name_bank ? $rows1->name_bank : '').'####'.($rows1->pan ? $rows1->pan : '').'####'.($rows1->name_pan ? $rows1->name_pan : '').'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY.'####'.$rows1->ip_number;
+				array_push($result, $row);
+			}	
+			return $result;
+		}
  	    function employee_detail_show(){
 		$id = $this->input->post('id');
 		
@@ -503,67 +465,27 @@ function family_detail_save(){
 			}
 	}
 	/*-----------kyc export----------*/
-		    function employee_export_search(){
-  $month_year =$this->input->post('month_year');
-  
-  
-//				
-				$getdata= $this->db->query('SELECT * FROM `employee_master` where doj like "'.$month_year.'%"  and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'"  ');
-			$row1 =	$getdata->result();
-				
-				
+  	    function employee_export_search(){
+			$month_year = $this->input->post('month_year');
+			
+			$query = $this->db->query('
+				SELECT em.*, 
+					k_bank.doc_num as acc_no, k_bank.doc_name as name_bank, k_bank.ifsc,
+					k_pan.doc_num as pan, k_pan.doc_name as name_pan
+				FROM employee_master em
+				LEFT JOIN kyc_master k_bank ON k_bank.emp_id = em.emp_id AND k_bank.doc_type = "BANK"
+				LEFT JOIN kyc_master k_pan ON k_pan.emp_id = em.emp_id AND k_pan.doc_type = "PAN"
+				WHERE em.doj LIKE "'.$month_year.'%" 
+				AND substr(em.member_id_org, 1, 15) = "'.$_SESSION['company_id'].'"
+			');
+
 			$result = array();	
-			
-   foreach($getdata->result() as $rows1)
-   {
-       $emp_id = $rows1->emp_id;
-				$getkyc= $this->db->query('SELECT * FROM kyc_master where emp_id="'.$emp_id.'" and doc_type = ("PAN" or "BANK") ');
-				$kyc =	$getkyc->result();
-				
-	$acc_no = ""; 			
-	$ifsc = ""; 			
-	$name_banck = ""; 			
-	$pan = ""; 			
-	$name_pan = "";
-	
-   foreach($getkyc->result() as $kyc)
-   {
-       $doc_type = $kyc->doc_type;
-	   if($doc_type == "BANK"){
-       $acc_no = $kyc->doc_num;
-       $name_banck = $kyc->doc_name;
-       $ifsc = $kyc->ifsc;		   
-		   }
-	   if($doc_type == "PAN"){
-       $pan = $kyc->doc_num;
-       $name_pan = $kyc->doc_name;
-		   }
-   
-   }		
-//   $uae = "";
-	   $row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.$acc_no.'####'.$ifsc.'####'.$name_banck.'####'.$pan.'####'.$name_pan.'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY.'####'.$rows1->ip_number;
-
-				array_push($result,$row);
-   }	
-
-			
-//			$n = count($getdata);
-//			for($i=0;$i<$n;$i++)
-//			{
-	//	$id = $getdata[$i]['emp_id'];
-		
-//		        $this->db->where('emp_id',$id);
-//        $getdata=$this->db->get('kyc_master');
-//        $getkyc->result();
-		
-//			}
-			
-       return $result;
- 			
-							
-					
-//					=$this->db->get('employee_master');
-    }
+			foreach($query->result() as $rows1) {
+				$row = $rows1->emp_id.'####'.$rows1->UAN.'####'.$rows1->previus_member_id.'####'.$rows1->dob.'####'.$rows1->doj.'####'.$rows1->gender.'####'.$rows1->father_husband.'####'.$rows1->relation.'####'.$rows1->mobile.'####'.$rows1->email.'####'.$rows1->nationality.'####'.$rows1->wages_join.'####'.$rows1->qualification.'####'.$rows1->marital_status.'####'.$rows1->international_worker.'####'.$rows1->contry_origin.'####'.$rows1->passport_no.'####'.$rows1->passport_from_date.'####'.$rows1->passport_till_date.'####'.$rows1->physical_handicap.'####'.$rows1->locomotive.'####'.$rows1->hearing.'####'.$rows1->visual.'####'.$rows1->employee_type.'####'.($rows1->acc_no ? $rows1->acc_no : '').'####'.($rows1->ifsc ? $rows1->ifsc : '').'####'.($rows1->name_bank ? $rows1->name_bank : '').'####'.($rows1->pan ? $rows1->pan : '').'####'.($rows1->name_pan ? $rows1->name_pan : '').'####'.$rows1->aadhaar_no.'####'.$rows1->name_as_aadhaar.'####'.$rows1->member_id.'####'.$rows1->pmrpy.'####'.$rows1->ABRY.'####'.$rows1->ip_number;
+				array_push($result, $row);
+			}	
+			return $result;
+		}
 	
 		 function employee_name_from_date_get(){
 			$result1 = array();	
