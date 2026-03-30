@@ -159,7 +159,7 @@ class Bidirollewagesmodel extends CI_Model{
 		$date_doj = $year."-".$month."-01";
 
 		if(($contractor==null)||($contractor=="")){
-		$query = $this->db->query('select em.member_id,em.status,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN from employee_master em where em.employee_type="BIDI MAKER" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'" and em.doj<=LAST_DAY("'.$date_doj.'") order by em.member_id ASC');			
+		$query = $this->db->query('select em.member_id,em.status,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN from employee_master em where em.employee_type="BIDI MAKER" and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'" and em.doj<=LAST_DAY("'.$date_doj.'") order by em.contractor, em.member_id ASC');			
 //		$query = $this->db->query('select em.member_id,em.status,em.gender,em.emp_id,em.name_as_aadhaar,em.UAN from employee_master em where em.employee_type="BIDI MAKER" and em.status="1" or (em.member_id IN (select rm.member_id from resignation_master rm inner join employee_master ep on ep.member_id=rm.member_id where em.employee_type="BIDI MAKER" and rm.leaving_date between "'.$lmfd.'" and "'.$lmld.'") ) and substr(`member_id_org`,1,15)="'.$_SESSION['company_id'].'" order by em.member_id ASC');			
 		}
 		else{

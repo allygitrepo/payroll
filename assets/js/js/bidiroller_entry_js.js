@@ -204,6 +204,7 @@ $(document).ready(function () {
 				$("#table_data1").html(html);
 				var msg = "Bidi Roller Entry List";
 				$('#example1').DataTable({
+					'aaSorting': [],
 					'scrollX': true,
 					'bDestroy': true,
 					'paging': false,  // Table pagination

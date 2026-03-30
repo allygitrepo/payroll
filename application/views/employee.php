@@ -612,6 +612,12 @@ $title = "Employee";
 		</tbody></table>
 
 							</div>
+                <div class="col-md-12" style="margin-top: 15px;">
+                    <center> 
+                        <button type="submit" class="btn btn-primary button_change">Save</button>						
+                        <a class="btn btn-primary btn_cancel button_change close_form">Cancel</a>	
+                    </center>
+                </div>
 
 
 
