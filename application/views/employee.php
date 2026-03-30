@@ -33,9 +33,12 @@ $title = "Employee";
                         <div class="panel-heading">
                            <div class="panel-title"></div>
                           	  <div class="panel-body">	
- <div class="tab-content" style="border:0;">
-  <div id="personalinfo" class="tab-pane fade in active">
- <form id="employee_form"></form>
+ <form id="employee_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" id="save_update" name="save_update" value="add" />
+    <input type="hidden" id="hid_id" name="hid_id" value=""/>
+    <input type="hidden" id="hid_up" name="hid_up" value="Add"/>
+  <div class="tab-content" style="border:0;">
+   <div id="personalinfo" class="tab-pane fade in active">
                       	<div class="col-md-12">
                                         <div class="col-md-12">
                                         <div class="col-md-4">
@@ -272,7 +275,7 @@ $title = "Employee";
   													</div>
 														</div>
 										
-								</form>
+								
 										
 										      <div class="col-md-12">
                                     <center > 
@@ -393,14 +396,12 @@ $title = "Employee";
 							
 										
 	         </div>
-						       <div class="col-md-12">
-                                    <center> 
-                                       
-                                        <a  id="close" class="btn btn-primary btn_cancel button_change close_form">Cancel</a>	
-                                        <input type="hidden" id="hid_id" value=""/>
-										<input type="hidden" id="hid_up" value="Add"/>
-                                    </center>
-                                </div>
+                <div class="col-md-12" style="margin-top: 15px;">
+                    <center> 
+                        <button type="submit" class="btn btn-primary button_change">Save</button>						
+                        <a class="btn btn-primary btn_cancel button_change close_form">Cancel</a>	
+                    </center>
+                </div>
 								</div>	
 		
  
@@ -484,6 +485,12 @@ $title = "Employee";
 		</tbody></table>
 	</div>
 				
+                <div class="col-md-12" style="margin-top: 15px;">
+                    <center> 
+                        <button type="submit" class="btn btn-primary button_change">Save</button>						
+                        <a class="btn btn-primary btn_cancel button_change close_form">Cancel</a>	
+                    </center>
+                </div>
 											
 											
 				
@@ -669,17 +676,13 @@ $title = "Employee";
 
 						</div>
 											             
-						       <div class="col-md-12">
-                                    <center> 
-                                        <button type="submit" id="btn_insert" form="employee_form" class="btn btn-primary button_change">Save</button>						
-			<input type="hidden" id="save_update" form="employee_form" value="add" />		
-                                       <!-- <button type="button" id="btn_update" class="btn btn-primary btn_update button_change" disabled>Update</button>	-->
-                                        <a  id="close" class="btn btn-primary btn_cancel button_change close_form">Cancel</a>	
-                                        <input type="hidden" id="hid_id" value=""/>
-										<input type="hidden" id="hid_up" value="Add"/>
-                                    </center>
-                                </div>
 
+                <div class="col-md-12" style="margin-top: 15px;">
+                    <center> 
+                        <button type="submit" class="btn btn-primary button_change">Save</button>						
+                        <a class="btn btn-primary btn_cancel button_change close_form">Cancel</a>	
+                    </center>
+                </div>
 								
 											</div>
 
@@ -688,7 +691,7 @@ $title = "Employee";
 											
  </div>
  
-</div>							  
+								</form>
 					  
 							  
         					</div>

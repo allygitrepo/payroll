@@ -1339,6 +1339,7 @@ $(document).on('click','.edit_row',function(){
 	                $('#member_id').val(data[i].member_id);
 	                $('#empName').val(data[i].name_as_aadhaar);
 	                $('#dob').val(dob);
+	                $('#ip_number').val(data[i].ip_number);
 	                $('#adharno').val(data[i].aadhaar_no);
 	                $('#gender').val(data[i].gender);
 	                $('#fhName').val(data[i].father_husband);
@@ -1565,6 +1566,7 @@ employee_form_clear();
 		   $('#empName').val('');  
 		   $('#uan_id').val('');          
            $('#dob').val('');              
+           $('#ip_number').val('');          
            $('#adharno').val('');          
            $('#gender').val('');           
            $('#fhName').val('');           
