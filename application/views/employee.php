@@ -59,14 +59,14 @@ $title = "Employee";
 															<div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label">UAN *</label>
-                                              <input type="text" name="uan_id" form="employee_form" id="uan_id" class="form-control" placeholder="Enter UAN No" required>
+                                              <input type="text" name="uan_id" form="employee_form" id="uan_id" class="form-control" placeholder="Enter UAN No">
                                  <label id="uan_id_error" style="color:red;"></label>
                                            </div>
                                         </div>
                                         <div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label">IP Number *</label>
-                                              <input type="text" name="ip_number" form="employee_form" id="ip_number" class="form-control" placeholder="Enter IP Number" required>
+                                              <input type="text" name="ip_number" form="employee_form" id="ip_number" class="form-control" placeholder="Enter IP Number">
                                  <label id="ip_number_error" style="color:red;"></label>
                                            </div>
                                         </div>
@@ -92,7 +92,7 @@ $title = "Employee";
 										<label class="control-label" >Date Of Birth As Per Aadhaar</label>
                                         <div class="form-group">
                                   <div id="datetimepicker1" class="date">
-                                 <input type="text" class="form-control" id="dob" form="employee_form" name="planstartdate" value='' placeholder="Select Date*"   required>
+                                 <input type="text" class="form-control" id="dob" form="employee_form" name="planstartdate" value='' placeholder="Select Date*">
                                  <label id="dob_error" style="color:red;"></label>
                               </div>
                                            </div>
@@ -110,7 +110,7 @@ $title = "Employee";
 										  <div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label"><?= $gender; ?> *</label>
-                                              <select type="text" name="gender" id="gender" form="employee_form" class="form-control" placeholder="Enter <?= $gender; ?>" required>											  <option Disabled Selected>Select Gender</option>
+                                              <select type="text" name="gender" id="gender" form="employee_form" class="form-control" placeholder="Enter <?= $gender; ?>">											  <option Disabled Selected>Select Gender</option>
 											  <option value="FEMALE">FEMALE</option>
 											  <option value="MALE">MALE</option>
 											  </select>
@@ -158,7 +158,7 @@ $title = "Employee";
 										                <div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label"><?= $mobile; ?> *</label>
-                                              <input type="text" name="mobile" id="mobile" form="employee_form" class="form-control" placeholder="Enter <?= $mobile; ?>*" required>
+                                              <input type="text" name="mobile" id="mobile" form="employee_form" class="form-control" placeholder="Enter <?= $mobile; ?>*">
                                 <label id="mobile_error" style="color:red;"></label>
                                            </div>
                                         </div>
@@ -195,7 +195,7 @@ $title = "Employee";
 										<div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label"><?= $typeEmp; ?> *</label>
-                                              <select type="text" name="typeEmp" form="employee_form" id="typeEmp" class="form-control"  required>
+                                              <select type="text" name="typeEmp" form="employee_form" id="typeEmp" class="form-control">
 											  <option value="" selected disabled>Select <?= $typeEmp; ?></option>
 												<option value="BIDI MAKER">Bidi Maker</option>
 												<option value="BIDI PACKER">Bidi Packer</option>
@@ -246,7 +246,7 @@ $title = "Employee";
 										<div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label">Address</label>
-                                              <textarea type="text" row="3" name="new_address" id="new_address" class="form-control" placeholder="Address" oninvalid="this.setCustomValidity('please Enter  Address')" onchange="this.setCustomValidity('')" required></textarea>
+                                              <textarea type="text" row="3" name="new_address" id="new_address" class="form-control" placeholder="Address" oninvalid="this.setCustomValidity('please Enter  Address')" onchange="this.setCustomValidity('')"></textarea>
                                            </div>
                                         </div>
 										
@@ -254,7 +254,7 @@ $title = "Employee";
 										
 										<div class="form-group">
 							<label class="control-label">Post Office</label>
-			<input type="text"  name="new_postoffice" id="new_postoffice" class="form-control" placeholder="Post Office" oninvalid="this.setCustomValidity('please Enter  Post Office')" onchange="this.setCustomValidity('')" required  />
+			<input type="text"  name="new_postoffice" id="new_postoffice" class="form-control" placeholder="Post Office" oninvalid="this.setCustomValidity('please Enter  Post Office')" onchange="this.setCustomValidity('')"  />
                              
   													</div>
 														</div>
@@ -262,7 +262,7 @@ $title = "Employee";
 										
 										<div class="form-group">
 							<label class="control-label">District</label>
-			<input type="text"  name="new_district" id="new_district" class="form-control" placeholder="District" oninvalid="this.setCustomValidity('please Enter  District')" onchange="this.setCustomValidity('')" required  />
+			<input type="text"  name="new_district" id="new_district" class="form-control" placeholder="District" oninvalid="this.setCustomValidity('please Enter  District')" onchange="this.setCustomValidity('')"  />
                              
   													</div>
 														</div>
@@ -270,7 +270,7 @@ $title = "Employee";
 										
 										<div class="form-group">
 							<label class="control-label">Pincode</label>
-			<input type="number"  name="new_pincode" id="new_pincode" class="form-control" placeholder="Pincode" oninvalid="this.setCustomValidity('Pincode Must be 6 Digit')" onchange="this.setCustomValidity('')" required />
+			<input type="number"  name="new_pincode" id="new_pincode" class="form-control" placeholder="Pincode" oninvalid="this.setCustomValidity('Pincode Must be 6 Digit')" onchange="this.setCustomValidity('')" />
                              
   													</div>
 														</div>
@@ -385,7 +385,7 @@ $title = "Employee";
 										  <div class="col-md-3">
                                            <div class="form-group">
                                               <label class="control-label">PMRPY ?</label>
-                                              <select type="text" name="pmrpy" id="pmrpy" form="employee_form" class="form-control" required>
+                                              <select type="text" name="pmrpy" id="pmrpy" form="employee_form" class="form-control">
 								<!--			  <option value="" selected disabled>Select PMRPY</option>
 								-->			  <option value="YES"  >YES</option>
 											  <option value="NO" selected>NO</option>

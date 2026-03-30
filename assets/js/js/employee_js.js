@@ -963,6 +963,12 @@ show_address_personal_info();	//call function show all address
     $(document).on("submit","#employee_form",function(e){
 	
 			e.preventDefault();
+            
+            if($('#uan_id').val() == "" || $('#empName').val() == "" || $('#dob').val() == "" || $('#gender').val() == null || $('#mobile').val() == "" || $('#typeEmp').val() == null){
+                $().toastmessage('showErrorToast', "Please fill all required fields marked with *");
+                return false;
+            }
+
             var save_update1 = $('#save_update').val(); 
             var pmrpy      = $('#pmrpy').val(); 
             var emp_image      = $('#emp_image_name').html(); 
@@ -1341,7 +1347,9 @@ $(document).on('click','.edit_row',function(){
 	                $('#dob').val(dob);
 	                $('#ip_number').val(data[i].ip_number);
 	                $('#adharno').val(data[i].aadhaar_no);
-	                $('#gender').val(data[i].gender);
+	                if(data[i].gender){
+	                	$('#gender').val(data[i].gender.trim().toUpperCase());
+	                }
 	                $('#fhName').val(data[i].father_husband);
 	                $('#relation').val(data[i].relation);
 	                $('#status').val(data[i].marital_status);
