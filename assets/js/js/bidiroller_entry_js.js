@@ -8,8 +8,9 @@ $(document).ready(function () {
 	show_contractor();	//call function show all address
 	function show_contractor() {
 		$.ajax({
-			type: 'ajax',
+			type: 'POST',
 			url: baseurl + "contractorcontroller/view_contractor",
+			data: { status: 'Active' },
 			async: false,
 			dataType: 'json',
 			success: function (data) {
