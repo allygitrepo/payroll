@@ -154,7 +154,7 @@ class Esicreportmodel extends CI_Model{
 					$display_lmld = date("d/m/Y", strtotime($res_info->leaving_date));
 				} else {
 					// Requirement: If no resignation data found, fill 0 for reason and blank for date
-					$reason_code = "0";
+					$reason_code = "11";
 					$display_lmld = "";
 				}
 			}
