@@ -145,20 +145,11 @@ class Employeeimport extends CI_Controller{
 					if (!empty($sheetData)) {
 						$totalRows = count($sheetData);
 						log_message('error', '[IMPORT] → Data Parsed → Total rows: ' . $totalRows);
-						// Skip header (index 0), legacy code starts from $row = 2
-						for ($i = 1; $i < $totalRows; $i++) {
-							// Ping DB every 10 rows to keep connection alive
-							if ($i % 10 == 0) {
-								$this->db->reconnect();
-							}
-							
-							$row = $sheetData[$i];
-							$result = array_slice($row, 0, 20);
-							
-							log_message('error', '[DB] → Operation → Importing row ' . ($i + 1));
-							$data11 = $this->Employeeimportmodel->employee_import_file($result);
-							$data2 .= "----".$data11;
-						}
+						log_message('error', '[IMPORT] → Data Parsed → Total rows: ' . $totalRows);
+						
+						// Call the new optimized bulk import method
+						$data2 = $this->Employeeimportmodel->bulk_employee_import($sheetData);
+						
 						log_message('error', '[IMPORT] → Completed → Employee import finished');
 					}
 				} else {
@@ -171,31 +162,9 @@ class Employeeimport extends CI_Controller{
 					$highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
 					$objReader->setReadDataOnly(false);
 
-					$column = 'A';
-					
-					for ($row = 2; $row <= $highestRow; $row++) {
-						$result = array();
-						for ($column = 'A'; $column !='U'; $column++) {
-							if(($column=='H')||($column=='I')){
-								$column_id = ($column=='H') ? 7 : 8;
-								$cell1 = $objPHPExcel->setActiveSheetIndex(0)->getCell($column.$row);	
-								
-								if((trim($cell1)!="")&&($cell1!="NOT AVAILABLE"))
-								{
-									$cell = date('Y-m-d',PHPExcel_Shared_Date::ExcelToPHP($objPHPExcel->setActiveSheetIndex(0)->getCellByColumnAndRow($column_id,$row)->getValue()));
-								}
-								else{
-									$cell = "";
-								}
-							}
-							else{
-								$cell = $objPHPExcel->setActiveSheetIndex(0)->getCell($column.$row);					
-							}
-							array_push($result,$cell);
-						}
-						$data11 =$this->Employeeimportmodel->employee_import_file($result);
-						$data2 .= "----".$data11;	
-					}
+					// Convert PHPExcel object data to a simple array first, then use our bulk method.
+					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, false);
+					$data2 = $this->Employeeimportmodel->bulk_employee_import($sheetData);
 				}
 				unlink($file_path);
 				echo json_encode(array(
