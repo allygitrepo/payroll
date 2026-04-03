@@ -829,27 +829,60 @@ class Payroll extends CI_Controller {
 			if(move_uploaded_file($_FILES["file"]["tmp_name"], $file_directory . $new_file_name))
 			{   
 				$file_path = $file_directory . $new_file_name;
-				log_message('debug', 'UAN-IP Mapping: File moved to ' . $file_path);
-
-				$file_type	= PHPExcel_IOFactory::identify($file_path);
-				$objReader	= PHPExcel_IOFactory::createReader($file_type);
-				$objPHPExcel = $objReader->load($file_path);
+				log_message('error', '[IMPORT] → File Upload → Received file: ' . $new_file_name);
 				
-				$highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
-				log_message('debug', 'UAN-IP Mapping: Total rows to process: ' . $highestRow);
-				
+				// --- Modern Excel Integration ---
+				$useNewExcelLogic = true;
 				$preview_data = array();
-				for ($row = 2; $row <= $highestRow; $row++) {
-					$uan = $objPHPExcel->setActiveSheetIndex(0)->getCell('A'.$row)->getValue();
-					$ip = $objPHPExcel->setActiveSheetIndex(0)->getCell('B'.$row)->getValue();
+
+				if ($useNewExcelLogic) {
+					log_message('error', '[IMPORT] → Logic Switch → Using New Excel Logic (PhpSpreadsheet)');
+					$this->load->library('latestExcelPHPIntegration');
+					log_message('error', '[IMPORT] → Processing Started → Extracting UAN-IP mapping data');
+					$sheetData = $this->latestexcelphpintegration->readExcel($file_path);
+
+					if (!empty($sheetData)) {
+						$totalRows = count($sheetData);
+						log_message('error', '[IMPORT] → Data Parsed → Total rows: ' . $totalRows);
+						// Skip header row (index 0)
+						for ($i = 1; $i < $totalRows; $i++) {
+							$row = $sheetData[$i];
+							$uan = $row[0] ?? ''; // Column A
+							$ip = $row[1] ?? '';  // Column B
+							
+							if(!empty($uan)){
+								log_message('error', '[IMPORT] → Validation → Processing UAN: ' . $uan);
+								$emp_name = $this->Employeemodel->get_employee_by_uan($uan);
+								$preview_data[] = array(
+									'uan' => (string)$uan,
+									'name' => $emp_name,
+									'ip' => (string)$ip
+								);
+							}
+						}
+					}
+					log_message('error', '[IMPORT] → Completed → UAN-IP mapping preview finished');
+				} else {
+					// --- Old PHPExcel Logic ---
+					$file_type	= PHPExcel_IOFactory::identify($file_path);
+					$objReader	= PHPExcel_IOFactory::createReader($file_type);
+					$objPHPExcel = $objReader->load($file_path);
 					
-					if(!empty($uan)){
-						$emp_name = $this->Employeemodel->get_employee_by_uan($uan);
-						$preview_data[] = array(
-							'uan' => (string)$uan,
-							'name' => $emp_name,
-							'ip' => (string)$ip
-						);
+					$highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
+					log_message('debug', 'UAN-IP Mapping: Total rows to process: ' . $highestRow);
+					
+					for ($row = 2; $row <= $highestRow; $row++) {
+						$uan = $objPHPExcel->setActiveSheetIndex(0)->getCell('A'.$row)->getValue();
+						$ip = $objPHPExcel->setActiveSheetIndex(0)->getCell('B'.$row)->getValue();
+						
+						if(!empty($uan)){
+							$emp_name = $this->Employeemodel->get_employee_by_uan($uan);
+							$preview_data[] = array(
+								'uan' => (string)$uan,
+								'name' => $emp_name,
+								'ip' => (string)$ip
+							);
+						}
 					}
 				}
 				unlink($file_path);

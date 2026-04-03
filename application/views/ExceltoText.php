@@ -65,8 +65,21 @@ $title = "Excel To Text";
         
 
    <?php include('footer.php');?>
-   
-   
+   <script>
+    $(document).ready(function() {
+        console.log('[IMPORT] → Page Loaded → Excel to Text Converter');
+        
+        $('form').submit(function() {
+            var file = $('#file').get(0).files[0];
+            if (file) {
+                console.log('[IMPORT] → Button Clicked → Excel to Text Conversion Started');
+                console.log('[IMPORT] → File Selected → ' + file.name);
+                console.log('[IMPORT] → engine → Using PhpSpreadsheet (Modern Logic)');
+                console.log('[IMPORT] → API Call Start → Sending file to server');
+            }
+        });
+    });
+   </script>
    </div>
 </body>
 

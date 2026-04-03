@@ -74,9 +74,11 @@ $title = "Employee Import";
         e.preventDefault();
         
         var fileName = $('#file').get(0).files[0].name;
-        console.log("Employee Import started");
-        console.log("Processing file:", fileName);
+        console.log('[IMPORT] → Button Clicked → Employee Import Started');
+        console.log('[IMPORT] → File Selected → ' + fileName);
+        console.log('[IMPORT] → engine → Using PhpSpreadsheet (Modern Logic)');
 
+        console.log('[IMPORT] → API Call Start → Uploading to Server');
         $.ajax({
             url:"<?php echo base_url(); ?>Employeeimport/import_employee_file",
             method:"POST",
@@ -85,6 +87,7 @@ $title = "Employee Import";
             cache:false,
             processData:false,
             success:function(response){
+                console.log('[IMPORT] → API Response Received → Processing result');
                 console.log("Employee Import Response:", response);
                 
                 if (response.status === false) {

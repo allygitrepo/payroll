@@ -56,6 +56,12 @@ $title = "Gratuity Data Import";
  $(document).ready(function() {
     $(document).on("submit","#excelimport_form",function(e){
 			e.preventDefault();
+            var fileName = $('#file').get(0).files[0].name;
+            console.log('[IMPORT] → Button Clicked → Gratuity Import Started');
+            console.log('[IMPORT] → File Selected → ' + fileName);
+            console.log('[IMPORT] → engine → Using PhpSpreadsheet (Modern Logic)');
+
+            console.log('[IMPORT] → API Call Start → Uploading to Server');
 					$.ajax({
 					url:"<?php echo base_url(); ?>Employeeimport/import_gratuity_file",
 					method:"POST",
@@ -64,6 +70,7 @@ $title = "Gratuity Data Import";
 					cache:false,
 					processData:false,
 					success:function(data){
+                        console.log('[IMPORT] → API Response Received → Gratuity Import Successful');
 //						$('#update_error').html('Employee Not Found : '+data);
 					$().toastmessage('showSuccessToast', "Employee Data Import Successfully");
 					}

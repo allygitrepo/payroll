@@ -68,7 +68,7 @@ $(document).ready(function() {
     var previewData = [];
 
     $('#btn_preview').click(function() {
-        console.log("UAN-IP Mapping: Preview button clicked");
+        console.log('[IMPORT] → Button Clicked → UAN-IP Mapping Preview Started');
         var file_data = $('#excel_file').prop('files')[0];
         if (!file_data) {
             console.warn("UAN-IP Mapping: No file selected");
@@ -76,14 +76,13 @@ $(document).ready(function() {
             return;
         }
 
-        console.log("UAN Mapping started");
-        var fileName = file_data.name;
-        console.log("Uploading file:", fileName);
+        console.log('[IMPORT] → File Selected → ' + file_data.name);
+        console.log('[IMPORT] → engine → Using PhpSpreadsheet (Modern Logic)');
 
         var form_data = new FormData();
         form_data.append('file', file_data);
 
-        console.log("UAN-IP Mapping: Showing loader and starting AJAX");
+        console.log('[IMPORT] → API Call Start → Uploading to Server');
         $("#wait").show();
         $('#btn_preview').prop('disabled', true);
 
@@ -96,6 +95,7 @@ $(document).ready(function() {
             data: form_data,
             type: 'post',
             success: function(response) {
+                console.log('[IMPORT] → API Response Received → Processing result');
                 console.log("UAN-IP Mapping Response:", response);
                 $("#wait").hide();
                 $('#btn_preview').prop('disabled', false);
@@ -140,7 +140,7 @@ $(document).ready(function() {
     });
 
     $('#btn_save').click(function() {
-        console.log("UAN-IP Mapping: Save button clicked");
+        console.log('[IMPORT] → Button Clicked → Update Records Started');
         if (previewData.length == 0) {
             alert("No data to save");
             return;
@@ -155,6 +155,7 @@ $(document).ready(function() {
             type: 'post',
             data: { data: JSON.stringify(previewData) },
             success: function(response) {
+                console.log('[IMPORT] → API Response Received → Update successful');
                 console.log("UAN-IP Mapping: Update success", response);
                 $("#wait").hide();
                 alert(response);

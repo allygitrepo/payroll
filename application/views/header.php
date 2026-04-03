@@ -189,10 +189,10 @@ else{
             <div class="navbar-header">
                <a href="index.php" class="navbar-brand">
                   <div class="brand-logo">
-                     <img src="<?php echo base_url().'assets/app/img/logo.jpeg" alt="App Logo" class="img-responsive';?>">
+                     <img src="<?php echo base_url(); ?>assets/app/img/logo.jpeg" alt="App Logo" class="img-responsive">
                   </div>
                   <div class="brand-logo-collapsed">
-                     <img src="<?php echo base_url().'assets/app/img/logo-single.png" alt="App Logo" class="img-responsive';?>">
+                     <img src="<?php echo base_url(); ?>assets/app/img/logo-single.png" alt="App Logo" class="img-responsive">
                   </div>
                </a>
             </div>
@@ -343,7 +343,7 @@ else{
                            <!-- User picture-->
                            <div class="user-block-picture">
                               <div class="user-block-status">
-                                 <img src="app/img/user/02.jpg" alt="Avatar" width="60" height="60" class="img-thumbnail img-circle">
+                                 <img src="<?php echo base_url(); ?>assets/app/img/user/02.jpg" alt="Avatar" width="60" height="60" class="img-thumbnail img-circle">
                                  <div class="circle circle-success circle-lg"></div>
                               </div>
                            </div>
@@ -1123,7 +1123,7 @@ else{
                               </span>
                               <span class="pull-left">
                                  <!-- Contact avatar-->
-                                 <img src="img/user/05.jpg" alt="Image" class="media-box-object img-circle thumb48">
+                                 <img src="<?php echo base_url(); ?>assets/app/img/user/05.jpg" alt="Image" class="media-box-object img-circle thumb48">
                               </span>
                               <!-- Contact info-->
                               <span class="media-box-body">
@@ -1142,7 +1142,7 @@ else{
                               </span>
                               <span class="pull-left">
                                  <!-- Contact avatar-->
-                                 <img src="img/user/06.jpg" alt="Image" class="media-box-object img-circle thumb48">
+                                 <img src="<?php echo base_url(); ?>assets/app/img/user/06.jpg" alt="Image" class="media-box-object img-circle thumb48">
                               </span>
                               <!-- Contact info-->
                               <span class="media-box-body">
@@ -1161,7 +1161,7 @@ else{
                               </span>
                               <span class="pull-left">
                                  <!-- Contact avatar-->
-                                 <img src="img/user/07.jpg" alt="Image" class="media-box-object img-circle thumb48">
+                                 <img src="<?php echo base_url(); ?>assets/app/img/user/07.jpg" alt="Image" class="media-box-object img-circle thumb48">
                               </span>
                               <!-- Contact info-->
                               <span class="media-box-body">
@@ -1180,7 +1180,7 @@ else{
                               </span>
                               <span class="pull-left">
                                  <!-- Contact avatar-->
-                                 <img src="img/user/08.jpg" alt="Image" class="media-box-object img-circle thumb48">
+                                 <img src="<?php echo base_url(); ?>assets/app/img/user/08.jpg" alt="Image" class="media-box-object img-circle thumb48">
                               </span>
                               <!-- Contact info-->
                               <span class="media-box-body">
@@ -1206,7 +1206,7 @@ else{
                               </span>
                               <span class="pull-left">
                                  <!-- Contact avatar-->
-                                 <img src="img/user/09.jpg" alt="Image" class="media-box-object img-circle thumb48">
+                                 <img src="<?php echo base_url(); ?>assets/app/img/user/09.jpg" alt="Image" class="media-box-object img-circle thumb48">
                               </span>
                               <!-- Contact info-->
                               <span class="media-box-body">
@@ -1225,7 +1225,7 @@ else{
                               </span>
                               <span class="pull-left">
                                  <!-- Contact avatar-->
-                                 <img src="img/user/10.jpg" alt="Image" class="media-box-object img-circle thumb48">
+                                 <img src="<?php echo base_url(); ?>assets/app/img/user/10.jpg" alt="Image" class="media-box-object img-circle thumb48">
                               </span>
                               <!-- Contact info-->
                               <span class="media-box-body">
