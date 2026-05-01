@@ -42,7 +42,7 @@ class LatestExcelPHPIntegration
         log_message('error', '[EXCEL] → Load File → Detected type: ' . $inputFileType);
 
         $reader = IOFactory::createReader($inputFileType);
-        $reader->setReadDataOnly(true);
+        $reader->setReadDataOnly(false);
         log_message('error', '[EXCEL] → Load File → Loading spreadsheet into memory');
         return $reader->load($filePath);
     }
@@ -58,8 +58,16 @@ class LatestExcelPHPIntegration
         log_message('error', '[EXCEL] → Get Sheet Data → Processing active worksheet');
         $worksheet = $spreadsheet->getActiveSheet();
 
-        // toArray(null, true, true, false) returns numeric keys, matching expected input for controllers
-        $data = $worksheet->toArray(null, true, true, false);
+        $data = [];
+        foreach ($worksheet->getRowIterator() as $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false); 
+            $cells = [];
+            foreach ($cellIterator as $cell) {
+                $cells[] = $this->formatCellValue($cell);
+            }
+            $data[] = $cells;
+        }
 
         log_message('error', '[EXCEL] → Get Sheet Data → Total rows extracted: ' . count($data));
         return $data;
