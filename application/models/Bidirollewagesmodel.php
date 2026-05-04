@@ -324,15 +324,11 @@ $rdate = 0;
 						$startTime = strtotime($lmfd);
 						$endTime =  strtotime($lmld);
 					
-						$time = $startTime;
 						$count = 0;
-						while($time < $endTime){
-							$count++;
-							$time += 7 * 86400;
-						}
-						
-						while(date('w', $time) != $day) { // 0 (for Sunday) through 6 (for Saturday)
-							$time += 86400;
+						for ($t = $startTime; $t <= $endTime; $t += 86400) {
+							if (date('w', $t) == $day) {
+								$count++;
+							}
 						}
 					
 						
@@ -372,7 +368,9 @@ $rdate = 0;
 		
 	$ac1eemf = 0;	
 	$ac1eemale = 0;	
-	$ac10 = 0;	
+	$ac10 = 0;
+	$esic_wages = 0;
+	$employee_share = 0;
 
 		if($gender=="MALE"){
 			
